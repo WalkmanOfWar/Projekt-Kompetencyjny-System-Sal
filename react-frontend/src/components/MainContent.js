@@ -6,14 +6,14 @@ export default function MainContent() {
         <div className="container-fluid background">
             <div className="row">
                 <div className="d-inline-flex justify-content-center">
-                    <div className=" col-2 mb-3 mx-2 d-flex flex-column p-3">
+                    {/* <div className=" col-2 mb-3 mx-2 d-flex flex-column p-3">
                         <label className="text-start ms-1" for="occupation">Wybór planu</label>
                         <select className="form-select d-block w-100 mt-1" id="country" required="">
                         <option value="">Wybierz jedną z opcji...</option>
                         <option>Plan dla studentów</option>
                         <option>Plan dla wykładowców</option>
                         </select>
-                    </div>
+                    </div> */}
                     <div className=" col-2 mb-3 mx-2 d-flex flex-column p-3">
                         <label className="text-start ms-1" for="room">Wybór sali</label>
                         <select className="form-select d-block w-100 mt-1" id="state" required="">
