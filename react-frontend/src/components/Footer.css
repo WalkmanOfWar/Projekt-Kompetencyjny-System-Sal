@@ -1,0 +1,18 @@
+.footer-background {
+  background-image: url("/images/background-footer.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.footer-text {
+  font-size: 28px;
+  font-weight: 400;
+  font-family: Inter, sans-serif;
+  color: #ffffff;
+}
