@@ -1,8 +1,8 @@
 .background{
 
     background-image: url('/images/background.png');
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
 }
 .schedule_img{
     height: 919px;

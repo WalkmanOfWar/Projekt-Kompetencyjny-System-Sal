@@ -16,19 +16,19 @@ export default function Navbar() {
                 <div className="collapse navbar-collapse align-items-center" id="navbarXl">
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item nav-item-text">
-                            <a className="nav-link" href="http://localhost:3000/">Strona Główna</a>
+                            <a className="nav-link px-3" href="http://localhost:3000/">Strona Główna</a>
                         </li>
                         <li className="nav-item nav-item-text">
-                            <a className="nav-link" href="http://localhost:3000/">FAQ</a>
+                            <a className="nav-link px-3" href="http://localhost:3000/">FAQ</a>
                         </li>
                         <li className="nav-item nav-item-text">
-                            <a className="nav-link" href="http://localhost:3000/">O nas</a>
+                            <a className="nav-link px-3" href="http://localhost:3000/">O nas</a>
                         </li>
                         <li className="nav-item nav-item-text">
-                            <a className="nav-link" href="http://localhost:3000/">Kontakt</a>
+                            <a className="nav-link px-3" href="http://localhost:3000/">Kontakt</a>
                         </li>
                         <li className="nav-item nav-item-text">
-                            <a className="nav-link" href="http://localhost:3000/">Zaloguj się</a>
+                            <a className="nav-link px-3" href="http://localhost:3000/">Zaloguj się</a>
                         </li>
                     </ul>
                 </div>
