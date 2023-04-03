@@ -33,7 +33,7 @@ export default function MainContent() {
         </div>
       </div>
       <img
-        className="img-fluid schedule_img mb-5 w-75"
+        className="img-fluid mb-5 w-75"
         src="images\schedule-mockup.png"
         alt="main-content"
       />
