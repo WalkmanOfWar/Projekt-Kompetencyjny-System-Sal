@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "user_courses")
 public class UserCourse {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +19,7 @@ public class UserCourse {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 }

@@ -10,7 +10,7 @@ import java.sql.Time;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "class_schedule")
+@Table(name = "class_schedules")
 public class ClassSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
