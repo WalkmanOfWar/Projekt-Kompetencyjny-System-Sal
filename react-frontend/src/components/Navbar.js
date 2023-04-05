@@ -1,18 +1,15 @@
 import React from "react";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    //Narazie jest xl, potem można zmienić że składa się kiedy jest mniejszy ekran
     <nav className="navbar navbar-expand-xl">
       <div className="container-fluid">
-        <a
-          className="navbar-brand d-flex flex-row align-items-center"
-          href="http://localhost:3000/"
-        >
+        <Link to={"/"} className="nav-link px-3">
           <img className="nav-logo me-4" src="images\logo.png" alt="logo" />
           <div className="nav-item-text">Time Tacticians</div>
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -30,29 +27,24 @@ export default function Navbar() {
         >
           <ul className="navbar-nav ms-auto">
             <li className="nav-item nav-item-text">
-              <a className="nav-link px-3" href="http://localhost:3000/">
-                Strona Główna
-              </a>
-            </li>
-            <li className="nav-item nav-item-text">
-              <a className="nav-link px-3" href="http://localhost:3000/">
+              <Link to={"/faq"} className="nav-link px-3">
                 FAQ
-              </a>
+              </Link>
             </li>
             <li className="nav-item nav-item-text">
-              <a className="nav-link px-3" href="http://localhost:3000/">
+              <Link to={"/about"} className="nav-link px-3">
                 O nas
-              </a>
+              </Link>
             </li>
             <li className="nav-item nav-item-text">
-              <a className="nav-link px-3" href="http://localhost:3000/">
+              <Link to={"/contact"} className="nav-link px-3">
                 Kontakt
-              </a>
+              </Link>
             </li>
             <li className="nav-item nav-item-text">
-              <a className="nav-link px-3" href="http://localhost:3000/">
+              <Link to={"/login"} className="nav-link px-3">
                 Zaloguj się
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
