@@ -7,6 +7,7 @@ import SignIn from "./pages/SignIn";
 import Faq from "./pages/Faq";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Navbar />
 
         <Routes>
-          {/* <Route path="/" element={<App />} /> */}
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />
