@@ -1,12 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat&display=swap");
 
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -38,5 +33,3 @@
     transform: rotate(360deg);
   }
 }
-
-

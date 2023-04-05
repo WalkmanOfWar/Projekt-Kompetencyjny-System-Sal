@@ -3,7 +3,7 @@ import "./SignIn.css";
 import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-function SignIn() {
+function SignUp() {
   return (
     <div className="wrapper py-3">
       <div className="mycontainer shadow">
@@ -28,12 +28,21 @@ function SignIn() {
           />
           <label for="floatingPassword">Hasło</label>
         </div>
+        <div className="input-container form-floating text-white mx-5">
+          <input
+            type="text"
+            placeholder="Potwórz hasło"
+            className="form-control bg-transparent text-white"
+            id="floatingPassword"
+          />
+          <label for="floatingPassword">Potwórz hasło</label>
+        </div>
 
         <button
           type="submit"
           className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75"
         >
-          Zaloguj się
+          Zarejestruj się
         </button>
         <p className="text-white register-text">Lub Zaloguj się Używając</p>
         <a href="#">
@@ -46,19 +55,19 @@ function SignIn() {
           <FaTwitter className="icon-register" />
         </a>
         <br />
-        <p className="text-white">Lub Zarejestruj się Używając</p>
-        <div>
+        <p className="text-white">
+          Masz już konto?
           <Link
-            to={"/register"}
-            className="link-primary text-info register-text mb-3"
+            to={"/login"}
+            className="link-primary text-info register-text mb-3 new-link-space"
           >
-            Zarejestruj się
+            Zaloguj się
           </Link>
-        </div>
+        </p>
         <br />
       </div>
     </div>
   );
 }
 
-export default SignIn;
+export default SignUp;
