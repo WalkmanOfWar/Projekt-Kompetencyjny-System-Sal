@@ -1,5 +1,6 @@
 import React from "react";
 import "./Footer.css";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -7,24 +8,24 @@ export default function Footer() {
       <footer className="py-1">
         <ul className="nav justify-content-center border-bottom py-3 mb-3">
           <li className="nav-item">
-            <a className="nav-link link-primary px-3 text-white" href="#">
-              Strona główna
-            </a>
+            <Link to={"/"} className="nav-link px-3">
+              <p className="text-white">Strona główna</p>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link link-primary px-3 text-white" href="#">
-              FAQ
-            </a>
+            <Link to={"/faq"} className="nav-link px-3">
+              <p className="text-white">FAQ</p>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link link-primary px-3 text-white" href="#">
-              O nas
-            </a>
+            <Link to={"/about"} className="nav-link px-3">
+              <p className="text-white">O nas</p>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link link-primary px-3 text-white" href="#">
-              Kontakt
-            </a>
+            <Link to={"/contact"} className="nav-link px-3">
+              <p className="text-white">Kontakt</p>
+            </Link>
           </li>
         </ul>
         <div className="text-center text-white">
