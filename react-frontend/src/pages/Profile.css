@@ -1,0 +1,59 @@
+.profile-container {
+    width: 100%;
+    background-image: url("/images/background.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.profile-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 0;
+}
+
+.profile-content-wrapper {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border-radius: 30px;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.column-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.divider {
+    width: 2px;
+    align-self: stretch;
+    background-color: black;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 999px;
+}
+
+.center {
+    align-items: center;
+}
+
+.text {
+    font-size: 20px;
+    color:white;
+}
+
+.header {
+    font-size: 32px;
+}

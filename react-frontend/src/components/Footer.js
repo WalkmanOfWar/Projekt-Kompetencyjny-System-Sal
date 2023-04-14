@@ -23,6 +23,11 @@ export default function Footer() {
             </Link>
           </li>
           <li className="nav-item">
+            <Link to={"/profile"} className="nav-link px-3">
+              <p className="text-white">Profil</p>
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link to={"/contact"} className="nav-link px-3">
               <p className="text-white">Kontakt</p>
             </Link>

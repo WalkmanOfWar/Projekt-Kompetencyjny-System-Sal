@@ -9,13 +9,13 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Navbar />
-
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -23,6 +23,7 @@ function App() {
           <Route path="/faq" element={<Faq />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/register" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>
