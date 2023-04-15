@@ -7,7 +7,7 @@ function SignIn() {
   return (
     <div className="wrapper py-3">
       <div className="mycontainer shadow">
-        <img className="nav-logo pt-3" src="\logo192.png" alt="logo" />
+        <img className="nav-logo my-3" src="images/logo.png" alt="logo" />
         <div className="nav-item-text text-white">Time Tacticians</div>
         <div className="input-container form-floating text-white mx-5 mt-3">
           <input
