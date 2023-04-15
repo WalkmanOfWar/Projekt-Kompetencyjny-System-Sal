@@ -39,10 +39,21 @@
 }
 
 .avatar {
+    display: flex;
     width: 100px;
     height: 100px;
-    background-color: white;
+    background-color: white;   
     border-radius: 999px;
+}
+
+.img{
+    
+    background-image:  url("/images/avatar.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70%;
+    width: 100px;
+    height: 100px;
 }
 
 .center {
@@ -52,6 +63,10 @@
 .text {
     font-size: 20px;
     color:white;
+}
+
+.text:active{
+    color:black; 
 }
 
 .header {
