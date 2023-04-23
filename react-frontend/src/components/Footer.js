@@ -32,6 +32,11 @@ export default function Footer() {
               <p className="text-white">Kontakt</p>
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to={"/operator"} className="nav-link px-3">
+              <p className="text-white">Operator</p>
+            </Link>
+          </li>
         </ul>
         <div className="text-center text-white">
           <p>Made by:</p>

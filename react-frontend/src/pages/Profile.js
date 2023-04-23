@@ -34,14 +34,18 @@ function Profile  () {
                     <span className="text" onClick={() => handleClick('ProfileReservations')}>Moje rezerwacje</span>
 
         
-                    <span className="text">Wyloguj się</span>
+                    <span className="text"> Wyloguj się</span>
                     
                 </div>
                 <div className="divider" />
+                {
+  activeComponent === 'ProfileInfo' ? <ProfileInfo /> :
+  activeComponent === 'ProfileReservations' ? <ProfileReservations /> :
+  null // lub inny komponent, który ma być wyrenderowany, jeśli żaden z powyższych warunków nie zostanie spełniony
+}
                 
-                {activeComponent === 'ProfileInfo' ? <ProfileInfo /> : <ProfileReservations />}
 
-                {/* <ProfileInfo/> */}
+              
             </div>
         </div>
     </div>

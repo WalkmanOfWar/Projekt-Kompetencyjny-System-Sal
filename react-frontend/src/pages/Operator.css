@@ -63,11 +63,17 @@
 .text {
     font-size: 20px;
     color:white;
+    text-decoration: none;
+    outline: none;
 }
-
+.text:hover {
+    color: white;  
+    text-decoration: none;  
+    cursor:default;  
+}
 .text:active{
     color:black; 
-}
+ }
 
 .header {
     font-size: 32px;
