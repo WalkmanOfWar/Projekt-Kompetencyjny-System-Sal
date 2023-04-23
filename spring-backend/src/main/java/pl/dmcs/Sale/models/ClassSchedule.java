@@ -8,6 +8,7 @@ import java.sql.Time;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "class_schedules")
