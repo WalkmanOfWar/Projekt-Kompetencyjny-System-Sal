@@ -23,7 +23,11 @@ public class RoomFacility {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "facility_id")
-    private List<FacilityAvailable> facilities;
+    private FacilityAvailable facilityAvailable;
+
+//    @OneToMany
+//    @JoinColumn(name = "facility_id")
+//    private List<FacilityAvailable> facilities;
 }

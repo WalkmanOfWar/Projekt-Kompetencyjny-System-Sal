@@ -23,7 +23,10 @@ public class CourseFacility {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "facility_id")
-    private List<FacilityAvailable> facilities;
+    private FacilityAvailable facilityAvailable;
+//    @OneToMany
+//    @JoinColumn(name = "facility_id")
+//    private List<FacilityAvailable> facilities;
 }
