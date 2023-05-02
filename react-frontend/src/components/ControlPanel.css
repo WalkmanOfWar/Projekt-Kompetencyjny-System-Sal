@@ -32,3 +32,6 @@
 .panel-button:hover {
   background-color: #4da1c4;
 }
+.panel-button.selected {
+  background-color: blue;
+}

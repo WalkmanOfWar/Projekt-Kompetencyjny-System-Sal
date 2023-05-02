@@ -110,6 +110,7 @@
   align-items: center;
   width: 60%;
   margin-top: 20px;
+  
   }
   
   .form-title {
@@ -147,18 +148,24 @@
   background-color: #167ba8;
   }
   
-  .form-cancel {
-  font-size: 16px;
-  color: #999;
-  cursor: pointer;
-  margin-top: 10px;
+  .cancel-button,.add-button {
+    background-color: #D9D9D9;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;  
+  margin-right: 10px;
   }
   
-  .form-cancel:hover {
-  color: #555;
+  .cancel-button:hover,.add-button:hover {
+    background-color: #167ba8;
   }
   .add-form {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -169,6 +176,8 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    overflow: auto
+    
   }
   .info-wrapper {
     position: relative;

@@ -78,3 +78,6 @@
 .header {
     font-size: 32px;
 }
+.text.active {
+    color: black;
+  }

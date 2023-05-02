@@ -113,10 +113,11 @@ function Room() {
     </div>
 
     <div className="form-buttons">
-      <button type="submit" className="add-button">Dodaj</button>
-      <button type="button" className="cancel-button" onClick={handleCancel}>
-        Anuluj
-      </button>
+    <button type="submit" className="add-button">Dodaj</button>
+<button type="button" className="cancel-button" onClick={handleCancel}>
+  Anuluj
+</button>
+
     </div>
   </form>
       )}
@@ -127,8 +128,8 @@ function handleCancel() {
   setShowForm(false);
   setNewRoomName("");
   setNewRoomDescription("");
-  setNewRoomFacilityId(0);
-  setNewRoomTypeId(0);
+  setNewRoomFacilityId("");
+  setNewRoomTypeId("");
 }
 
 }
