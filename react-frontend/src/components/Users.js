@@ -6,13 +6,6 @@ import axios from "axios";
 function Users() {
   const [userList, setUserList] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [newLogin, setNewLogin] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [newFirstName, setNewFirstName] = useState("");
-  const [newLastName, setNewLastName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [newIsAdmin, setNewIsAdmin] = useState("");
-  const [newReservations, setNewReservations] = useState("");
 
   useEffect(() => {
     loadUsers()
@@ -28,43 +21,28 @@ function Users() {
     setShowForm(true);
   };
 
-  const handleLoginChange = (event) => {
-    setNewLogin(event.target.value);
-  };
+  const [user, setUser] = useState({
+    login: "",
+    password: "",
+    seed: 0,
+    first_name: "",
+    last_name: "",
+    email: "",
+    is_admin: false,
+    reservations: []
+  });
 
-  const handlePasswordChange = (event) => {
-    setNewPassword(event.target.value);
-  };
-  const handleFirstNameChange = (event) => {
-    setNewFirstName(event.target.value);
-  };
-  const handleLastNameChange = (event) => {
-    setNewLastName(event.target.value);
-  };
-  const handleEmailChange = (event) => {
-    setNewEmail(event.target.value);
-  };
-  const handleIsAdminChange = (event) => {
-    setNewIsAdmin(event.target.value);
-  };
-  const handleReservationsChange = (event) => {
-    setNewReservations(event.target.value);
+  const { login, password, seed, first_name, last_name, email, is_admin, reservations } = user;
+
+  const onInputChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
 
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    const newUserId = userList.length + 1;
-    setUserList([...userList, { id: newUserId, name: newLogin }]);
-    setNewLogin("");
-    setNewPassword("");
-    setNewFirstName("");
-    setNewLastName("");
-    setNewEmail("");
-    document.getElementById("newIsAdmin").checked = false;
-    setNewReservations("");
-    setShowForm(false);
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post("http://localhost:8080/new_user", user)
+    handleCancel()
   };
   
   return (
@@ -74,10 +52,11 @@ function Users() {
       <table className="room-table">
         <thead>
           <tr>
-            <th>Lp.</th>
-            <th>Imię</th>
-            <th>Nazwisko</th>
-            <th>E-mail</th>
+            <th scope="col">Lp.</th>
+            <th scope="col">Imię</th>
+            <th scope="col">Nazwisko</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Akcja</th>
           </tr>
         </thead>
         <tbody>
@@ -87,6 +66,14 @@ function Users() {
               <td>{user.first_name}</td>
               <td>{user.last_name}</td>
               <td>{user.email}</td>
+              <td>
+                <button className="btn btn-primary mx-2">
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -98,70 +85,67 @@ function Users() {
       
       </div>
       {showForm && (
-  <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
+  <form onSubmit={(e) => handleFormSubmit(e)} className={showForm ? "add-form" : "hidden"}>
+    <h2 className="text-center m-4">Nowy użytkownik</h2>
     <div className="form-group">
-      <label htmlFor="newLogin">Login:</label>
+      <label htmlFor="Login" className="form-label">Login:</label>
       <input
         type="text"
-        id="newLogin"
-        value={newLogin}
-        onChange={handleLoginChange}
+        className="form-control"
+        placeholder="Podaj login"
+        name="login"
+        value={login}
+        onChange={(e) => onInputChange(e)}
       />
     </div>
 
     <div className="form-group">
-      <label htmlFor="newPassword">Hasło:</label>
+      <label htmlFor="Password" className="form-label">Hasło:</label>
       <input
         type="text"
-        id="newPassword"
-        value={newPassword}
-        onChange={handlePasswordChange}
+        className="form-control"
+        placeholder="Podaj hasło"
+        name="password"
+        value={password}
+        onChange={(e) => onInputChange(e)}
       />
     </div>
 
     <div className="form-group">
-      <label htmlFor="newFirstName">Imię:</label>
+      <label htmlFor="FirstName" className="form-label">Imię:</label>
       <input
         type="text"
-        id="newFirstName"
-        value={newFirstName}
-        onChange={handleFirstNameChange}
+        className="form-control"
+        placeholder="Podaj imię"
+        name="first_name"
+        value={first_name}
+        onChange={(e) => onInputChange(e)}
       />
     </div>
 
     <div className="form-group">
-      <label htmlFor="newLastName">Nazwisko:</label>
+      <label htmlFor="last_name" className="form-label">Nazwisko:</label>
       <input
         type="text"
-        id="newLastName"
-        value={newLastName}
-        onChange={handleLastNameChange}
+        className="form-control"
+        placeholder="Podaj nazwisko"
+        name="last_name"
+        value={last_name}
+        onChange={(e) => onInputChange(e)}
       />
     </div>
 
     <div className="form-group">
-      <label htmlFor="newReservations">Rezerwacja:</label>
+      <label htmlFor="email" className="form-label">Email:</label>
       <input
-        type="number"
-        step="1"
-        id="newReservations"
-        value={newReservations}
-        onChange={handleReservationsChange}
+        type="email"
+        className="form-control"
+        placeholder="Podaj email"
+        name="email"
+        value={email}
+        onChange={(e) => onInputChange(e)}
       />
     </div>
- 
-    <div className="form-group">
-      <label htmlFor="newIsAdmin">Admin</label>
-      <input
-        type="checkbox"
-        id="newIsAdmin"
-        value={newIsAdmin}
-        onChange={handleIsAdminChange}
-      />
-    </div>
-
-
-
 
     <div className="form-buttons">
     <button type="submit" className="add-button">Dodaj</button>
@@ -176,13 +160,6 @@ function Users() {
   );
 
 function handleCancel() {
-    setNewLogin("");
-    setNewPassword("");
-    setNewFirstName("");
-    setNewLastName("");
-    setNewEmail("");
-    document.getElementById("newIsAdmin").checked = false;
-    setNewReservations("");
     setShowForm(false);
 }
 

@@ -58,10 +58,11 @@ function Room() {
       <table className="room-table">
         <thead>
           <tr>
-            <th>Lp.</th>
-            <th>Nazwa sali</th>
-            <th>Rodzaj sali</th>
-            <th>Opis</th>
+            <th scope="col">Lp.</th>
+            <th scope="col">Nazwa sali</th>
+            <th scope="col">Rodzaj sali</th>
+            <th scope="col">Opis</th>
+            <th scope="col">Akcja</th>
           </tr>
         </thead>
         <tbody>
@@ -71,6 +72,14 @@ function Room() {
               <td>{room.name}</td>
               <td>{room.roomType.room_name}</td>
               <td>{room.description === "" ? "Brak opisu" : room.description}</td>
+              <td>
+                <button className="btn btn-primary mx-2">
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

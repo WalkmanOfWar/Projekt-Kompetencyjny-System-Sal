@@ -41,18 +41,19 @@ function User_courses() {
   
   return (
     <div className="room-wrapper">
-      <h2 className="room-title">Lista Przedmiotów prowadząćych</h2>
+      <h2 className="room-title">Lista Przedmiotów prowadzących</h2>
       <div className="horizontal-line"></div>
       <table className="room-table">
         <thead>
           <tr>
-            <th>Lp.</th>
-            <th>Imię</th>
-            <th>Nazwisko</th>
-            <th>E-mail</th>
-            <th>Nazwa kursu</th>
-            <th>Rodzaj kursu</th>
-            <th>Rodzaj pokoju</th>
+            <th scope="col">Lp.</th>
+            <th scope="col">Imię</th>
+            <th scope="col">Nazwisko</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Nazwa kursu</th>
+            <th scope="col">Rodzaj kursu</th>
+            <th scope="col">Rodzaj pokoju</th>
+            <th scope="col">Akcja</th>
           </tr>
         </thead>
         <tbody>
@@ -65,6 +66,14 @@ function User_courses() {
               <td>{userCourse.course.name}</td>
               <td>{userCourse.course.course_type}</td>
               <td>{userCourse.course.roomType.room_name}</td>
+              <td>
+                <button className="btn btn-primary mx-2">
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

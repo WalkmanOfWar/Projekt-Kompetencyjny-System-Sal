@@ -53,8 +53,9 @@ function Facilities() {
       <table className="room-table">
         <thead>
           <tr>
-            <th>Lp.</th>
-            <th>Nazwa</th>
+            <th scope="col">Lp.</th>
+            <th scope="col">Nazwa</th>
+            <th scope="col">Akcja</th>
           </tr>
         </thead>
         <tbody>
@@ -62,6 +63,14 @@ function Facilities() {
             <tr key={facility.id}>
               <td>{index + 1}.</td>
               <td>{facility.name}</td>
+              <td>
+                <button className="btn btn-primary mx-2">
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

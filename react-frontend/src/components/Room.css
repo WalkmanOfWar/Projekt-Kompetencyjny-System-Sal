@@ -64,9 +64,14 @@
   }
   
   .room-table {
-  width: 60%;
+    background-color: rgb(226, 226, 226);
+  width: fit-content;
   border-collapse: collapse;
   margin-top: 20px;
+  }
+
+  .room-table td {
+    /* color: white; */
   }
   
   .room-table th,

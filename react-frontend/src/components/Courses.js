@@ -58,10 +58,11 @@ function Courses() {
       <table className="room-table">
         <thead>
           <tr>
-            <th>Lp.</th>
-            <th>Nazwa przedmiotu</th>
-            <th>Typ przedmiotu</th>
-            <th>Typ pokoju</th>
+            <th scope="col">Lp.</th>
+            <th scope="col">Nazwa przedmiotu</th>
+            <th scope="col">Typ przedmiotu</th>
+            <th scope="col">Typ pokoju</th>
+            <th scope="col">Akcja</th>
           </tr>
         </thead>
         <tbody>
@@ -71,6 +72,14 @@ function Courses() {
               <td>{course.name}</td>
               <td>{course.course_type}</td>
               <td>{course.roomType.room_name}</td>
+              <td>
+                <button className="btn btn-primary mx-2">
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2">
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

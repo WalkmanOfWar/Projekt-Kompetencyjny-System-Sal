@@ -1,9 +1,7 @@
 package pl.dmcs.Sale.controllers;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.models.*;
 import pl.dmcs.Sale.repositories.*;
 
@@ -24,6 +22,10 @@ public class TempController {
     private final UserCourseRepository userCourseRepository;
     private final UserRepository userRepository;
 
+    @PostMapping("/new_user")
+    User newUser(@RequestBody User newUser) {
+        return userRepository.save(newUser);
+    }
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();
