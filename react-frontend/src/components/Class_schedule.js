@@ -1,9 +1,9 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Class_schedule() {
-  const [classScheduleList, setClassScheduleList] = useState([{ id: 1, name: "10" }]);
+  const [classScheduleList, setClassScheduleList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newTimeDateId, setNewTimeDateId,] = useState("");
   const [newCourseId, setNewCourseId] = useState("");
@@ -16,6 +16,14 @@ function Class_schedule() {
   const [newEndWeek, setNewEndWeek] = useState("");
   const [newIsParity, setNewIsParity] = useState("");
 
+  useEffect(() => {
+    loadClassSchedules()
+  }, []);
+
+  const loadClassSchedules = async () => {
+      const result = await axios.get("http://localhost:8080/class_schedules");
+      setClassScheduleList(result.data)
+  }
 
   const handleAddClassSchedule = () => {
     setShowForm(true);
@@ -78,14 +86,28 @@ function Class_schedule() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Id czasu</th>
+            <th>Przedmiot</th>
+            <th>Pokój</th>
+            <th>Dzień tygodnia</th>
+            <th>Początek - czas</th>
+            <th>Koniec - czas</th>
+            <th>Początek - tydzień</th>
+            <th>Koniec - tydzień</th>
+            <th>Parzystość</th>
           </tr>
         </thead>
         <tbody>
           {classScheduleList.map((classSchedule, index) => (
             <tr key={classSchedule.id}>
               <td>{index + 1}.</td>
-              <td>{classSchedule.name}</td>
+              <td>{classSchedule.course_id}</td>
+              <td>{classSchedule.room_id}</td>
+              <td>{classSchedule.day_of_week}</td>
+              <td>{classSchedule.start_time}</td>
+              <td>{classSchedule.end_time}</td>
+              <td>{classSchedule.start_week}</td>
+              <td>{classSchedule.end_week}</td>
+              <td>{classSchedule.is_parity}</td>
             </tr>
           ))}
         </tbody>

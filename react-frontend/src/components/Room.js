@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Room() {
-  const [roomList, setRoomList] = useState([{ id: 1, name: "Sala 1" }]);
+  const [roomList, setRoomList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const [newRoomFacilityId, setNewRoomFacilityId] = useState("");
   const [newRoomTypeId, setNewRoomTypeId] = useState("");
 
+  useEffect(() => {
+    loadRooms()
+  }, []);
+
+  const loadRooms = async () => {
+      const result = await axios.get("http://localhost:8080/rooms");
+      setRoomList(result.data)
+  }
 
 
   const handleAddRoom = () => {
@@ -51,6 +60,8 @@ function Room() {
           <tr>
             <th>Lp.</th>
             <th>Nazwa sali</th>
+            <th>Rodzaj sali</th>
+            <th>Opis</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +69,8 @@ function Room() {
             <tr key={room.id}>
               <td>{index + 1}.</td>
               <td>{room.name}</td>
+              <td>{room.roomType.room_name}</td>
+              <td>{room.description === "" ? "Brak opisu" : room.description}</td>
             </tr>
           ))}
         </tbody>

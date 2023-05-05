@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Room_types() {
-  const [roomTypeList, setRoomTypeList] = useState([{ id: 1, name: "Wykładowa" }]);
+  const [roomTypeList, setRoomTypeList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newRoomTypeName, setNewRoomTypeName] = useState("");
 
+  useEffect(() => {
+    loadRoomTypes()
+  }, []);
+
+  const loadRoomTypes = async () => {
+      const result = await axios.get("http://localhost:8080/room_types");
+      setRoomTypeList(result.data)
+  }
 
 
   const handleAddRoomType = () => {
@@ -36,14 +45,14 @@ function Room_types() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Nazwa typu</th>
+            <th>Nazwa</th>
           </tr>
         </thead>
         <tbody>
           {roomTypeList.map((roomType, index) => (
             <tr key={roomType.id}>
               <td>{index + 1}.</td>
-              <td>{roomType.name}</td>
+              <td>{roomType.room_name}</td>
             </tr>
           ))}
         </tbody>

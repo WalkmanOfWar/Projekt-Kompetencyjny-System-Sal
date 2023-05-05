@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Facilities() {
-  const [facilityList, setFacilityList] = useState([{ id: 1, name: "10" }]);
+  const [facilityList, setFacilityList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newComputers, setNewComputers] = useState("");
   const [newProjectors, setNewProjectors] = useState("");
   const [newCapacity, setNewCapacity] = useState("");
   
+  useEffect(() => {
+    loadFacilities()
+  }, []);
 
+  const loadFacilities = async () => {
+      const result = await axios.get("http://localhost:8080/facilities_available");
+      setFacilityList(result.data)
+  }
 
   const handleAddFacility = () => {
     setShowForm(true);
@@ -46,7 +54,7 @@ function Facilities() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Liczba komputerów</th>
+            <th>Nazwa</th>
           </tr>
         </thead>
         <tbody>

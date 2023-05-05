@@ -68,8 +68,8 @@
 }
 .text:hover {
     color: white;  
-    text-decoration: none;  
-    cursor:default;  
+    text-decoration: none;
+    cursor:pointer;    
 }
 .text:active{
     color:black; 

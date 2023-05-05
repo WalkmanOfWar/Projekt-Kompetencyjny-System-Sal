@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function User_courses() {
-  const [userCoursesList, setUserCoursesList] = useState([{ id: 1, name: "0" }]);
+  const [userCoursesList, setUserCoursesList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newUserId, setNewUserId] = useState("");
   const [newCourseId, setNewCourseId] = useState("");
 
+  useEffect(() => {
+    loadUserCourses()
+  }, []);
 
+  const loadUserCourses = async () => {
+      const result = await axios.get("http://localhost:8080/user_course");
+      setUserCoursesList(result.data)
+  }
 
   const handleAddUserCourses = () => {
     setShowForm(true);
@@ -39,14 +47,24 @@ function User_courses() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Id prowadzącego</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>E-mail</th>
+            <th>Nazwa kursu</th>
+            <th>Rodzaj kursu</th>
+            <th>Rodzaj pokoju</th>
           </tr>
         </thead>
         <tbody>
           {userCoursesList.map((userCourse, index) => (
             <tr key={userCourse.id}>
               <td>{index + 1}.</td>
-              <td>{userCourse.name}</td>
+              <td>{userCourse.user.first_name}</td>
+              <td>{userCourse.user.last_name}</td>
+              <td>{userCourse.user.email}</td>
+              <td>{userCourse.course.name}</td>
+              <td>{userCourse.course.course_type}</td>
+              <td>{userCourse.course.roomType.room_name}</td>
             </tr>
           ))}
         </tbody>

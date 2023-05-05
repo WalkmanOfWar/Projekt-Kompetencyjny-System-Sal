@@ -31,9 +31,9 @@ function ControlPanel() {
          return <Users />;
       case "Facilities":
          return <Facilities />;
-         case "Reservations":
+      case "Reservations":
          return <Reservations />;
-         case "Class_schedule":
+      case "Class_schedule":
           return <Class_schedule />;
       default:
         return <Room />;
@@ -45,10 +45,12 @@ function ControlPanel() {
       <span className="panel-text">Panel sterowania</span>
       <div className="button-group">
         <button className={`panel-button ${selectedButton === "Room" ? "selected" : ""}`} onClick={() => handleButtonClick("Room")}>Sale</button>
-        <button className={`panel-button ${selectedButton === "Users" ? "selected" : ""}`} onClick={() => handleButtonClick("Users")}>Prowadzący</button>
+        <button className={`panel-button ${selectedButton === "Users" ? "selected" : ""}`} onClick={() => handleButtonClick("Users")}>Użytkownicy</button>
         <button className={`panel-button ${selectedButton === "Courses" ? "selected" : ""}`} onClick={() => handleButtonClick("Courses")}>Przedmioty</button>
         <button className={`panel-button ${selectedButton === "Class_schedule" ? "selected" : ""}`} onClick={() => handleButtonClick("Class_schedule")}>Plan zajęć</button>
-        <button className={`panel-button ${selectedButton === "Facilities" ? "selected" : ""}`} onClick={() => handleButtonClick("Facilities")}>Udogodnienia</button>
+        <button className={`panel-button ${selectedButton === "Facilities" ? "selected" : ""}`} onClick={() => handleButtonClick("Facilities")}>Dostępne udogodnienia</button>
+        {/* DODAĆ Udogodnienia przedmiotów */}
+        {/* DODAĆ Udogodnienia sal */}
         <button className={`panel-button ${selectedButton === "Room_types" ? "selected" : ""}`} onClick={() => handleButtonClick("Room_types")}>Typy sal</button>
       </div>
       <div className="button-group">

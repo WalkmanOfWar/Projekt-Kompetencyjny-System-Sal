@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
+
 
 function Users() {
-  const [userList, setUserList] = useState([{ id: 1, name: "Drzymała" }]);
+  const [userList, setUserList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newLogin, setNewLogin] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -11,6 +13,15 @@ function Users() {
   const [newEmail, setNewEmail] = useState("");
   const [newIsAdmin, setNewIsAdmin] = useState("");
   const [newReservations, setNewReservations] = useState("");
+
+  useEffect(() => {
+    loadUsers()
+  }, []);
+
+  const loadUsers = async () => {
+      const result = await axios.get("http://localhost:8080/users");
+      setUserList(result.data)
+  }
 
 
   const handleAddUser = () => {
@@ -64,14 +75,18 @@ function Users() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Login prowadzącego</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>E-mail</th>
           </tr>
         </thead>
         <tbody>
           {userList.map((user, index) => (
             <tr key={user.id}>
               <td>{index + 1}.</td>
-              <td>{user.name}</td>
+              <td>{user.first_name}</td>
+              <td>{user.last_name}</td>
+              <td>{user.email}</td>
             </tr>
           ))}
         </tbody>

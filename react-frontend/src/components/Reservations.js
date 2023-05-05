@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Reservations() {
-  const [reservationList, setReservationList] = useState([{ id: 1, name: "10" }]);
+  const [reservationList, setReservationList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newClassScheduleId, setNewClassScheduleId] = useState("");
   const [newStatus, setNewStatus] = useState("");
- 
+
+  useEffect(() => {
+    loadReservations()
+  }, []);
+
+  const loadReservations = async () => {
+      const result = await axios.get("http://localhost:8080/reservations");
+      setReservationList(result.data)
+  }
 
   const handleAddReservation= () => {
     setShowForm(true);
@@ -39,14 +48,30 @@ function Reservations() {
         <thead>
           <tr>
             <th>Lp.</th>
-            <th>Id planu zajęć</th>
+            <th>Status</th>
+            <th>Kurs</th>
+            <th>Pokój</th>
+            <th>Dzień tygodnia</th>
+            <th>Początek - dzień</th>
+            <th>Koniec - dzień</th>
+            <th>Początek - tydzień</th>
+            <th>Koniec - tydzień</th>
+            <th>Parzystość</th>
           </tr>
         </thead>
         <tbody>
           {reservationList.map((reservation, index) => (
             <tr key={reservation.id}>
               <td>{index + 1}.</td>
-              <td>{reservation.name}</td>
+              <td>{reservation.status}</td>
+              <td>{reservation.class_schedule_id.course_id.name}</td>
+              <td>{reservation.class_schedule_id.room_id.name}</td>
+              <td>{reservation.class_schedule_id.day_of_week}</td>
+              <td>{reservation.class_schedule_id.start_time}</td>
+              <td>{reservation.class_schedule_id.end_time}</td>
+              <td>{reservation.class_schedule_id.start_week}</td>
+              <td>{reservation.class_schedule_id.end_week}</td>
+              <td>{reservation.class_schedule_id.is_parity}</td>
             </tr>
           ))}
         </tbody>

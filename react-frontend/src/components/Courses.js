@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Room.css";
+import axios from "axios";
 
 function Courses() {
-  const [courseList, setCourseList] = useState([{ id: 1, name: "So2" }]);
+  const [courseList, setCourseList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newCourseName, setNewCourseName] = useState("");
   const [newCourseType, setNewCourseType] = useState("");
   const [newFacilitiesId, setNewFacilitiesId] = useState("");
   const [newRoomTypesId, setNewRoomTypesId] = useState("");
 
+  useEffect(() => {
+    loadCourses()
+  }, []);
+
+  const loadCourses = async () => {
+      const result = await axios.get("http://localhost:8080/courses");
+      setCourseList(result.data)
+  }
 
 
   const handleAddCourse = () => {
@@ -51,6 +60,8 @@ function Courses() {
           <tr>
             <th>Lp.</th>
             <th>Nazwa przedmiotu</th>
+            <th>Typ przedmiotu</th>
+            <th>Typ pokoju</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +69,8 @@ function Courses() {
             <tr key={course.id}>
               <td>{index + 1}.</td>
               <td>{course.name}</td>
+              <td>{course.course_type}</td>
+              <td>{course.roomType.room_name}</td>
             </tr>
           ))}
         </tbody>
