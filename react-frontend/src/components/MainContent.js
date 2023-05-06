@@ -4,19 +4,20 @@ import axios from "axios";
 
 export default function MainContent() {
 
-  const options = [
-    { value: "Sala 0", text: "...", img: ""},
-    { value: "Sala A", text: "Sala A", img: "images/salaA"},
-    { value: "Sala B", text: "Sala B", img: "images/salaB"},
-    { value: "Sala C", text: "Sala C", img: "images/salaC"},
-    { value: "Sala D", text: "Sala D", img: "images/salaD"}
-  ];
-  
-  const [selected, setSelected] = useState(0);
-  
-  const mainHandleChange = (event) => {
-    setSelected(event.target.value);
-  };
+  const [roomList, setRoomList] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [reservations, setReservations] = useState('');
+  const [course, setCourse] = useState('');
+  const [room, setRoom] = useState('');
+  const [selectedScheduleType, setSelectedScheduleType] = useState('');
+  const [displaySchedule, setDisplaySchedule] = useState(false)
+
+  const scheduleTypeOptions = [
+    {value: "no-plan", text: "Wybierz jedną z opcji..."},
+    {value: "student-plan", text: "Plan dla studentów"},
+    {value: "teacher-plan", text: "Plan dla wykładowców"}
+  ]
+
 
   const days = [
     {value: "monday", text: "Poniedziałek"},
@@ -26,6 +27,23 @@ export default function MainContent() {
     {value: "friday", text: "Piątek"}
   ]
 
+  useEffect(() => {
+    loadRooms()
+  }, []);
+
+  const loadRooms = async () => {
+    const result = await axios.get("http://localhost:8080/rooms");
+    setRoomList(result.data)
+  };
+
+  const handleSelectedRoom = (e) => {
+    setSelectedRoom(e.target.value)
+  };
+
+  const handleSelectedScheduleType = (e) => {
+    setSelectedScheduleType(e.target.value)
+  };
+  
   function generateTableHeader() {
     return (
         <thead>
@@ -47,31 +65,52 @@ export default function MainContent() {
         </thead>
     );
   }
+
+  // Załadować dane z class_schedules - porównanie room_id
+  // Losowe dane dla Sala 5
+
+  const loadReservations = async () => {
+    try {
+      const result = await axios.get("http://localhost:8080/class_schedules")
+      // console.log(result.data)
+      setReservations(result.data)
+    } catch(error) {
+      console.error("Error in loading reservations: ", error);
+    }
+  };
   
-  function generateSingleReservationCard() {
-    return (
+  function generateSingleReservationCard(reservation) {
+    return(
       <td>
-        <div className="card text-white bg-dark">
-            <h5 className="card-header">w, 1-15</h5>
-            <div className="card-body">
-              <p className="card-text course-text">Zaawansowane aplikacje internetowe</p>
-              <p className="card-text room-text">Sala 20</p>
-              <p className="card-text">Piotr Pabich</p>
-            </div>
-        </div>
-      </td>
+      <div className="card text-white bg-dark">
+         <h5 className="card-header">{reservation ? "w, " + reservation.start_week + "-" + reservation.end_week : ""}</h5>
+         <div className="card-body">
+           <p className="card-text course-text">{reservation ? reservation.course.name : ""}</p>
+           <p className="card-text room-text">{reservation ? reservation.room.name : ""}</p>
+           <p className="card-text">{reservation ? "Piotr Pabich" : ""}</p>
+         </div>
+     </div>
+   </td>
     );
   }
 
   function generateTableContent() {
+    if(selectedRoom) {
+      loadReservations()
+
+    }
+
     return (
       <tbody>
         {days.map((day) => (
           <tr key={day.id}>
             <td>{day.text}</td>
-            {Array.from({ length: 12 }, (_) => (
-            generateSingleReservationCard()
-          ))}
+            {Array.from({ length: 12 }, (_, index) => {    
+              if (reservations && reservations[0].start_time >= "12:15:00") {
+                return generateSingleReservationCard(reservations[0]);
+              }
+              return generateSingleReservationCard("");
+            })}
           </tr>
         ))} 
       </tbody>
@@ -79,10 +118,16 @@ export default function MainContent() {
   }
 
   function generateTable() {
+    const scheduleType = scheduleTypeOptions.find((option) => option.value === selectedScheduleType);
+    const scheduleTypeText = (scheduleType && scheduleType.value != "no-plan") ? scheduleType.text : "";
+    const room = roomList.find((option) => option.name === selectedRoom);
+    const roomText = room ? room.name : "";
     return (
-      <div className="card text-white bg-dark mb-3" >
-          <div class="card-header">Plan dla studentów</div>
-          <div class="card-title">Grupa dziekańska 6I TI-3</div>
+      
+      <div className="card justfiy-content-center align-items-center text-white bg-dark mb-3" >
+          <div class="card-header">{scheduleTypeText}</div>
+          <div class="card-title">{roomText}</div>
+          {/* <div class="card-title">Grupa dziekańska 6I TI-3</div> */}
           <div className="card-body">
             <div className="table table-responsive table-dark">
               {generateTableHeader()}
@@ -94,22 +139,6 @@ export default function MainContent() {
     );
   }
 
-  const scheduleTypeOptions = [
-    {value: "no-plan", text: "Wybierz jedną z opcji..."},
-    {value: "student-plan", text: "Plan dla studentów"},
-    {value: "teacher-plan", text: "Plan dla wykładowców"}
-  ]
-
-  const [roomList, setRoomList] = useState([]);
-
-  useEffect(() => {
-    loadRooms()
-  }, []);
-
-  const loadRooms = async () => {
-    const result = await axios.get("http://localhost:8080/rooms");
-    setRoomList(result.data)
-  };
 
 
   return (
@@ -119,7 +148,7 @@ export default function MainContent() {
         <div className="d-inline-flex justify-content-center">
           <div className=" col-2 mb-3 mx-2 d-flex flex-column p-3">
               <label className="text-start ms-1" for="occupation">Wybór planu</label>
-              <select className="form-select d-block w-100 mt-1" id="schedule-type-id" required="">
+              <select className="form-select d-block w-100 mt-1" value={selectedScheduleType} onChange={handleSelectedScheduleType}>
               {scheduleTypeOptions.map((option) => (
                 <option value={option.value}>{option.text}</option>
               ))}
@@ -127,7 +156,7 @@ export default function MainContent() {
           </div>
           <div className=" col-2 mb-3 mx-2 d-flex flex-column p-3">
             <label className="text-center" for="room">Wybór sali</label>
-            <select className="form-select d-block w-100 mt-1" id="room-id" required="">
+            <select className="form-select d-block w-100 mt-1" value={selectedRoom} onChange={handleSelectedRoom}>
                 <option value="no-room-selected">Wybierz jedną z opcji...</option>
             {roomList.map((room) => (
                 <option value={room.value}>{room.name}</option>
@@ -136,12 +165,12 @@ export default function MainContent() {
           </div>
         </div>
       </div>
-      <img
+      {/* <img
         className="img-fluid mb-5 w-75"
         // src={options[selected].img}
         src="images\schedule-mockup.png"
         alt="main-content"
-      />
+      /> */}
 
       {/* TUTAJ GENEROWANA TABELKA */}
       {generateTable()}

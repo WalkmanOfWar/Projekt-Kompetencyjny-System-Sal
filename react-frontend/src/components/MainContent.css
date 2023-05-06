@@ -20,9 +20,3 @@
 .room-text {
   font-weight: bold;
 }
-
-.first-col-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

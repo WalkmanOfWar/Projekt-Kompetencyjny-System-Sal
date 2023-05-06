@@ -6,6 +6,7 @@ import pl.dmcs.Sale.models.*;
 import pl.dmcs.Sale.repositories.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
@@ -65,5 +66,18 @@ public class TempController {
     @GetMapping("/reservations")
     public List<Reservation> getReservations() {
         return reservationRepository.findAll();
+    }
+    @GetMapping("/class_schedules/room/id/{roomName}")
+    public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
+        return classScheduleRepository.findByRoomName(roomName);
+    }
+    @GetMapping("rooms/id/{roomId}")
+    public Optional<Room> getRoom(@PathVariable("roomId") String roomId) {
+        return roomRepository.findById(Long.parseLong(roomId));
+    }
+
+    @GetMapping("courses/id/{courseId}")
+    public Optional<Course> getCourse(@PathVariable("courseId") String courseId) {
+        return courseRepository.findById(Long.parseLong(courseId));
     }
 }
