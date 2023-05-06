@@ -43,7 +43,7 @@ function ControlPanel() {
   return (
     <div className="info-wrapper">
       <span className="panel-text">Panel sterowania</span>
-      <div className="button-group">
+      <div className="container">
         <button className={`btn btn-primary ${selectedButton === "Room" ? "selected" : ""}`} onClick={() => handleButtonClick("Room")}>Sale</button>
         <button className={`btn btn-primary ${selectedButton === "Users" ? "selected" : ""}`} onClick={() => handleButtonClick("Users")}>Użytkownicy</button>
         <button className={`btn btn-primary ${selectedButton === "Courses" ? "selected" : ""}`} onClick={() => handleButtonClick("Courses")}>Przedmioty</button>
@@ -52,8 +52,6 @@ function ControlPanel() {
         {/* DODAĆ Udogodnienia przedmiotów */}
         {/* DODAĆ Udogodnienia sal */}
         <button className={`btn btn-primary ${selectedButton === "Room_types" ? "selected" : ""}`} onClick={() => handleButtonClick("Room_types")}>Typy sal</button>
-      </div>
-      <div className="button-group">
         <button className={`btn btn-primary ${selectedButton === "User_courses" ? "selected" : ""}`} onClick={() => handleButtonClick("User_courses")}>Przedmioty prowadzących</button>
         <button className={`btn btn-primary ${selectedButton === "Reservations" ? "selected" : ""}`} onClick={() => handleButtonClick("Reservations")}>Rezerwacje</button>
         <button className={`btn btn-primary ${selectedButton === "Korekty" ? "selected" : ""}`} onClick={() => handleButtonClick("Korekty")}>Korekty</button>

@@ -1,3 +1,28 @@
 .background {
   background-image: url("/images/background.png");
 }
+
+.vertical-text {
+  transform: rotate(90deg);
+  transform-origin: left top 0;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-text {
+  font-size: 0.8rem;
+}
+
+.room-text {
+  font-weight: bold;
+}
+
+.first-col-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
