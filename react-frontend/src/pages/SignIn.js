@@ -1,14 +1,32 @@
 import React from "react";
 import "./SignIn.css";
 import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import { useForm } from 'react-hook-form';
+import { useEffect, useState } from "react";
+import axios from 'axios';
+import Profile from "./Profile";
+import { useNavigate } from "react-router-dom";
+
 
 function SignIn() {
 
   const {register, handleSubmit, formState: { errors } } = useForm();
-  
-  const onSubmit = (data) => console.log(data);
+  const navigate = useNavigate();
+
+
+  const onSubmit = data =>{
+    axios.post('http://localhost:8080/login', data)
+      .then(response => {
+        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
+        navigate('/profile');
+      })
+      .catch(error => {
+        // Wystąpił błąd logowania, można wyświetlić odpowiedni komunikat.
+        console.log("Nie udało się zalogować")
+      });
+  };
+
 
   return (
     <div className="wrapper py-3">
@@ -29,7 +47,7 @@ function SignIn() {
 
           <div className="input-container form-floating text-white mx-5">
             <input
-              type="text"
+              type="password"
               placeholder="Hasło"
               className="form-control bg-transparent text-white"
               id="floatingPassword"
@@ -46,18 +64,7 @@ function SignIn() {
             Zaloguj się
           </button>
         </form>
-        <p className="text-white register-text">Lub Zaloguj się Używając</p>
-        <a href="#">
-          <FaGoogle className="icon-register" />
-        </a>
-        <a href="#">
-          <FaFacebook className="icon-register" />
-        </a>
-        <a href="#">
-          <FaTwitter className="icon-register" />
-        </a>
-        <br />
-        <p className="text-white">Lub Zarejestruj się Używając</p>
+        <p className="text-white">Lub jeżeli nie posiadasz konta</p>
         <div>
           <Link
             to={"/register"}
