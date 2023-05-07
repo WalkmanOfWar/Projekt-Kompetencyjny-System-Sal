@@ -35,6 +35,10 @@ public class TempController {
     FacilityAvailable newFacility(@RequestBody FacilityAvailable newFacility) {
         return facilityAvailableRepository.save(newFacility);
     }
+    @PostMapping("/new_course")
+    Course newCourse(@RequestBody Course newCourse) {
+        return courseRepository.save(newCourse);
+    }
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();
