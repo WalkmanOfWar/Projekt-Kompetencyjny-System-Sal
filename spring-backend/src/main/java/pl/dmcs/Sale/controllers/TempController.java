@@ -27,6 +27,10 @@ public class TempController {
     User newUser(@RequestBody User newUser) {
         return userRepository.save(newUser);
     }
+    @PostMapping("/new_room")
+    Room newRoom(@RequestBody Room newRoom) {
+        return roomRepository.save(newRoom);
+    }
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();

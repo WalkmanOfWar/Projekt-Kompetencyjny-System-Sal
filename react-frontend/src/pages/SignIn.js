@@ -2,12 +2,15 @@ import React from "react";
 import "./SignIn.css";
 import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
 function SignIn() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const {register, handleSubmit, formState: { errors } } = useForm();
-  
   const onSubmit = (data) => console.log(data);
 
   return (
@@ -38,11 +41,9 @@ function SignIn() {
             <label for="floatingPassword">Hasło</label>
           </div>
 
-
           <button
             type={"submit"}
-            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75"
-          >
+            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75">
             Zaloguj się
           </button>
         </form>
@@ -61,8 +62,7 @@ function SignIn() {
         <div>
           <Link
             to={"/register"}
-            className="link-primary text-info register-text mb-3"
-          >
+            className="link-primary text-info register-text mb-3">
             Zarejestruj się
           </Link>
         </div>
