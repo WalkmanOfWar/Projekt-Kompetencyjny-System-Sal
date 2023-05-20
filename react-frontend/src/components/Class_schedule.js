@@ -178,6 +178,7 @@ function Class_schedule() {
         id="newRoomId"
         value={newRoomId}
         onChange={handleRoomIdChange}
+        min="0"
       />
     </div>
 
@@ -193,6 +194,7 @@ function Class_schedule() {
         id="newDayOfWeek"
         value={newDayOfWeek}
         onChange={handleDayOfWeekChange}
+        min="0"
       />
     </div>
 
@@ -223,6 +225,7 @@ function Class_schedule() {
         id="newStartWeek"
         value={newStartWeek}
         onChange={handleStartWeekChange}
+        min="0"
       />
     </div>
 
@@ -235,6 +238,7 @@ function Class_schedule() {
         id="newEndWeek"
         value={newEndWeek}
         onChange={handleEndWeekChange}
+        min="0"
       />
     </div>
 

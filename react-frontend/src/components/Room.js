@@ -7,50 +7,41 @@ function Room() {
   const [showForm, setShowForm] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
-  const [newRoomFacilityId, setNewRoomFacilityId] = useState("");
   const [newRoomTypeId, setNewRoomTypeId] = useState("");
 
   useEffect(() => {
-    loadRooms()
+    loadRooms();
   }, []);
 
   const loadRooms = async () => {
-      const result = await axios.get("http://localhost:8080/rooms");
-      setRoomList(result.data)
-  }
-
+    const result = await axios.get("http://localhost:8080/rooms");
+    setRoomList(result.data);
+  };
 
   const handleAddRoom = () => {
     setShowForm(true);
   };
 
-  const handleRoomNameChange = (event) => {
-    setNewRoomName(event.target.value);
-  };
-
-  const handleRoomDescriptionChange = (event) => {
-    setNewRoomDescription(event.target.value);
-  };
-  const handleRoomFacilityIdChange = (event) => {
-    setNewRoomFacilityId(event.target.value);
-  };
-  const handleRoomTypeIdChange = (event) => {
-    setNewRoomTypeId(event.target.value);
-  };
-
-
-
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const newRoomId = roomList.length + 1;
-    setRoomList([...roomList, { id: newRoomId, name: newRoomName }]);
+    const newRoom = {
+      name: newRoomName,
+      description: newRoomDescription,
+      roomType: { id: newRoomTypeId, room_name: "" },
+    };
+
+    await axios.post("http://localhost:8080/new_room", newRoom);
+    handleCancel();
+    loadRooms();
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
     setNewRoomName("");
     setNewRoomDescription("");
-    setNewRoomFacilityId("");
     setNewRoomTypeId("");
-    setShowForm(false);
   };
-  
+
   return (
     <div className="room-wrapper">
       <h2 className="room-title">Lista sal</h2>
@@ -59,9 +50,9 @@ function Room() {
         <thead>
           <tr>
             <th scope="col">Lp.</th>
-            <th scope="col">Nazwa sali</th>
-            <th scope="col">Rodzaj sali</th>
+            <th scope="col">Nazwa</th>
             <th scope="col">Opis</th>
+            <th scope="col">Rodzaj sali</th>
             <th scope="col">Akcja</th>
           </tr>
         </thead>
@@ -70,15 +61,11 @@ function Room() {
             <tr key={room.id}>
               <td>{index + 1}.</td>
               <td>{room.name}</td>
+              <td>{room.description}</td>
               <td>{room.roomType.room_name}</td>
-              <td>{room.description === "" ? "Brak opisu" : room.description}</td>
               <td>
-                <button className="btn btn-primary mx-2">
-                  Edit
-                </button>
-                <button className="btn btn-danger mx-2">
-                  Delete
-                </button>
+                <button className="btn btn-primary mx-2">Edytuj</button>
+                <button className="btn btn-danger mx-2">Usuń</button>
               </td>
             </tr>
           ))}
@@ -88,72 +75,64 @@ function Room() {
         <button className="add-button" onClick={handleAddRoom}>
           Dodaj
         </button>
-      
       </div>
       {showForm && (
-  <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
-    <div className="form-group">
-      <label htmlFor="newRoomName">Nazwa sali:</label>
-      <input
-        type="text"
-        id="newRoomName"
-        value={newRoomName}
-        onChange={handleRoomNameChange}
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="newRoomDescription">Opis:</label>
-      <input
-        type="text"
-        id="newRoomDescription"
-        value={newRoomDescription}
-        onChange={handleRoomDescriptionChange}
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="newRoomFacilityId">Id Udogodnień:</label>
-      <input
-        type="number"
-        step="1"
-        id="newRoomFacilityId"
-        value={newRoomFacilityId}
-        onChange={handleRoomFacilityIdChange}
-      />
-    </div>
-
-    <div className="form-group">
-      <label htmlFor="newRoomTypeId">Id rodzaju sali:</label>
-      <input
-        type="number"
-        step="1"
-        id="newRoomTypeId"
-        value={newRoomTypeId}
-        onChange={handleRoomTypeIdChange}
-      />
-    </div>
-
-    <div className="form-buttons">
-    <button type="submit" className="add-button">Dodaj</button>
-<button type="button" className="cancel-button" onClick={handleCancel}>
-  Anuluj
-</button>
-
-    </div>
-  </form>
+        <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
+          <h2 className="text-center m-4">Nowa sala</h2>
+          <div className="form-group">
+            <label htmlFor="name" className="form-label">
+              Nazwa:
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Podaj nazwę"
+              name="name"
+              value={newRoomName}
+              onChange={(e) => setNewRoomName(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="description" className="form-label">
+              Opis:
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Podaj opis"
+              name="description"
+              value={newRoomDescription}
+              onChange={(e) => setNewRoomDescription(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="roomType" className="form-label">
+              Rodzaj sali:
+            </label>
+            <select
+              className="form-control"
+              name="roomType"
+              value={newRoomTypeId}
+              onChange={(e) => setNewRoomTypeId(e.target.value)}
+            >
+              <option value="">Wybierz rodzaj sali</option>
+              <option value="6">Aula</option>
+              <option value="5">Sala wykładowa</option>
+              <option value="4">Laboratorium</option>
+            </select>
+          </div>
+          <div className="form-buttons">
+            <button type="submit" className="add-button">
+              Dodaj
+            </button>
+            <button type="button" className="cancel-button" onClick={handleCancel}>
+              Anuluj
+            </button>
+          </div>
+        </form>
       )}
     </div>
   );
-
-function handleCancel() {
-  setShowForm(false);
-  setNewRoomName("");
-  setNewRoomDescription("");
-  setNewRoomFacilityId("");
-  setNewRoomTypeId("");
-}
-
 }
 
 export default Room;

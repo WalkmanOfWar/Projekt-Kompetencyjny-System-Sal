@@ -91,6 +91,7 @@ function Facilities() {
         id="newComputers"
         value={newComputers}
         onChange={handleComputersChange}
+        min="0"
       />
     </div>
 
@@ -102,6 +103,7 @@ function Facilities() {
         id="newProjectors"
         value={newProjectors}
         onChange={handleProjectorsChange}
+        min="0"
       />
     </div>
  
@@ -113,6 +115,7 @@ function Facilities() {
         id="newCapacity"
         value={newCapacity}
         onChange={handleCapacityChange}
+        min="0"
       />
     </div>
 
