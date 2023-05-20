@@ -8,14 +8,20 @@ function Room() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const [newRoomTypeId, setNewRoomTypeId] = useState("");
-
+  const [roomTypes, setRoomTypes] = useState([]);
   useEffect(() => {
     loadRooms();
+    loadRoomTypes();
   }, []);
 
   const loadRooms = async () => {
     const result = await axios.get("http://localhost:8080/rooms");
     setRoomList(result.data);
+  };
+
+  const loadRoomTypes = async () => {
+    const result = await axios.get("http://localhost:8080/room_types");
+    setRoomTypes(result.data);
   };
 
   const handleAddRoom = () => {
@@ -105,6 +111,7 @@ function Room() {
               onChange={(e) => setNewRoomDescription(e.target.value)}
             />
           </div>
+          
           <div className="form-group">
             <label htmlFor="roomType" className="form-label">
               Rodzaj sali:
@@ -116,11 +123,14 @@ function Room() {
               onChange={(e) => setNewRoomTypeId(e.target.value)}
             >
               <option value="">Wybierz rodzaj sali</option>
-              <option value="6">Aula</option>
-              <option value="5">Sala wykładowa</option>
-              <option value="4">Laboratorium</option>
+              {roomTypes.map((roomType) => (
+                <option key={roomType.id} value={roomType.id}>
+                  {roomType.room_name}
+                </option>
+              ))}
             </select>
           </div>
+          
           <div className="form-buttons">
             <button type="submit" className="add-button">
               Dodaj
