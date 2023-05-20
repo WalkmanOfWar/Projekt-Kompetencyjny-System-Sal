@@ -140,13 +140,13 @@ function Courses() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="newRoomTypeId">Typ pokoju:</label>
+            <label htmlFor="newRoomTypeId">Rodzaj sali:</label>
             <select
               id="newRoomTypeId"
               value={newRoomTypeId}
               onChange={handleRoomTypeIdChange}
             >
-              <option value="">Wybierz typ pokoju</option>
+              <option value="">Wybierz rodzaj sali</option>
               {roomTypes.map((roomType) => (
                 <option key={roomType.id} value={roomType.id}>
                   {roomType.room_name}
