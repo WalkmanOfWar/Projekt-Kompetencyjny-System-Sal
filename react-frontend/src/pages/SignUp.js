@@ -1,14 +1,37 @@
 import React from "react";
 import "./SignIn.css";
-import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+
 
 function SignUp() {
 
-  const {register, handleSubmit, formState: { errors } } = useForm();
-  
-  const onSubmit = (data) => console.log(data);
+  const {register, handleSubmit, watch, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+
+
+  const onSubmit = data =>{
+    if(data.password != data.repeatPassword){
+      console.log("Hasła nie są takie same")
+      return;
+    }
+    axios.post('http://localhost:8080/register',{
+      email: data.email,
+      password: data.password,
+    })
+      .then(response => {
+        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
+        console.log('Udało się zarejestrować');
+        navigate('/profile');
+      })
+      .catch(error => {
+        // Wystąpił błąd logowania, można wyświetlić odpowiedni komunikat.
+        console.log(error.response.data);
+      });
+  };
+  console.log(watch());
 
   return (
     <div className="wrapper py-3">
@@ -54,17 +77,7 @@ function SignUp() {
           >
             Zarejestruj się
           </button>
-          <p className="text-white register-text">Lub Zaloguj się Używając</p>
-          <a href="#">
-            <FaGoogle className="icon-register" />
-          </a>
-          <a href="#">
-            <FaFacebook className="icon-register" />
-          </a>
-          <a href="#">
-            <FaTwitter className="icon-register" />
-          </a>
-          <br />
+          
           <p className="text-white">
             Masz już konto?
             <Link
