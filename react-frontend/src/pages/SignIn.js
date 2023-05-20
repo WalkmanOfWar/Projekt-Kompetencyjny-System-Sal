@@ -1,32 +1,38 @@
 import React from "react";
 import "./SignIn.css";
-import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
-import { Link, Route } from "react-router-dom";
-import { useForm } from 'react-hook-form';
-import { useEffect, useState } from "react";
-import axios from 'axios';
-import Profile from "./Profile";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Navbar from "../components/Navbar";
 
 function SignIn() {
-
-  const {register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-
-  const onSubmit = data =>{
-    axios.post('http://localhost:8080/login', data)
-      .then(response => {
-        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
-        navigate('/profile');
-      })
-      .catch(error => {
-        // Wystąpił błąd logowania, można wyświetlić odpowiedni komunikat.
-        console.log("Nie udało się zalogować")
-      });
+  const reloadPage = () => {
+    window.location.reload();
   };
 
+  const onSubmit = (data) => {
+    axios
+      .post("http://localhost:8080/login", data)
+      .then((response) => {
+        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
+        const userData = response.data;
+        localStorage.setItem("user", JSON.stringify(userData));
+        navigate("/profile");
+        reloadPage();
+      })
+      .catch((error) => {
+        // Wystąpił błąd logowania, można wyświetlić odpowiedni komunikat.
+        console.log("Nie udało się zalogować");
+      });
+  };
 
   return (
     <div className="wrapper py-3">
@@ -42,7 +48,7 @@ function SignIn() {
               id="floatingEmail"
               {...register("email", { required: true })}
             />
-            <label for="floatingEmail">Adres e-mail</label>
+            <label htmlFor="floatingEmail">Adres e-mail</label>
           </div>
 
           <div className="input-container form-floating text-white mx-5">
@@ -53,14 +59,12 @@ function SignIn() {
               id="floatingPassword"
               {...register("password", { required: true })}
             />
-            <label for="floatingPassword">Hasło</label>
+            <label htmlFor="floatingPassword">Hasło</label>
           </div>
-
 
           <button
             type={"submit"}
-            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75"
-          >
+            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75">
             Zaloguj się
           </button>
         </form>
@@ -68,8 +72,7 @@ function SignIn() {
         <div>
           <Link
             to={"/register"}
-            className="link-primary text-info register-text mb-3"
-          >
+            className="link-primary text-info register-text mb-3">
             Zarejestruj się
           </Link>
         </div>

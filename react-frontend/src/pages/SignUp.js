@@ -1,32 +1,35 @@
 import React from "react";
 import "./SignIn.css";
 import { Link } from "react-router-dom";
-import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import { useForm } from "react-hook-form";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 function SignUp() {
-
-  const {register, handleSubmit, watch, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
 
-
-  const onSubmit = data =>{
-    if(data.password != data.repeatPassword){
-      console.log("Hasła nie są takie same")
+  const onSubmit = (data) => {
+    if (data.password !== data.repeatPassword) {
+      console.log("Hasła nie są takie same");
       return;
     }
-    axios.post('http://localhost:8080/register',{
-      email: data.email,
-      password: data.password,
-    })
-      .then(response => {
-        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
-        console.log('Udało się zarejestrować');
-        navigate('/profile');
+    axios
+      .post("http://localhost:8080/register", {
+        email: data.email,
+        password: data.password,
       })
-      .catch(error => {
+      .then((response) => {
+        // Udało się zalogować, można wykonać jakieś dodatkowe akcje.
+        console.log("Udało się zarejestrować");
+        navigate("/profile");
+      })
+      .catch((error) => {
         // Wystąpił błąd logowania, można wyświetlić odpowiedni komunikat.
         console.log(error.response.data);
       });
@@ -47,7 +50,7 @@ function SignUp() {
               id="floatingEmail"
               {...register("email", { required: true })}
             />
-            <label for="floatingEmail">Adres e-mail</label>
+            <label htmlFor="floatingEmail">Adres e-mail</label>
           </div>
 
           <div className="input-container form-floating text-white mx-5">
@@ -58,7 +61,7 @@ function SignUp() {
               id="floatingPassword"
               {...register("password", { required: true })}
             />
-            <label for="floatingPassword">Hasło</label>
+            <label htmlFor="floatingPassword">Hasło</label>
           </div>
           <div className="input-container form-floating text-white mx-5">
             <input
@@ -68,27 +71,25 @@ function SignUp() {
               id="floatingPassword"
               {...register("repeatPassword", { required: true })}
             />
-            <label for="floatingPassword">Potwórz hasło</label>
+            <label htmlFor="floatingPassword">Potwórz hasło</label>
           </div>
 
           <button
             type={"submit"}
-            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75"
-          >
+            className="input-container mx-5 mb-3 btn btn-secondary btn-lg bg-dark opacity-75">
             Zarejestruj się
           </button>
-          
+
           <p className="text-white">
             Masz już konto?
             <Link
               to={"/login"}
-              className="link-primary text-info register-text mb-3 new-link-space"
-            >
+              className="link-primary text-info register-text mb-3 new-link-space">
               Zaloguj się
             </Link>
           </p>
           <br />
-        </form>      
+        </form>
       </div>
     </div>
   );

@@ -3,11 +3,10 @@ package pl.dmcs.Sale.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.DTOs.LoginRequest;
+import pl.dmcs.Sale.models.User;
+import pl.dmcs.Sale.repositories.UserRepository;
 import pl.dmcs.Sale.services.UserService;
 
 @AllArgsConstructor
@@ -18,6 +17,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    private final UserRepository userRepository;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getEmail();
@@ -25,9 +26,10 @@ public class UserController {
 
         if (isRegistered) {
             String password = loginRequest.getPassword();
-            if(userService.isPasswordCorrect(username, password)) {
+            if (userService.isPasswordCorrect(username, password)) {
+                User user = userRepository.findByEmail(username);
                 // zaloguj użytkownika
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok(user);
             } else {
                 // zwróć błąd logowania
                 return ResponseEntity.badRequest().body("Zły login lub hasło");
@@ -38,6 +40,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Użytkownik nie istnieje w bazie danych");
         }
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody LoginRequest loginRequest) {
@@ -52,6 +55,18 @@ public class UserController {
             // zarejestruj użytkownika
             userService.registerUser(loginRequest);
             return ResponseEntity.ok().build();
+        }
+    }
+
+    @GetMapping("/user/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+        System.out.println(user);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

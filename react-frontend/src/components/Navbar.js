@@ -1,8 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import "./Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!storedUser) {
+      navigate("/login");
+    }
+    setUserData(storedUser);
+  }, []);
+
+  const renderLogin = () => {
+    return (
+      <Link to={"/login"} className="nav-link px-3">
+        Zaloguj się
+      </Link>
+    );
+  };
+
+  const renderAccount = () => {
+    return (
+      <Link to={"/profile"} className="nav-link px-3">
+        Mój profil
+      </Link>
+    );
+  };
+
+  const renderUserAccount = () => {
+    return (
+      <li className="nav-item nav-item-text">
+        {userData ? renderAccount() : renderLogin()}
+      </li>
+    );
+  };
+
   return (
     <nav className="navbar navbar-expand-xl">
       <div className="container-fluid">
@@ -17,35 +54,19 @@ export default function Navbar() {
           data-bs-target="#navbarXl"
           aria-controls="navbarXl"
           aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+          aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
         </button>
         <div
           className="collapse navbar-collapse align-items-center"
-          id="navbarXl"
-        >
+          id="navbarXl">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item nav-item-text">
-              <Link to={"/faq"} className="nav-link px-3">
-                FAQ
+              <Link to={"/"} className="nav-link px-3">
+                Strona główna
               </Link>
             </li>
-            <li className="nav-item nav-item-text">
-              <Link to={"/about"} className="nav-link px-3">
-                O nas
-              </Link>
-            </li>
-            <li className="nav-item nav-item-text">
-              <Link to={"/contact"} className="nav-link px-3">
-                Kontakt
-              </Link>
-            </li>
-            <li className="nav-item nav-item-text">
-              <Link to={"/login"} className="nav-link px-3">
-                Zaloguj się
-              </Link>
-            </li>
+            {renderUserAccount()}
           </ul>
         </div>
       </div>

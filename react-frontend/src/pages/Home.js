@@ -1,12 +1,8 @@
 import React from "react";
-import MainContent from "../components/MainContent";
+import GenerateHomeTable from "../components/GenerateHomeTable";
 
 function Home() {
-  return (
-    <div className="App">
-      <MainContent />
-    </div>
-  );
+  return <GenerateHomeTable />;
 }
 
 export default Home;

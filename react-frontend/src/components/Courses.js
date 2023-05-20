@@ -11,14 +11,13 @@ function Courses() {
   const [newRoomTypesId, setNewRoomTypesId] = useState("");
 
   useEffect(() => {
-    loadCourses()
+    loadCourses();
   }, []);
 
   const loadCourses = async () => {
-      const result = await axios.get("http://localhost:8080/courses");
-      setCourseList(result.data)
-  }
-
+    const result = await axios.get("http://localhost:8080/courses");
+    setCourseList(result.data);
+  };
 
   const handleAddCourse = () => {
     setShowForm(true);
@@ -38,8 +37,6 @@ function Courses() {
     setNewRoomTypesId(event.target.value);
   };
 
-
-
   const handleFormSubmit = (event) => {
     event.preventDefault();
     const newCourseId = courseList.length + 1;
@@ -50,7 +47,7 @@ function Courses() {
     setNewRoomTypesId("");
     setShowForm(false);
   };
-  
+
   return (
     <div className="room-wrapper">
       <h2 className="room-title">Lista przedmiotów</h2>
@@ -73,12 +70,8 @@ function Courses() {
               <td>{course.course_type}</td>
               <td>{course.roomType.room_name}</td>
               <td>
-                <button className="btn btn-primary mx-2">
-                  Edit
-                </button>
-                <button className="btn btn-danger mx-2">
-                  Delete
-                </button>
+                <button className="btn btn-primary mx-2">Edit</button>
+                <button className="btn btn-danger mx-2">Delete</button>
               </td>
             </tr>
           ))}
@@ -88,73 +81,77 @@ function Courses() {
         <button className="add-button" onClick={handleAddCourse}>
           Dodaj
         </button>
-      
       </div>
       {showForm && (
-  <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
-    <div className="form-group">
-      <label htmlFor="newCourseName">Nazwa przedmiotu:</label>
-      <input
-        type="text"
-        id="newCourseName"
-        value={newCourseName}
-        onChange={handleCourseNameChange}
-      />
-    </div>
+        <form
+          onSubmit={handleFormSubmit}
+          className={showForm ? "add-form" : "hidden"}>
+          <div className="form-group">
+            <label htmlFor="newCourseName">Nazwa przedmiotu:</label>
+            <input
+              type="text"
+              id="newCourseName"
+              value={newCourseName}
+              onChange={handleCourseNameChange}
+            />
+          </div>
 
-    <div className="form-group">
-      <label htmlFor="newCourseType">Typ przedmiotu:</label>
-      <input
-        type="number"
-        step="1"
-        id="newCourseType"
-        value={newCourseType}
-        onChange={handleCourseTypeChange}
-      />
-    </div>
+          <div className="form-group">
+            <label htmlFor="newCourseType">Typ przedmiotu:</label>
+            <input
+              type="number"
+              step="1"
+              id="newCourseType"
+              value={newCourseType}
+              onChange={handleCourseTypeChange}
+            />
+          </div>
 
-    <div className="form-group">
-      <label htmlFor="newFacilitiesId">Id rodzaju udogodnień:</label>
-      <input
-        type="number"
-        step="1"
-        id="newFacilitiesId"
-        value={newFacilitiesId}
-        onChange={handleFacilitiesIdChange}
-      />
-    </div>
+          <div className="form-group">
+            <label htmlFor="newFacilitiesId">Id rodzaju udogodnień:</label>
+            <input
+              type="number"
+              step="1"
+              id="newFacilitiesId"
+              value={newFacilitiesId}
+              onChange={handleFacilitiesIdChange}
+            />
+          </div>
 
-    <div className="form-group">
-      <label htmlFor="newRoomTypesId">Id rodzaju sali:</label>
-      <input
-        type="number"
-        step="1"
-        id="newRoomTypesId"
-        value={newRoomTypesId}
-        onChange={handleRoomTypesIdChange}
-      />
-    </div>
+          <div className="form-group">
+            <label htmlFor="newRoomTypesId">Id rodzaju sali:</label>
+            <input
+              type="number"
+              step="1"
+              id="newRoomTypesId"
+              value={newRoomTypesId}
+              onChange={handleRoomTypesIdChange}
+            />
+          </div>
 
-    <div className="form-buttons">
-    <button type="submit" className="add-button">Dodaj</button>
-<button type="button" className="cancel-button" onClick={handleCancel}>
-  Anuluj
-</button>
-
-    </div>
-  </form>
+          <div className="form-buttons">
+            <button type="submit" className="add-button">
+              Dodaj
+            </button>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={handleCancel}>
+              Anuluj
+            </button>
+          </div>
+        </form>
       )}
     </div>
   );
 
-function handleCancel() {
+  function handleCancel() {
     setShowForm(false);
     setNewCourseName("");
     setNewCourseType("");
     setNewFacilitiesId("");
     setNewRoomTypesId("");
-}
-
+  }
 }
 
 export default Courses;

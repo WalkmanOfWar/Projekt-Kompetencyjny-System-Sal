@@ -1,0 +1,6 @@
+admin: 
+    email: admin@edu.p.lodz.pl
+    hasło: admin
+user: 
+    email: user@edu.p.lodz.pl
+    hasło: user
