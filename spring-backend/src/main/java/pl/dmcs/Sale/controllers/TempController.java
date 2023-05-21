@@ -16,7 +16,6 @@ import java.util.Optional;
 public class TempController {
     private final ClassScheduleRepository classScheduleRepository;
     private final CourseFacilityRepository courseFacilityRepository;
-    private final CourseRepository courseRepository;
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
     private final RoomRepository roomRepository;
@@ -34,10 +33,7 @@ public class TempController {
         return roomRepository.save(newRoom);
     }
 
-    @PostMapping("/new_course")
-    Course newCourse(@RequestBody Course newCourse) {
-        return courseRepository.save(newCourse);
-    }
+
 
     @PostMapping("/new_reservation")
     Reservation newReservation(@RequestBody Reservation newReservation) {
@@ -65,10 +61,7 @@ public class TempController {
     public List<User> getUsers() {
         return userRepository.findAll();
     }
-    @GetMapping("/courses")
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
-    }
+
     @GetMapping("/user_course")
     public List<UserCourse> getUserCourse() {
         return userCourseRepository.findAll();
@@ -114,8 +107,5 @@ public class TempController {
         return roomRepository.findById(Long.parseLong(roomId));
     }
 
-    @GetMapping("courses/id/{courseId}")
-    public Optional<Course> getCourse(@PathVariable("courseId") String courseId) {
-        return courseRepository.findById(Long.parseLong(courseId));
-    }
+
 }

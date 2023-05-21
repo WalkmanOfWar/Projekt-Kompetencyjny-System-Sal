@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./Room.css";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Courses() {
   const [courseList, setCourseList] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editCourse, setEditCourse] = useState(null);
   const [newCourseName, setNewCourseName] = useState("");
   const [newCourseType, setNewCourseType] = useState("");
   const [newRoomTypeId, setNewRoomTypeId] = useState("");
@@ -33,6 +36,7 @@ function Courses() {
   };
 
   const handleAddCourse = () => {
+    setEditCourse(null);
     setShowForm(true);
   };
 
@@ -51,13 +55,34 @@ function Courses() {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    const newCourse = {
-      name: newCourseName,
-      course_type: newCourseType,
-      roomType: { id: newRoomTypeId },
-    };
+    if (editCourse) {
+      // If editCourse exists, it means we are editing an existing course
+      const updatedCourse = {
+        id: editCourse.id,
+        name: newCourseName,
+        course_type: newCourseType,
+        roomType: { id: newRoomTypeId },
+      };
 
-    await axios.post("http://localhost:8080/new_course", newCourse);
+      await axios.put(
+        `http://localhost:8080/update_course/${editCourse.id}`,
+        updatedCourse
+      );
+
+      setEditCourse(null);
+      toast.success("Kurs został zaktualizowany.");
+    } else {
+      // Otherwise, we are adding a new course
+      const newCourse = {
+        name: newCourseName,
+        course_type: newCourseType,
+        roomType: { id: newRoomTypeId },
+      };
+
+      await axios.post("http://localhost:8080/new_course", newCourse);
+
+      toast.success("Kurs został dodany.");
+    }
 
     setNewCourseName("");
     setNewCourseType("");
@@ -65,6 +90,31 @@ function Courses() {
     setShowForm(false);
 
     loadCourses();
+  };
+
+  const handleCourseDelete = async (courseId) => {
+    try {
+      await axios.delete(`http://localhost:8080/delete_course/${courseId}`);
+      loadCourses();
+      toast.success("Kurs został usunięty.");
+    } catch (error) {
+      console.log("Wystąpił błąd podczas usuwania kursu:", error);
+      toast.error("Wystąpił błąd podczas usuwania .");
+    }
+  };
+
+  const handleCourseEdit = (courseId) => {
+    // Find the course with the given id
+    const courseToEdit = courseList.find((course) => course.id === courseId);
+
+    // Set the form values with the course data
+    setEditCourse(courseToEdit);
+    setNewCourseName(courseToEdit.name);
+    setNewCourseType(courseToEdit.course_type);
+    setNewRoomTypeId(courseToEdit.roomType.id);
+
+    // Show the form
+    setShowForm(true);
   };
 
   const getCourseTypeName = (courseTypeId) => {
@@ -99,8 +149,18 @@ function Courses() {
               <td>{getCourseTypeName(course.course_type)}</td>
               <td>{getRoomTypeName(course.roomType.id)}</td>
               <td>
-                <button className="btn btn-primary mx-2">Edit</button>
-                <button className="btn btn-danger mx-2">Delete</button>
+                <button
+                  className="btn btn-primary mx-2"
+                  onClick={() => handleCourseEdit(course.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-danger mx-2"
+                  onClick={() => handleCourseDelete(course.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -157,18 +217,22 @@ function Courses() {
 
           <div className="form-buttons">
             <button type="submit" className="add-button">
-              Dodaj
+              {editCourse ? "Zaktualizuj" : "Dodaj"}
             </button>
             <button
               type="button"
               className="cancel-button"
-              onClick={() => setShowForm(false)}
+              onClick={() => {
+                setEditCourse(null);
+                setShowForm(false);
+              }}
             >
               Anuluj
             </button>
           </div>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 }
