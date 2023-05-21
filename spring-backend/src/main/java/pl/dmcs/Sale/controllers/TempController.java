@@ -46,7 +46,17 @@ public class TempController {
     }
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
-        return classScheduleRepository.save(newClassSchedule);
+        try {
+            ClassSchedule savedClassSchedule = classScheduleRepository.save(newClassSchedule);
+            Reservation reservation = new Reservation();
+            reservation.setClassSchedule(savedClassSchedule);
+            reservation.setStatus(0L);
+            reservation.setUser(savedClassSchedule.getUser());
+            reservationRepository.save(reservation);
+            return savedClassSchedule;
+        } catch (Exception e) {
+            return null;
+        }
     }
     @PostMapping("/new_facilityAvailable")
     FacilityAvailable newFacilityAvailable(@RequestBody FacilityAvailable facilityAvailable) {
