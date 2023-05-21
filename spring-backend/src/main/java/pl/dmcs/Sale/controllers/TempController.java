@@ -1,6 +1,8 @@
 package pl.dmcs.Sale.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.models.*;
 import pl.dmcs.Sale.repositories.*;
@@ -55,8 +57,13 @@ public class TempController {
         return roomTypeRepository.save(roomType);
     }
     @PostMapping("/new_userCourse")
-    UserCourse newUserCourse(@RequestBody UserCourse userCourse) {
-        return userCourseRepository.save(userCourse);
+    public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
+        if (userCourseRepository.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        UserCourse savedUserCourse = userCourseRepository.save(userCourse);
+        return ResponseEntity.ok(savedUserCourse);
     }
     @GetMapping("/users")
     public List<User> getUsers() {
