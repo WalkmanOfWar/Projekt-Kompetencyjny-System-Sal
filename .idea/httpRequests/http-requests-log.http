@@ -1,0 +1,30 @@
+GET http://localhost:8080/users/byCourse/6
+
+<> 2023-05-21T201452.200.json
+
+###
+
+GET http://localhost:8080/users/byCourse/5
+
+<> 2023-05-21T201324.500.json
+
+###
+
+GET http://localhost:8080/courses/id/6
+
+<> 2023-05-21T201239.200.json
+
+###
+
+GET http://localhost:8080/users/byCourse/6
+
+<> 2023-05-21T201223.500.json
+
+###
+
+GET http://localhost:8080/courses/id/6
+
+<> 2023-05-21T195837.200.json
+
+###
+
