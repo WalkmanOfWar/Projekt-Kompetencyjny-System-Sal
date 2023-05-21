@@ -15,16 +15,40 @@ function Class_schedule() {
   const [newStartWeek, setNewStartWeek] = useState("");
   const [newEndWeek, setNewEndWeek] = useState("");
   const [newIsParity, setNewIsParity] = useState("");
+  const [coursesList, setCourseList] = useState([]);
+  const [roomList, setRoomList] = useState([]);
+  const [dayOfWeeks, setDayOfWeek] = useState([
+    { id: 1, name: "Poniedziałek" },
+    { id: 2, name: "Wtorek" },
+    { id: 3, name: "Środa" },
+    { id: 4, name: "Czwartek" },
+    { id: 5, name: "Piątek" },
+    { id: 6, name: "Sobota" },
+    { id: 7, name: "Niedziela" },
+  ]);
 
+  const getDayOfWeekName = (dayOfWeekId) => {
+    const dayOfWeek = dayOfWeeks.find((day) => day.id === dayOfWeekId);
+    return dayOfWeek ? dayOfWeek.name : "";
+  };
   useEffect(() => {
     loadClassSchedules()
+    loadCourses();
+    loadRooms();
   }, []);
 
   const loadClassSchedules = async () => {
       const result = await axios.get("http://localhost:8080/class_schedules");
       setClassScheduleList(result.data)
   }
-
+  const loadCourses = async () => {
+    const result = await axios.get("http://localhost:8080/courses");
+    setCourseList(result.data);
+  };
+  const loadRooms = async () => {
+    const result = await axios.get("http://localhost:8080/rooms");
+    setRoomList(result.data);
+  };
   const handleAddClassSchedule = () => {
     setShowForm(true);
   };
@@ -87,6 +111,7 @@ function Class_schedule() {
           <tr>
             <th>Lp.</th>
             <th>Przedmiot</th>
+            
             <th>Pokój</th>
             <th>Dzień tygodnia</th>
             <th>Początek - czas</th>
@@ -100,9 +125,10 @@ function Class_schedule() {
           {classScheduleList.map((classSchedule, index) => (
             <tr key={classSchedule.id}>
               <td>{index + 1}.</td>
-              <td>{classSchedule.course_id}</td>
-              <td>{classSchedule.room_id}</td>
-              <td>{classSchedule.day_of_week}</td>
+              <td>{classSchedule.course.name}</td>
+              
+              <td>{classSchedule.room.name}</td>
+              <td>{getDayOfWeekName(classSchedule.day_of_week)}</td>
               <td>{classSchedule.start_time}</td>
               <td>{classSchedule.end_time}</td>
               <td>{classSchedule.start_week}</td>
@@ -121,81 +147,55 @@ function Class_schedule() {
       {showForm && (
   <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
 
-
-
 <div className="form-group">
-      <label htmlFor="newTimeDateId">Id Czasu:</label>
-      <input
-        type="number"
-        step="1"
-        id="newTimeDateId"
-        value={newTimeDateId}
-        onChange={handleTimeDateIdChange}
-      />
-    </div>
-
-
-
-
-
-
-<div className="form-group">
-      <label htmlFor="newCourseId">Id Przedmiotu:</label>
-      <input
-        type="number"
-        step="1"
+      <label htmlFor="newCourseId">Nazwa przedmiotu:</label>
+      <select
         id="newCourseId"
         value={newCourseId}
         onChange={handleCourseIdChange}
-      />
+      >
+          <option value="">Wybierz przedmiot</option>
+              {coursesList.map((courses) => (
+                <option key={courses.id} value={courses.id}>
+                  {courses.name}
+                </option>
+              ))}
+         </select>
     </div>
 
-
-
-
-
 <div className="form-group">
-      <label htmlFor="newCourseId">Id Przedmiotu:</label>
-      <input
-        type="number"
-        step="1"
-        id="newCourseId"
-        value={newCourseId}
-        onChange={handleCourseIdChange}
-      />
-    </div>
-
-
-
-
-
-
-<div className="form-group">
-      <label htmlFor="newRoomId">Id sali:</label>
-      <input
-        type="number"
-        step="1"
+      <label htmlFor="newRoomId">sala:</label>
+      <select
         id="newRoomId"
         value={newRoomId}
         onChange={handleRoomIdChange}
-      />
+      >
+        <option value="">Wybierz sale</option>
+              {roomList.map((room) => (
+                <option key={room.id} value={room.id}>
+                  {room.name}
+                </option>
+              ))}
+         </select>
     </div>
-
-
-
-
 
 <div className="form-group">
       <label htmlFor="newDayOfWeek">Dzień tygodnia:</label>
-      <input
-        type="number"
-        step="1"
+      <select
         id="newDayOfWeek"
         value={newDayOfWeek}
         onChange={handleDayOfWeekChange}
-      />
-    </div>
+        min="0"
+      >
+            <option value="">Wybierz dzień</option>
+              {dayOfWeeks.map((dayOfWeek) => (
+                <option key={dayOfWeek.id} value={dayOfWeek.id}>
+                  {dayOfWeek.name}
+                </option>
+              ))}
+            </select>
 
+    </div>
 
     <div className="form-group">
       <label htmlFor="newStartTime">Czas Rozpoczęcia:</label>
@@ -206,6 +206,7 @@ function Class_schedule() {
         onChange={handleStartTimeChange}
       />
     </div>
+
     <div className="form-group">
       <label htmlFor="newEndTime">Czas Zakończenia:</label>
       <input
@@ -215,6 +216,7 @@ function Class_schedule() {
         onChange={handleEndTimeChange}
       />
     </div>
+
     <div className="form-group">
       <label htmlFor="newStartWeek">Początkowy tydzień:</label>
       <input
@@ -223,9 +225,9 @@ function Class_schedule() {
         id="newStartWeek"
         value={newStartWeek}
         onChange={handleStartWeekChange}
+        min="0"
       />
     </div>
-
 
     <div className="form-group">
       <label htmlFor="newEndWeek">Końcowy tydzień:</label>
@@ -235,12 +237,10 @@ function Class_schedule() {
         id="newEndWeek"
         value={newEndWeek}
         onChange={handleEndWeekChange}
+        min="0"
       />
     </div>
 
-
-
- 
     <div className="form-group">
       <label htmlFor="newIsParity">Parzystość:</label>
       <input
@@ -250,9 +250,6 @@ function Class_schedule() {
         onChange={handleIsParityChange}
       />
     </div>
-
-
-
 
     <div className="form-buttons">
     <button type="submit" className="add-button">Dodaj</button>
@@ -281,5 +278,4 @@ function handleCancel() {
 }
 
 }
-
 export default Class_schedule;
