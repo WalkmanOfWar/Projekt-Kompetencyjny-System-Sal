@@ -1,5 +1,5 @@
 .background {
-  background-image: url("/images/background.png");
+  background-image: url('/images/background.png');
 }
 
 .vertical-text {
@@ -19,4 +19,13 @@
 
 .room-text {
   font-weight: bold;
+}
+
+.card-container {
+  display: flex;
+  align-items: stretch; /* Ensures equal height */
+}
+
+.card-container > .card {
+  flex: 1; /* Ensures equal width */
 }
