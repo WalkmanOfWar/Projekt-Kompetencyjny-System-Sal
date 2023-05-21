@@ -125,4 +125,10 @@ public class TempController {
     public Optional<Course> getCourse(@PathVariable("courseId") String courseId) {
         return courseRepository.findById(Long.parseLong(courseId));
     }
+
+    @GetMapping("users/byCourse/{courseId}")
+    public List<UserCourse> getUserCourse(@PathVariable("courseId") String courseId) {
+        //userCourseRepository.findB
+        return userCourseRepository.findByCourseId(Long.parseLong(courseId));
+    }
 }
