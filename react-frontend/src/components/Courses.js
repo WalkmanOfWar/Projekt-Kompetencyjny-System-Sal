@@ -7,16 +7,29 @@ function Courses() {
   const [showForm, setShowForm] = useState(false);
   const [newCourseName, setNewCourseName] = useState("");
   const [newCourseType, setNewCourseType] = useState("");
-  const [newFacilitiesId, setNewFacilitiesId] = useState("");
-  const [newRoomTypesId, setNewRoomTypesId] = useState("");
+  const [newRoomTypeId, setNewRoomTypeId] = useState("");
+  const [roomTypes, setRoomTypes] = useState([]);
+  const [courseTypes, setCourseTypes] = useState([
+    { id: 0, name: "Laboratorium" },
+    { id: 1, name: "Ćwiczenia" },
+    { id: 2, name: "Wykład" },
+    { id: 3, name: "Projekt" },
+    { id: 4, name: "Inne" },
+  ]);
 
   useEffect(() => {
     loadCourses();
+    loadRoomTypes();
   }, []);
 
   const loadCourses = async () => {
     const result = await axios.get("http://localhost:8080/courses");
     setCourseList(result.data);
+  };
+
+  const loadRoomTypes = async () => {
+    const result = await axios.get("http://localhost:8080/room_types");
+    setRoomTypes(result.data);
   };
 
   const handleAddCourse = () => {
@@ -30,22 +43,38 @@ function Courses() {
   const handleCourseTypeChange = (event) => {
     setNewCourseType(event.target.value);
   };
-  const handleFacilitiesIdChange = (event) => {
-    setNewFacilitiesId(event.target.value);
-  };
-  const handleRoomTypesIdChange = (event) => {
-    setNewRoomTypesId(event.target.value);
+
+  const handleRoomTypeIdChange = (event) => {
+    setNewRoomTypeId(event.target.value);
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const newCourseId = courseList.length + 1;
-    setCourseList([...courseList, { id: newCourseId, name: newCourseName }]);
+
+    const newCourse = {
+      name: newCourseName,
+      course_type: newCourseType,
+      roomType: { id: newRoomTypeId },
+    };
+
+    await axios.post("http://localhost:8080/new_course", newCourse);
+
     setNewCourseName("");
     setNewCourseType("");
-    setNewFacilitiesId("");
-    setNewRoomTypesId("");
+    setNewRoomTypeId("");
     setShowForm(false);
+
+    loadCourses();
+  };
+
+  const getCourseTypeName = (courseTypeId) => {
+    const courseType = courseTypes.find((type) => type.id === courseTypeId);
+    return courseType ? courseType.name : "";
+  };
+
+  const getRoomTypeName = (roomTypeId) => {
+    const roomType = roomTypes.find((type) => type.id === roomTypeId);
+    return roomType ? roomType.room_name : "";
   };
 
   return (
@@ -67,8 +96,8 @@ function Courses() {
             <tr key={course.id}>
               <td>{index + 1}.</td>
               <td>{course.name}</td>
-              <td>{course.course_type}</td>
-              <td>{course.roomType.room_name}</td>
+              <td>{getCourseTypeName(course.course_type)}</td>
+              <td>{getRoomTypeName(course.roomType.id)}</td>
               <td>
                 <button className="btn btn-primary mx-2">Edit</button>
                 <button className="btn btn-danger mx-2">Delete</button>
@@ -83,9 +112,7 @@ function Courses() {
         </button>
       </div>
       {showForm && (
-        <form
-          onSubmit={handleFormSubmit}
-          className={showForm ? "add-form" : "hidden"}>
+        <form onSubmit={handleFormSubmit} className="add-form">
           <div className="form-group">
             <label htmlFor="newCourseName">Nazwa przedmiotu:</label>
             <input
@@ -98,35 +125,34 @@ function Courses() {
 
           <div className="form-group">
             <label htmlFor="newCourseType">Typ przedmiotu:</label>
-            <input
-              type="number"
-              step="1"
+            <select
               id="newCourseType"
               value={newCourseType}
               onChange={handleCourseTypeChange}
-            />
+            >
+              <option value="">Wybierz typ przedmiotu</option>
+              {courseTypes.map((courseType) => (
+                <option key={courseType.id} value={courseType.id}>
+                  {courseType.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="newFacilitiesId">Id rodzaju udogodnień:</label>
-            <input
-              type="number"
-              step="1"
-              id="newFacilitiesId"
-              value={newFacilitiesId}
-              onChange={handleFacilitiesIdChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="newRoomTypesId">Id rodzaju sali:</label>
-            <input
-              type="number"
-              step="1"
-              id="newRoomTypesId"
-              value={newRoomTypesId}
-              onChange={handleRoomTypesIdChange}
-            />
+            <label htmlFor="newRoomTypeId">Rodzaj sali:</label>
+            <select
+              id="newRoomTypeId"
+              value={newRoomTypeId}
+              onChange={handleRoomTypeIdChange}
+            >
+              <option value="">Wybierz rodzaj sali</option>
+              {roomTypes.map((roomType) => (
+                <option key={roomType.id} value={roomType.id}>
+                  {roomType.room_name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-buttons">
@@ -136,7 +162,8 @@ function Courses() {
             <button
               type="button"
               className="cancel-button"
-              onClick={handleCancel}>
+              onClick={() => setShowForm(false)}
+            >
               Anuluj
             </button>
           </div>
@@ -144,14 +171,6 @@ function Courses() {
       )}
     </div>
   );
-
-  function handleCancel() {
-    setShowForm(false);
-    setNewCourseName("");
-    setNewCourseType("");
-    setNewFacilitiesId("");
-    setNewRoomTypesId("");
-  }
 }
 
 export default Courses;

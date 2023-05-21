@@ -27,6 +27,37 @@ public class TempController {
     User newUser(@RequestBody User newUser) {
         return userRepository.save(newUser);
     }
+
+    @PostMapping("/new_room")
+    Room newRoom(@RequestBody Room newRoom) {
+        return roomRepository.save(newRoom);
+    }
+
+    @PostMapping("/new_course")
+    Course newCourse(@RequestBody Course newCourse) {
+        return courseRepository.save(newCourse);
+    }
+
+    @PostMapping("/new_reservation")
+    Reservation newReservation(@RequestBody Reservation newReservation) {
+        return reservationRepository.save(newReservation);
+    }
+    @PostMapping("/new_classSchedule")
+    ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
+        return classScheduleRepository.save(newClassSchedule);
+    }
+    @PostMapping("/new_facilityAvailable")
+    FacilityAvailable newFacilityAvailable(@RequestBody FacilityAvailable facilityAvailable) {
+        return facilityAvailableRepository.save(facilityAvailable);
+    }
+    @PostMapping("/new_roomType")
+    RoomType newRoomType(@RequestBody RoomType roomType) {
+        return roomTypeRepository.save(roomType);
+    }
+    @PostMapping("/new_userCourse")
+    UserCourse newUserCourse(@RequestBody UserCourse userCourse) {
+        return userCourseRepository.save(userCourse);
+    }
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();

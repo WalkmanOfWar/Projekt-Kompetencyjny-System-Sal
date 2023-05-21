@@ -92,6 +92,7 @@ function Reservations() {
         id="newClassScheduleId"
         value={newClassScheduleId}
         onChange={handleClassScheduleIdChange}
+        min="0"
       />
     </div>
 
@@ -103,6 +104,7 @@ function Reservations() {
         id="newStatus"
         value={newStatus}
         onChange={handleStatusChange}
+        min="0"
       />
     </div>
  

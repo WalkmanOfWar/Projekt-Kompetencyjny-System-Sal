@@ -94,6 +94,7 @@ function User_courses() {
         id="newUserId"
         value={newUserId}
         onChange={handleUserIdChange}
+        min="0"
       />
     </div>
     <div className="form-group">
@@ -104,6 +105,7 @@ function User_courses() {
         id="newCourseId"
         value={newCourseId}
         onChange={handleCourseIdChange}
+        min="0"
       />
     </div>
 
