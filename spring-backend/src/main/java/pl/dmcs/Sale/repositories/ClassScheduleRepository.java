@@ -9,6 +9,6 @@ import pl.dmcs.Sale.models.Room;
 import java.util.List;
 
 public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Long> {
-    @Query("SELECT cs from ClassSchedule cs JOIN Room r WHERE r.name = :roomName")
+//    @Query("SELECT cs from ClassSchedule cs JOIN Room r WHERE r.name = :roomName")
     List<ClassSchedule> findByRoomName(String roomName);
 }
