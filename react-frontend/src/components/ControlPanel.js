@@ -42,7 +42,7 @@ function ControlPanel() {
   return (
     <div className='info-wrapper'>
       <span className='panel-text'>Panel sterowania</span>
-      <div className='container'>
+      <div className='container-fluid'>
         <button
           className={`btn btn-primary ${
             selectedButton === 'Room' ? 'selected' : ''
@@ -80,6 +80,8 @@ function ControlPanel() {
         </button>
         {/* DODAĆ Udogodnienia przedmiotów */}
         {/* DODAĆ Udogodnienia sal */}
+      </div>
+      <div className='container-fluid'>
         <button
           className={`btn btn-primary ${
             selectedButton === 'Room_types' ? 'selected' : ''
@@ -100,13 +102,6 @@ function ControlPanel() {
           }`}
           onClick={() => handleButtonClick('Reservations')}>
           Rezerwacje
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Korekty' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Korekty')}>
-          Korekty
         </button>
         <button
           className={`btn btn-primary ${

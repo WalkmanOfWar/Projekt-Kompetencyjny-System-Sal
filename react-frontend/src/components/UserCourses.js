@@ -98,7 +98,7 @@ function UserCourses() {
     }
   };
 
-  function generateUserCoursesDisplay() {
+  const generateUserCoursesDisplay = () => {
     return (
       <>
         <h2 className='room-title'>Lista Udogodnień</h2>
@@ -141,9 +141,9 @@ function UserCourses() {
         </div>
       </>
     );
-  }
+  };
 
-  function generateNewUserCourseForm() {
+  const generateNewUserCourseForm = () => {
     return (
       <>
         {showForm && (
@@ -207,7 +207,7 @@ function UserCourses() {
         )}
       </>
     );
-  }
+  };
 
   return (
     <div className='room-wrapper'>

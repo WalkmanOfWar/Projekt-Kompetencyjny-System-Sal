@@ -1,134 +1,113 @@
-import React, { useEffect, useState } from "react";
-import "./Room.css";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import './Room.css';
+import axios from 'axios';
 
 function Reservations() {
   const [reservationList, setReservationList] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [newClassScheduleId, setNewClassScheduleId] = useState("");
-  const [newStatus, setNewStatus] = useState("");
 
   useEffect(() => {
-    loadReservations()
+    loadReservations();
   }, []);
 
+  useEffect(() => {
+    console.log(reservationList);
+  }, [reservationList]);
+
   const loadReservations = async () => {
-      const result = await axios.get("http://localhost:8080/reservations");
-      setReservationList(result.data)
-  }
-
-  const handleAddReservation= () => {
-    setShowForm(true);
+    const result = await axios.get('http://localhost:8080/reservations');
+    setReservationList(result.data);
   };
 
-  const handleClassScheduleIdChange = (event) => {
-    setNewClassScheduleId(event.target.value);
+  const displayStatus = (status) => {
+    switch (status) {
+      case 0:
+        return 'Niezaakceptowana';
+      case 1:
+        return 'Zaakceptowana';
+      default:
+        break;
+    }
   };
 
-  const handleStatusChange = (event) => {
-    setNewStatus(event.target.value);
+  const displayDayOfWeek = (dayOfWeek) => {
+    switch (dayOfWeek) {
+      case 1:
+        return 'Poniedziałek';
+      case 2:
+        return 'Wtorek';
+      case 3:
+        return 'Środa';
+      case 4:
+        return 'Czwartek';
+      case 5:
+        return 'Piątek';
+      default:
+        break;
+    }
   };
- 
 
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    const newReservationId = reservationList.length + 1;
-    setReservationList([...reservationList, { id: newReservationId, name: newClassScheduleId }]);
-    setNewClassScheduleId("");
-    setNewStatus("");
-    setShowForm(false);
+  const displayParity = (parity) => {
+    switch (parity) {
+      case true:
+        return 'Tak';
+      case false:
+        return 'Nie';
+      default:
+        return 'Nie brane pod uwagę';
+    }
   };
-  
-  return (
-    <div className="room-wrapper">
-      <h2 className="room-title">Lista Rezerwacji</h2>
-      <div className="horizontal-line"></div>
-      <table className="room-table">
-        <thead>
-          <tr>
-            <th>Lp.</th>
-            <th>Status</th>
-            <th>Kurs</th>
-            <th>Pokój</th>
-            <th>Dzień tygodnia</th>
-            <th>Początek - dzień</th>
-            <th>Koniec - dzień</th>
-            <th>Początek - tydzień</th>
-            <th>Koniec - tydzień</th>
-            <th>Parzystość</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reservationList.map((reservation, index) => (
-            <tr key={reservation.id}>
-              <td>{index + 1}.</td>
-              <td>{reservation.status}</td>
-              <td>{reservation.class_schedule_id.course_id.name}</td>
-              <td>{reservation.class_schedule_id.room_id.name}</td>
-              <td>{reservation.class_schedule_id.day_of_week}</td>
-              <td>{reservation.class_schedule_id.start_time}</td>
-              <td>{reservation.class_schedule_id.end_time}</td>
-              <td>{reservation.class_schedule_id.start_week}</td>
-              <td>{reservation.class_schedule_id.end_week}</td>
-              <td>{reservation.class_schedule_id.is_parity}</td>
+
+  const generateReservationsDisplay = () => {
+    return (
+      <>
+        <h2 className='room-title'>Lista Rezerwacji</h2>
+        <div className='horizontal-line'></div>
+        <table className='room-table'>
+          <thead>
+            <tr>
+              <th>Lp.</th>
+              <th>Użytkownik</th>
+              <th>Kurs</th>
+              <th>Pokój</th>
+              <th>Dzień tygodnia</th>
+              <th>Początek - dzień</th>
+              <th>Koniec - dzień</th>
+              <th>Początek - tydzień</th>
+              <th>Koniec - tydzień</th>
+              <th>Parzystość</th>
+              <th>Status</th>
+              <th>Akcja</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="add-button-wrapper">
-        <button className="add-button" onClick={handleAddReservation}>
-          Dodaj
-        </button>
-      
-      </div>
-      {showForm && (
-  <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
-    <div className="form-group">
-      <label htmlFor="newClassScheduleId">Id planu zajęć:</label>
-      <input
-       type="number"
-       step="1"
-        id="newClassScheduleId"
-        value={newClassScheduleId}
-        onChange={handleClassScheduleIdChange}
-        min="0"
-      />
-    </div>
+          </thead>
+          <tbody>
+            {reservationList.map((reservation, index) => (
+              <tr key={reservation.id}>
+                <td>{index + 1}.</td>
+                <td>{reservation.user.email}</td>
+                <td>{reservation.classSchedule.course.name}</td>
+                <td>{reservation.classSchedule.room.name}</td>
+                <td>
+                  {displayDayOfWeek(reservation.classSchedule.day_of_week)}
+                </td>
+                <td>{reservation.classSchedule.start_time}</td>
+                <td>{reservation.classSchedule.end_time}</td>
+                <td>{reservation.classSchedule.start_week}</td>
+                <td>{reservation.classSchedule.end_week}</td>
+                <td>{displayParity(reservation.classSchedule.is_parity)}</td>
+                <td>{displayStatus(reservation.status)}</td>
+                <td>
+                  <button className='btn btn-primary mx-2'>Edit</button>
+                  <button className='btn btn-danger mx-2'>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    );
+  };
 
-    <div className="form-group">
-      <label htmlFor="newStatus">Status:</label>
-      <input
-         type="number"
-         step="1"
-        id="newStatus"
-        value={newStatus}
-        onChange={handleStatusChange}
-        min="0"
-      />
-    </div>
- 
- 
-
-
-    <div className="form-buttons">
-    <button type="submit" className="add-button">Dodaj</button>
-<button type="button" className="cancel-button" onClick={handleCancel}>
-  Anuluj
-</button>
-
-    </div>
-  </form>
-      )}
-    </div>
-  );
-
-function handleCancel() {
-    setNewClassScheduleId("");
-    setNewStatus("");
-    setShowForm(false);
-}
-
+  return <div className='room-wrapper'>{generateReservationsDisplay()}</div>;
 }
 
 export default Reservations;

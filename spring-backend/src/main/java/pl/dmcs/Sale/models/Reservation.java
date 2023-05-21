@@ -19,4 +19,8 @@ public class Reservation {
     @OneToOne
     @JoinColumn(name = "class_schedule_id")
     private ClassSchedule classSchedule;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
