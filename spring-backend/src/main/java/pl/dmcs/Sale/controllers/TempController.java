@@ -115,6 +115,12 @@ public class TempController {
     public List<Reservation> getReservations() {
         return reservationRepository.findAll();
     }
+    @GetMapping("reservations/{email}")
+    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
+        System.out.println(email);
+        System.out.println(reservationRepository.findByUserEmail(email));
+        return reservationRepository.findByUserEmail(email);
+    }
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);
