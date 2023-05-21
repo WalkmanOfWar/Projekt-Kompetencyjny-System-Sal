@@ -1,6 +1,8 @@
 package pl.dmcs.Sale.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.models.*;
 import pl.dmcs.Sale.repositories.*;
@@ -26,6 +28,42 @@ public class TempController {
     @PostMapping("/new_user")
     User newUser(@RequestBody User newUser) {
         return userRepository.save(newUser);
+    }
+
+    @PostMapping("/new_room")
+    Room newRoom(@RequestBody Room newRoom) {
+        return roomRepository.save(newRoom);
+    }
+
+    @PostMapping("/new_course")
+    Course newCourse(@RequestBody Course newCourse) {
+        return courseRepository.save(newCourse);
+    }
+
+    @PostMapping("/new_reservation")
+    Reservation newReservation(@RequestBody Reservation newReservation) {
+        return reservationRepository.save(newReservation);
+    }
+    @PostMapping("/new_classSchedule")
+    ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
+        return classScheduleRepository.save(newClassSchedule);
+    }
+    @PostMapping("/new_facilityAvailable")
+    FacilityAvailable newFacilityAvailable(@RequestBody FacilityAvailable facilityAvailable) {
+        return facilityAvailableRepository.save(facilityAvailable);
+    }
+    @PostMapping("/new_roomType")
+    RoomType newRoomType(@RequestBody RoomType roomType) {
+        return roomTypeRepository.save(roomType);
+    }
+    @PostMapping("/new_userCourse")
+    public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
+        if (userCourseRepository.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        UserCourse savedUserCourse = userCourseRepository.save(userCourse);
+        return ResponseEntity.ok(savedUserCourse);
     }
     @GetMapping("/users")
     public List<User> getUsers() {
@@ -69,6 +107,13 @@ public class TempController {
     }
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
+        return classScheduleRepository.findByRoomName(roomName);
+    }
+
+    @GetMapping("/class_schedules/room/name/{roomName}")
+    public List<ClassSchedule> getClassSchedulesByRoomName(@PathVariable("roomName") String roomName) {
+        System.out.println(roomName);
+        System.out.println(classScheduleRepository.findByRoomName(roomName));
         return classScheduleRepository.findByRoomName(roomName);
     }
     @GetMapping("rooms/id/{roomId}")

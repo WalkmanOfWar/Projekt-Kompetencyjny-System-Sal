@@ -11,6 +11,7 @@ import java.sql.Time;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "class_schedules")
 public class ClassSchedule {
     @Id

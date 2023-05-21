@@ -46,6 +46,11 @@ public class InitData implements ApplicationRunner {
     @Autowired
     private UserRepository userRepository;
 
+    private void initReservations() {
+        ArrayList<Reservation> reservations = new ArrayList<>();
+
+    }
+
     private void initializeData() {
         ArrayList<User> users = new ArrayList<>();
         Random rand = new Random();
