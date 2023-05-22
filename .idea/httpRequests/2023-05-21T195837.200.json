@@ -1,0 +1,9 @@
+{
+  "id": 6,
+  "name": "Dante 5",
+  "course_type": 1,
+  "roomType": {
+    "id": 5,
+    "room_name": "Sala wykładowa"
+  }
+}

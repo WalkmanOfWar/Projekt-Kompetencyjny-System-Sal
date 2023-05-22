@@ -18,11 +18,11 @@ export default function GenerateHomeTable() {
   ];
 
   const days = [
-    { value: 'monday', text: 'Poniedziałek' },
-    { value: 'tuesday', text: 'Wtorek' },
-    { value: 'wednesday', text: 'Środa' },
-    { value: 'thursday', text: 'Czwartek' },
-    { value: 'friday', text: 'Piątek' },
+    { value: 1, text: 'Poniedziałek' },
+    { value: 2, text: 'Wtorek' },
+    { value: 3, text: 'Środa' },
+    { value: 4, text: 'Czwartek' },
+    { value: 5, text: 'Piątek' },
   ];
 
   const startingTimeSlots = [
@@ -94,90 +94,85 @@ export default function GenerateHomeTable() {
     );
   }
 
-  // Załadować dane z class_schedules - porównanie room_id
-  // Losowe dane dla Sala 5
+  const displayCourseType = (courseType) => {
+    switch (courseType) {
+      case 0:
+        return 'L, ';
+      case 1:
+        return 'W, ';
+      default:
+        return '';
+    }
+  };
 
-  // const loadReservations = async (selectedRoom) => {
-  //   try {
-  //     console.log(selectedRoom);
-  //     const result = await axios.get(
-  //       'http://localhost:8080/class_schedules/room/name/',
-  //       selectedRoom
-  //     );
-  //     // console.log(result.data)
-  //     setReservations(result.data);
-  //     // console.log(result.data);
-  //   } catch (error) {
-  //     console.error('Error in loading reservations: ', error);
-  //   }
-  // };
+  useEffect(() => {
+    console.log(reservations);
+  }, [reservations]);
 
   function generateSingleReservationCard(reservation) {
     return (
       <td>
-        <div className='card text-white bg-dark'>
-          <h5 className='card-header'>
-            {reservation
-              ? 'w, ' + reservation.start_week + '-' + reservation.end_week
-              : ''}
-          </h5>
-          <div className='card-body'>
-            <p className='card-text course-text'>
-              {reservation ? reservation.course.name : ''}
-            </p>
-            <p className='card-text room-text'>
-              {reservation ? reservation.room.name : ''}
-            </p>
-            <p className='card-text'>{reservation ? 'Piotr Pabich' : ''}</p>
+        <div className='card-container'>
+          <div className='card text-white bg-dark'>
+            <h5 className='card-header'>
+              {reservation
+                ? displayCourseType(reservation.course.course_type) +
+                  reservation.start_week +
+                  '-' +
+                  reservation.end_week
+                : ''}
+            </h5>
+            <div className='card-body'>
+              <p className='card-text course-text'>
+                {reservation ? reservation.course.name : ''}
+              </p>
+              <p className='card-text room-text'>
+                {reservation ? reservation.room.name : ''}
+              </p>
+              <p className='card-text'>
+                {reservation
+                  ? reservation.user.first_name +
+                    ' ' +
+                    reservation.user.last_name
+                  : ''}
+              </p>
+            </div>
           </div>
         </div>
       </td>
     );
   }
 
-  function renderSingleRecord(reservation) {
-    const start_time = reservation.start_time;
-    const end_time = reservation.end_time;
-    const row = reservation.day_of_week;
-    const index_start_col = startingTimeSlots.indexOf(start_time);
-    const index_end_col = endingTimeSlots.indexOf(end_time);
-
-    const renderedRecords = [];
-    for (let i = index_start_col; i <= index_end_col; i++) {
-      console.log('I: ' + i);
-      renderedRecords.push(
-        <tr key={`${row}-${i}`}>
-          <td key={`${row}-${i}`}>
-            {generateSingleReservationCard(reservation)}
-          </td>
-        </tr>
+  const fetchReservations = async () => {
+    try {
+      console.log(selectedRoom);
+      const response = await fetch(
+        `http://localhost:8080/class_schedules/room/name/${selectedRoom}`
       );
+      if (response.ok) {
+        const data = await response.json();
+        setReservations(data);
+      } else {
+        console.log('Failed to fetch reservations');
+      }
+    } catch (error) {
+      console.log('Error:', error);
     }
-
-    return renderedRecords;
-  }
+    console.log(reservations);
+  };
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        console.log(selectedRoom);
-        const response = await fetch(
-          `http://localhost:8080/class_schedules/room/name/${selectedRoom}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setReservations(data);
-        } else {
-          console.log('Failed to fetch reservations');
-        }
-      } catch (error) {
-        console.log('Error:', error);
-      }
-      console.log(reservations);
-    };
-
     fetchReservations();
   }, [selectedRoom]);
+
+  function parseTime(timeString) {
+    const [hours, minutes, seconds] = timeString.split(':');
+    return new Date(0, 0, 0, hours, minutes, seconds);
+  }
+
+  function compareTime(time1, time2) {
+    return time1.getTime() - time2.getTime();
+  }
 
   function generateTableContent() {
     return (
@@ -185,13 +180,25 @@ export default function GenerateHomeTable() {
         {days.map((day) => (
           <tr key={day.id}>
             <td>{day.text}</td>
-            {reservations.map((reservation) => renderSingleRecord(reservation))}
-            {/* const startTime = startingTimeSlots[index];
-              const endTime = endingTimeSlots[index];
-              if (reservations && reservations.start_time >= startTime
-                && reservations) {
-                return generateSingleReservationCard(reservations[0]);
-              } */}
+            {Array.from({ length: 12 }, (_, index) => {
+              const startTime = parseTime(startingTimeSlots[index]);
+              const endTime = parseTime(endingTimeSlots[index]);
+
+              const reservation = reservations.find(
+                (reservation) =>
+                  day.value === reservation.day_of_week &&
+                  compareTime(startTime, parseTime(reservation.start_time)) >=
+                    0 &&
+                  compareTime(parseTime(reservation.end_time), endTime) >= 0
+              );
+
+              if (reservation) {
+                console.log(reservation);
+                return generateSingleReservationCard(reservation);
+              } else {
+                return generateSingleReservationCard();
+              }
+            })}
           </tr>
         ))}
       </tbody>
@@ -210,7 +217,6 @@ export default function GenerateHomeTable() {
       <div className='card justfiy-content-center align-items-center text-white bg-dark mb-3'>
         <div class='card-header'>{scheduleTypeText}</div>
         <div class='card-title'>{roomText}</div>
-        {/* <div class="card-title">Grupa dziekańska 6I TI-3</div> */}
         <div className='card-body'>
           <div className='table table-responsive table-dark'>
             {generateTableHeader()}
@@ -254,12 +260,6 @@ export default function GenerateHomeTable() {
           </div>
         </div>
       </div>
-      {/* <img
-        className="img-fluid mb-5 w-75"
-        // src={options[selected].img}
-        src="images\schedule-mockup.png"
-        alt="main-content"
-      /> */}
 
       {/* TUTAJ GENEROWANA TABELKA */}
       {generateTable()}

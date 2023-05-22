@@ -41,7 +41,17 @@ public class TempController {
     }
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
-        return classScheduleRepository.save(newClassSchedule);
+        try {
+            ClassSchedule savedClassSchedule = classScheduleRepository.save(newClassSchedule);
+            Reservation reservation = new Reservation();
+            reservation.setClassSchedule(savedClassSchedule);
+            reservation.setStatus(0L);
+            reservation.setUser(savedClassSchedule.getUser());
+            reservationRepository.save(reservation);
+            return savedClassSchedule;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @PostMapping("/new_roomType")
@@ -91,6 +101,12 @@ public class TempController {
     public List<Reservation> getReservations() {
         return reservationRepository.findAll();
     }
+    @GetMapping("reservations/{email}")
+    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
+        System.out.println(email);
+        System.out.println(reservationRepository.findByUserEmail(email));
+        return reservationRepository.findByUserEmail(email);
+    }
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);
@@ -106,6 +122,5 @@ public class TempController {
     public Optional<Room> getRoom(@PathVariable("roomId") String roomId) {
         return roomRepository.findById(Long.parseLong(roomId));
     }
-
 
 }

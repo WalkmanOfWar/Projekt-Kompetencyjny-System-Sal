@@ -1,0 +1,25 @@
+[
+  {
+    "id": 21,
+    "user": {
+      "id": 41,
+      "login": "IwghwAnIRS",
+      "password": "aslOtJICZr",
+      "seed": 1440403,
+      "first_name": "jehmhvPzTL",
+      "last_name": "FWIVmlVcgP",
+      "email": "NoADYQZrnk@edu.p.lodz.pl",
+      "is_admin": false,
+      "reservations": []
+    },
+    "course": {
+      "id": 6,
+      "name": "Dante 5",
+      "course_type": 1,
+      "roomType": {
+        "id": 5,
+        "room_name": "Sala wykładowa"
+      }
+    }
+  }
+]
