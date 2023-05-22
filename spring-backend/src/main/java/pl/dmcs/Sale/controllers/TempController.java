@@ -38,20 +38,7 @@ public class TempController {
     Reservation newReservation(@RequestBody Reservation newReservation) {
         return reservationRepository.save(newReservation);
     }
-    @PostMapping("/new_classSchedule")
-    ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
-        try {
-            ClassSchedule savedClassSchedule = classScheduleRepository.save(newClassSchedule);
-            Reservation reservation = new Reservation();
-            reservation.setClassSchedule(savedClassSchedule);
-            reservation.setStatus(0L);
-            reservation.setUser(savedClassSchedule.getUser());
-            reservationRepository.save(reservation);
-            return savedClassSchedule;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+
 
 
     @PostMapping("/new_userCourse")
@@ -90,16 +77,7 @@ public class TempController {
         return roomFacilityRepository.findAll();
     }
 
-    @GetMapping("/reservations")
-    public List<Reservation> getReservations() {
-        return reservationRepository.findAll();
-    }
-    @GetMapping("reservations/{email}")
-    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
-        System.out.println(email);
-        System.out.println(reservationRepository.findByUserEmail(email));
-        return reservationRepository.findByUserEmail(email);
-    }
+
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);
