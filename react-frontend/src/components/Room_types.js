@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function RoomTypes() {
   const [roomTypeList, setRoomTypeList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newRoomTypeName, setNewRoomTypeName] = useState("");
+  const [editRoomType, setEditRoomType] = useState(null);
 
   useEffect(() => {
     loadRoomTypes();
@@ -19,27 +22,66 @@ function RoomTypes() {
     setShowForm(true);
   };
 
+  const handleEditRoomType = (roomType) => {
+    setShowForm(true);
+    setEditRoomType(roomType);
+    setNewRoomTypeName(roomType.room_name);
+  };
+
+  const handleDeleteRoomType = async (roomType) => {
+    try {
+      await axios.delete(`http://localhost:8080/room_types/${roomType.id}`);
+      const updatedRoomTypeList = roomTypeList.filter((rt) => rt.id !== roomType.id);
+      setRoomTypeList(updatedRoomTypeList);
+      toast.success("Typ sali został usunięty.");
+    } catch (error) {
+      console.error("Error deleting room type:", error);
+      toast.error("Wystąpił błąd podczas usuwania typu sali.");
+    }
+  };
+
   const handleRoomTypeNameChange = (event) => {
     setNewRoomTypeName(event.target.value);
   };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const newRoomType = { room_name: newRoomTypeName };
-    try {
-      const response = await axios.post("http://localhost:8080/new_roomType", newRoomType);
-      const createdRoomType = response.data;
-      setRoomTypeList([...roomTypeList, createdRoomType]);
-      setNewRoomTypeName("");
-      setShowForm(false);
-    } catch (error) {
-      console.error("Error creating room type:", error);
+
+    if (editRoomType) {
+      try {
+        const updatedRoomType = { ...editRoomType, room_name: newRoomTypeName };
+        await axios.put(`http://localhost:8080/room_types/${editRoomType.id}`, updatedRoomType);
+        const updatedRoomTypeList = roomTypeList.map((rt) =>
+          rt.id === editRoomType.id ? { ...rt, room_name: newRoomTypeName } : rt
+        );
+        setRoomTypeList(updatedRoomTypeList);
+        toast.success("Typ sali został zaktualizowany.");
+        setEditRoomType(null);
+      } catch (error) {
+        console.error("Error updating room type:", error);
+        toast.error("Wystąpił błąd podczas aktualizacji typu sali.");
+      }
+    } else {
+      const newRoomType = { room_name: newRoomTypeName };
+      try {
+        const response = await axios.post("http://localhost:8080/new_roomType", newRoomType);
+        const createdRoomType = response.data;
+        setRoomTypeList([...roomTypeList, createdRoomType]);
+        toast.success("Nowy typ sali został dodany.");
+      } catch (error) {
+        console.error("Error creating room type:", error);
+        toast.error("Wystąpił błąd podczas dodawania nowego typu sali.");
+      }
     }
+
+    setNewRoomTypeName("");
+    setShowForm(false);
   };
 
   const handleCancel = () => {
     setShowForm(false);
     setNewRoomTypeName("");
+    setEditRoomType(null);
   };
 
   return (
@@ -60,8 +102,12 @@ function RoomTypes() {
               <td>{index + 1}.</td>
               <td>{roomType.room_name}</td>
               <td>
-                <button className="btn btn-primary mx-2">Edit</button>
-                <button className="btn btn-danger mx-2">Delete</button>
+                <button className="btn btn-primary mx-2" onClick={() => handleEditRoomType(roomType)}>
+                  Edit
+                </button>
+                <button className="btn btn-danger mx-2" onClick={() => handleDeleteRoomType(roomType)}>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -85,7 +131,7 @@ function RoomTypes() {
           </div>
           <div className="form-buttons">
             <button type="submit" className="add-button">
-              Dodaj
+              {editRoomType ? "Zaktualizuj" : "Dodaj"}
             </button>
             <button type="button" className="cancel-button" onClick={handleCancel}>
               Anuluj
@@ -93,6 +139,7 @@ function RoomTypes() {
           </div>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 }

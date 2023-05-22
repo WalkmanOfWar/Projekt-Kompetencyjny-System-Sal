@@ -19,7 +19,6 @@ public class TempController {
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
     private final RoomRepository roomRepository;
-    private final RoomTypeRepository roomTypeRepository;
     private final UserCourseRepository userCourseRepository;
     private final UserRepository userRepository;
 
@@ -54,10 +53,7 @@ public class TempController {
         }
     }
 
-    @PostMapping("/new_roomType")
-    RoomType newRoomType(@RequestBody RoomType roomType) {
-        return roomTypeRepository.save(roomType);
-    }
+
     @PostMapping("/new_userCourse")
     public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
         if (userCourseRepository.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {
@@ -84,10 +80,7 @@ public class TempController {
     public List<Room> getRooms() {
         return roomRepository.findAll();
     }
-    @GetMapping("/room_types")
-    public List<RoomType> getRoomTypes() {
-        return roomTypeRepository.findAll();
-    }
+
     @GetMapping("/course_facilities")
     public List<CourseFacility> getCourseFacilities() {
         return courseFacilityRepository.findAll();
