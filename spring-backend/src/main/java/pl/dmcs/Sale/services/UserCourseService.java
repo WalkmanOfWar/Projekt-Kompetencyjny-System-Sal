@@ -30,4 +30,15 @@ public class UserCourseService {
     public List<UserCourse> findByCourseId(Long courseId) {
         return userCourseRepository.findByCourseId(courseId);
     }
+
+    public void deleteById(Long id) {
+        userCourseRepository.deleteById(id);
+    }
+
+    public void updateUserCourse(Long id, UserCourse userCourse) {
+        UserCourse existingUserCourse = userCourseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Nie można znaleźć użytkownika o podanym id: " + id));
+        existingUserCourse.setCourse(userCourse.getCourse());
+        existingUserCourse.setUser(userCourse.getUser());
+        userCourseRepository.save(existingUserCourse);
+    }
 }

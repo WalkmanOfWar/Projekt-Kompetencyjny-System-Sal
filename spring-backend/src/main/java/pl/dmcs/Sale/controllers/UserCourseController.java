@@ -41,4 +41,14 @@ public class UserCourseController {
         List<UserCourse> userCourses = userCourseService.findByCourseId(courseId);
         return ResponseEntity.ok(userCourses);
     }
+
+    @DeleteMapping("/user_course/{id}")
+    void deleteUserCourse(@PathVariable Long id) {
+        userCourseService.deleteById(id);
+    }
+    @PutMapping("/user_course/{id}")
+    void updateUserCourse(@PathVariable Long id, @RequestBody UserCourse userCourse) {
+        userCourseService.updateUserCourse(id, userCourse);
+    }
+
 }
