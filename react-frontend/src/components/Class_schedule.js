@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './Room.css';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { set } from 'react-hook-form';
 
 function Class_schedule() {
+  const [sortBy, setSortBy] = useState('');
+  const handleSortBy = (e) => {
+    setSortBy(e.target.value);
+  };
   const [classScheduleList, setClassScheduleList] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editSchedule, setEditSchedule] = useState(null);
@@ -23,14 +27,14 @@ function Class_schedule() {
 
   const [roomList, setRoomList] = useState([]);
   const [userCourseList, setUserCourseList] = useState([]);
-  const dayOfWeeks  = [
+  const dayOfWeeks = [
     { id: 1, name: 'Poniedziałek' },
     { id: 2, name: 'Wtorek' },
     { id: 3, name: 'Środa' },
     { id: 4, name: 'Czwartek' },
     { id: 5, name: 'Piątek' },
   ];
-  const isParity =[
+  const isParity = [
     { id: 0, name: '-' },
     { id: 1, name: 'x1' },
     { id: 2, name: 'x2' },
@@ -167,13 +171,10 @@ function Class_schedule() {
     setNewUserId(event.target.value);
   };
 
-  
-
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-
-    if(editSchedule){
+    if (editSchedule) {
       const updatedSchedule = {
         id: editSchedule.id,
         day_of_week: newDayOfWeek,
@@ -191,8 +192,8 @@ function Class_schedule() {
         updatedSchedule
       );
       setEditSchedule(null);
-      toast.success("Zaktualizowano plan zajęć");
-    }else{
+      toast.success('Zaktualizowano plan zajęć');
+    } else {
       const newClassSchedule = {
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
@@ -209,7 +210,7 @@ function Class_schedule() {
         newClassSchedule
       );
       setClassScheduleList([...classScheduleList, newClassSchedule]);
-      toast.success("Dodano nowy plan zajęć");
+      toast.success('Dodano nowy plan zajęć');
     }
 
     handleCancel();
@@ -232,16 +233,17 @@ function Class_schedule() {
     try {
       await axios.delete(`http://localhost:8080/delete_schedule/${courseId}`);
       loadClassSchedules();
-      toast.success("Plan został usunięty.");
+      toast.success('Plan został usunięty.');
     } catch (error) {
-      console.log("Wystąpił błąd podczas usuwania planu:", error);
-      toast.error("Wystąpił błąd podczas usuwania .");
+      console.log('Wystąpił błąd podczas usuwania planu:', error);
+      toast.error('Wystąpił błąd podczas usuwania .');
     }
   };
 
   const handleEditSchedule = (scheduleID) => {
-
-    const schedule = classScheduleList.find((schedule) => schedule.id === scheduleID);
+    const schedule = classScheduleList.find(
+      (schedule) => schedule.id === scheduleID
+    );
     setEditSchedule(schedule);
     setNewCourseId(schedule.course.id);
     setNewRoomId(schedule.room.id);
@@ -257,7 +259,6 @@ function Class_schedule() {
     setShowForm(true);
   };
 
-
   function enableScroll() {
     document.body.classList.remove('disable-scroll');
   }
@@ -272,234 +273,313 @@ function Class_schedule() {
     enableScroll();
   }
 
+  const generateClassSchedulesDisplay = () => {
+    let sortedClassSchedules = [...classScheduleList];
+    console.log(sortedClassSchedules);
+
+    if (sortBy === 'user') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.user.email.localeCompare(b.user.email)
+      );
+    } else if (sortBy === 'room') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.room.name.localeCompare(b.room.name)
+      );
+    } else if (sortBy === 'course') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.course.name.localeCompare(b.course.name)
+      );
+    } else if (sortBy === 'parity') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        getisParityName(a.is_parity).localeCompare(getisParityName(b.is_parity))
+      );
+    } else if (sortBy === 'day') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        getDayOfWeekName(a.day_of_week).localeCompare(
+          getDayOfWeekName(b.day_of_week)
+        )
+      );
+    } else if (sortBy === 'startTime') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.start_time.localeCompare(b.start_time)
+      );
+    } else if (sortBy === 'endTime') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.end_time.localeCompare(b.end_time)
+      );
+    } else if (sortBy === 'startWeek') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) => {
+        return a.start_week - b.start_week;
+      });
+    } else if (sortBy === 'endWeek') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) => {
+        return a.end_week - b.end_week;
+      });
+    }
+    return (
+      <>
+        <h2 className='room-title'>Lista planów zajęć</h2>
+        <div className='horizontal-line'></div>
+        <div className='sort-container'>
+          <h4 htmlFor='sort' className='label text-light'>
+            Sortuj według:
+          </h4>
+          <select
+            className='form-select'
+            id='sort'
+            value={sortBy}
+            onChange={handleSortBy}>
+            <option value=''>Brak sortowania</option>
+            <option value='user'>Prowadzący</option>
+            <option value='room'>Nazwa sali</option>
+            <option value='course'>Nazwa kursu</option>
+            <option value='parity'>Parzystość</option>
+            <option value='day'>Dzień</option>
+            <option value='startTime'>Czas - początek</option>
+            <option value='endTime'>Czas - koniec</option>
+            <option value='startWeek'>Tydzień - początek</option>
+            <option value='endWeek'>Tydzień - koniec</option>
+          </select>
+        </div>
+        <table className='room-table'>
+          <thead>
+            <tr>
+              <th>Lp.</th>
+              <th>Prowadzący</th>
+              <th>Przedmiot</th>
+              <th>Pokój</th>
+              <th>Dzień tygodnia</th>
+              <th>Początek - czas</th>
+              <th>Koniec - czas</th>
+              <th>Początek - tydzień</th>
+              <th>Koniec - tydzień</th>
+              <th>Parzystość</th>
+              <th>Akcja</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedClassSchedules.map((classSchedule, index) => (
+              <tr key={classSchedule.id}>
+                <td>{index + 1}.</td>
+                <td>{classSchedule.user.email}</td>
+                <td>{classSchedule.course.name}</td>
+                <td>{classSchedule.room.name}</td>
+                <td>{getDayOfWeekName(classSchedule.day_of_week)}</td>
+                <td>{classSchedule.start_time}</td>
+                <td>{classSchedule.end_time}</td>
+                <td>{classSchedule.start_week}</td>
+                <td>{classSchedule.end_week}</td>
+                <td>{getisParityName(classSchedule.is_parity)}</td>
+                <td>
+                  <button
+                    className='btn btn-primary mx-2'
+                    onClick={() => handleEditSchedule(classSchedule.id)}>
+                    Edit
+                  </button>
+                  <button
+                    className='btn btn-danger mx-2'
+                    onClick={() => handleDeleteSchedule(classSchedule.id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className='add-button-wrapper'>
+          <button className='add-button' onClick={handleAddClassSchedule}>
+            Dodaj
+          </button>
+        </div>
+        {showForm && (
+          <form
+            onSubmit={handleFormSubmit}
+            className={showForm ? 'add-form' : 'hidden'}
+            style={{ paddingTop: '300px', paddingBottom: '100px' }}>
+            <div className='form-group'>
+              <label htmlFor='newCourseId'>Nazwa przedmiotu:</label>
+              <select
+                className='form-select'
+                id='newCourseId'
+                value={newCourseId}
+                onChange={handleCourseIdChange}>
+                <option value=''>Wybierz przedmiot</option>
+                {coursesList.map((courses) => (
+                  <option key={courses.id} value={courses.id}>
+                    {courses.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newRoomId'>Sala:</label>
+              <select
+                className='form-select'
+                id='newRoomId'
+                value={newRoomId}
+                onChange={handleRoomIdChange}>
+                <option value=''>Wybierz sale</option>
+                {roomList.map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newDayOfWeek'>Dzień tygodnia:</label>
+              <select
+                className='form-select'
+                id='newDayOfWeek'
+                value={newDayOfWeek}
+                onChange={handleDayOfWeekChange}
+                min='0'>
+                <option value=''>Wybierz dzień</option>
+                {dayOfWeeks.map((dayOfWeek) => (
+                  <option key={dayOfWeek.id} value={dayOfWeek.id}>
+                    {dayOfWeek.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newStartTime'>Czas rozpoczęcia:</label>
+              <select
+                className='form-select'
+                id='newStartTime'
+                value={newStartTime}
+                onChange={handleStartTimeChange}
+                min='0'>
+                <option value=''>Wybierz czas rozpoczęcia</option>
+                {startingTimeSlots.map((startTime) => (
+                  <option
+                    key={startTime.id}
+                    value={startTime.text}
+                    disabled={
+                      newEndTime !== '' && newEndTime <= startTime.id - 1
+                    }>
+                    {startTime.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newEndTime'>Czas zakończenia:</label>
+              <select
+                className='form-select'
+                id='newEndTime'
+                value={newEndTime}
+                onChange={handleEndTimeChange}
+                min='0'>
+                <option value=''>Wybierz czas zakończenia</option>
+                {endingTimeSlots.map((endTime) => (
+                  <option
+                    key={endTime.id}
+                    value={endTime.text}
+                    disabled={
+                      newStartTime !== '' && newStartTime >= endTime.id + 1
+                    }>
+                    {endTime.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newStartWeek'>Początkowy tydzień:</label>
+              <select
+                className='form-select'
+                id='newStartWeek'
+                value={newStartWeek}
+                onChange={handleStartWeekChange}
+                min='0'>
+                <option value=''>Wybierz początkowy tydzień</option>
+                {[...Array(15)].map((_, index) => (
+                  <option
+                    key={index + 1}
+                    value={index + 1}
+                    disabled={newEndWeek !== '' && newEndWeek <= index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newEndWeek'>Końcowy tydzień:</label>
+              <select
+                className='form-select'
+                id='newEndWeek'
+                value={newEndWeek}
+                onChange={handleEndWeekChange}
+                min='0'>
+                <option value=''>Wybierz końcowy tydzień</option>
+                {[...Array(15)].map((_, index) => (
+                  <option
+                    key={index + 1}
+                    value={index + 1}
+                    disabled={newStartWeek !== '' && newStartWeek >= index + 1}>
+                    {index + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newIsParity'>Parzystość:</label>
+              <select
+                className='form-select'
+                id='newIsParity'
+                value={newIsParity}
+                onChange={handleIsParityChange}>
+                <option value=''>Wybierz parzystość</option>
+                {isParity.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className='form-group'>
+              <label htmlFor='newUserId'>Prowadzący:</label>
+              <select
+                className='form-select'
+                id='newUserId'
+                value={newUserId}
+                onChange={handleNewUserId}>
+                {userCourseList.length === 0 ? (
+                  <option value=''>
+                    Ten przedmiot nie ma przypisanych prowadzących
+                  </option>
+                ) : (
+                  <>
+                    <option value=''>Wybierz prowadzącego</option>
+                    {userCourseList.map((userCourse) => (
+                      <option key={userCourse.user.id} value={userCourse.user}>
+                        {userCourse.user.first_name}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+            </div>
+            <div className='form-buttons'>
+              <button type='submit' className='add-button'>
+                {editSchedule ? 'Zaktualizuj' : 'Dodaj'}
+              </button>
+              <button
+                type='button'
+                className='cancel-button'
+                onClick={handleCancel}>
+                Anuluj
+              </button>
+            </div>
+          </form>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className='room-wrapper'>
-      <h2 className='room-title'>Lista planów zajęć</h2>
-      <div className='horizontal-line'></div>
-      <table className='room-table'>
-        <thead>
-          <tr>
-            <th>Lp.</th>
-            <th>Prowadzący</th>
-            <th>Przedmiot</th>
-            <th>Pokój</th>
-            <th>Dzień tygodnia</th>
-            <th>Początek - czas</th>
-            <th>Koniec - czas</th>
-            <th>Początek - tydzień</th>
-            <th>Koniec - tydzień</th>
-            <th>Parzystość</th>
-            <th>Akcja</th>
-          </tr>
-        </thead>
-        <tbody>
-          {classScheduleList.map((classSchedule, index) => (
-            <tr key={classSchedule.id}>
-              <td>{index + 1}.</td>
-              <td>{classSchedule.user.email}</td>
-              <td>{classSchedule.course.name}</td>
-              <td>{classSchedule.room.name}</td>
-              <td>{getDayOfWeekName(classSchedule.day_of_week)}</td>
-              <td>{classSchedule.start_time}</td>
-              <td>{classSchedule.end_time}</td>
-              <td>{classSchedule.start_week}</td>
-              <td>{classSchedule.end_week}</td>
-              <td>{getisParityName(classSchedule.is_parity)}</td>
-              <td>
-                <button className='btn btn-primary mx-2'
-                onClick={() => handleEditSchedule(classSchedule.id)}>Edit</button>
-                <button className='btn btn-danger mx-2' onClick={() => handleDeleteSchedule(classSchedule.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className='add-button-wrapper'>
-        <button className='add-button' onClick={handleAddClassSchedule}>
-          Dodaj
-        </button>
-      </div>
-      {showForm && (
-        <form
-          onSubmit={handleFormSubmit}
-          className={showForm ? 'add-form' : 'hidden'}>
-          <div className='form-group'>
-            <label htmlFor='newCourseId'>Nazwa przedmiotu:</label>
-            <select
-              className='form-select'
-              id='newCourseId'
-              value={newCourseId}
-              onChange={handleCourseIdChange}>
-              <option value=''>Wybierz przedmiot</option>
-              {coursesList.map((courses) => (
-                <option key={courses.id} value={courses.id}>
-                  {courses.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newRoomId'>Sala:</label>
-            <select
-              className='form-select'
-              id='newRoomId'
-              value={newRoomId}
-              onChange={handleRoomIdChange}>
-              <option value=''>Wybierz sale</option>
-              {roomList.map((room) => (
-                <option key={room.id} value={room.id}>
-                  {room.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newDayOfWeek'>Dzień tygodnia:</label>
-            <select
-              className='form-select'
-              id='newDayOfWeek'
-              value={newDayOfWeek}
-              onChange={handleDayOfWeekChange}
-              min='0'>
-              <option value=''>Wybierz dzień</option>
-              {dayOfWeeks.map((dayOfWeek) => (
-                <option key={dayOfWeek.id} value={dayOfWeek.id}>
-                  {dayOfWeek.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newStartTime'>Czas rozpoczęcia:</label>
-            <select
-              className='form-select'
-              id='newStartTime'
-              value={newStartTime}
-              onChange={handleStartTimeChange}
-              min='0'>
-              <option value=''>Wybierz czas rozpoczęcia</option>
-              {startingTimeSlots.map((startTime) => (
-                <option
-                  key={startTime.id}
-                  value={startTime.text}
-                  disabled={
-                    newEndTime !== '' && newEndTime <= startTime.id - 1
-                  }>
-                  {startTime.text}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newEndTime'>Czas zakończenia:</label>
-            <select
-              className='form-select'
-              id='newEndTime'
-              value={newEndTime}
-              onChange={handleEndTimeChange}
-              min='0'>
-              <option value=''>Wybierz czas zakończenia</option>
-              {endingTimeSlots.map((endTime) => (
-                <option
-                  key={endTime.id}
-                  value={endTime.text}
-                  disabled={
-                    newStartTime !== '' && newStartTime >= endTime.id + 1
-                  }>
-                  {endTime.text}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newStartWeek'>Początkowy tydzień:</label>
-            <select
-              className='form-select'
-              id='newStartWeek'
-              value={newStartWeek}
-              onChange={handleStartWeekChange}
-              min='0'>
-              <option value=''>Wybierz początkowy tydzień</option>
-              {[...Array(15)].map((_, index) => (
-                <option
-                  key={index + 1}
-                  value={index + 1}
-                  disabled={newEndWeek !== '' && newEndWeek <= index + 1}>
-                  {index + 1}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newEndWeek'>Końcowy tydzień:</label>
-            <select
-              className='form-select'
-              id='newEndWeek'
-              value={newEndWeek}
-              onChange={handleEndWeekChange}
-              min='0'>
-              <option value=''>Wybierz końcowy tydzień</option>
-              {[...Array(15)].map((_, index) => (
-                <option
-                  key={index + 1}
-                  value={index + 1}
-                  disabled={newStartWeek !== '' && newStartWeek >= index + 1}>
-                  {index + 1}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newIsParity'>Parzystość:</label>
-            <select
-              className='form-select'
-              id='newIsParity'
-              value={newIsParity}
-              onChange={handleIsParityChange}>
-              <option value=''>Wybierz parzystość</option>
-              {isParity.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='newUserId'>Prowadzący:</label>
-            <select
-              className='form-select'
-              id='newUserId'
-              value={newUserId}
-              onChange={handleNewUserId}>
-              {userCourseList.length === 0 ? (
-                <option value=''>
-                  Ten przedmiot nie ma przypisanych prowadzących
-                </option>
-              ) : (
-                <>
-                  <option value=''>Wybierz prowadzącego</option>
-                  {userCourseList.map((userCourse) => (
-                    <option key={userCourse.user.id} value={userCourse.user}>
-                      {userCourse.user.first_name}
-                    </option>
-                  ))}
-                </>
-              )}
-            </select>
-          </div>
-          <div className='form-buttons'>
-            <button type='submit' className='add-button'>
-            {editSchedule ? "Zaktualizuj" : "Dodaj"}
-            </button>
-            <button
-              type='button'
-              className='cancel-button'
-              onClick={handleCancel}>
-              Anuluj
-            </button>
-          </div>
-        </form>
-      )}
+      {generateClassSchedulesDisplay()}
       <ToastContainer />
     </div>
   );
