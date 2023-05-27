@@ -113,7 +113,7 @@ export default function GenerateHomeTable() {
     return (
       <td>
         <div className='card-container'>
-          <div className='card text-white bg-dark'>
+          <div className='card text-black bg-striped'>
             <h5 className='card-header'>
               {reservation
                 ? displayCourseType(reservation.course.course_type) +
@@ -218,7 +218,7 @@ export default function GenerateHomeTable() {
         <div class='card-header'>{scheduleTypeText}</div>
         <div class='card-title'>{roomText}</div>
         <div className='card-body'>
-          <div className='table table-responsive table-dark'>
+          <div className='table table-responsive table-striped'>
             {generateTableHeader()}
             {generateTableContent()}
           </div>

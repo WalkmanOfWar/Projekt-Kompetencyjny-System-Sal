@@ -1,0 +1,36 @@
+
+.vertical-text {
+    transform: rotate(90deg);
+    transform-origin: left top 0;
+  }
+  
+  .box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .course-text {
+    font-size: 0.8rem;
+  }
+  
+  .room-text {
+    font-weight: bold;
+  }
+  
+  .card-container {
+    display: flex;
+    align-items: stretch; /* Ensures equal height */
+  }
+  
+  .card-container > .card {
+    flex: 1; /* Ensures equal width */
+  }
+  .logger {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+  }
+  
+  
