@@ -31,16 +31,6 @@ public class TempController {
     }
 
 
-    @GetMapping("/course_facilities")
-    public List<CourseFacility> getCourseFacilities() {
-        return courseFacilityRepository.findAll();
-    }
-    @GetMapping("/room_facilities")
-    public List<RoomFacility> getRoomFacilities() {
-        return roomFacilityRepository.findAll();
-    }
-
-
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);

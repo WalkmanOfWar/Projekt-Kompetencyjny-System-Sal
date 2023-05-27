@@ -150,8 +150,14 @@ function UserCourses() {
         <h2 className='room-title'>Przedmioty prowadzących</h2>
         <div className='horizontal-line'></div>
         <div className='sort-container'>
-          <label htmlFor='sort'>Sortuj według:</label>
-          <select id='sort' value={sortBy} onChange={handleSortBy}>
+          <h4 htmlFor='sort' className='label text-light'>
+            Sortuj według:
+          </h4>
+          <select
+            className='form-select'
+            id='sort'
+            value={sortBy}
+            onChange={handleSortBy}>
             <option value=''>Brak sortowania</option>
             <option value='courseName'>Nazwa kursu</option>
             <option value='email'>E-mail</option>
@@ -183,14 +189,12 @@ function UserCourses() {
                 <td>
                   <button
                     className='btn btn-primary mx-2'
-                    onClick={() => handleEditUserCourse(userCourse)}
-                  >
+                    onClick={() => handleEditUserCourse(userCourse)}>
                     Edytuj
                   </button>
                   <button
                     className='btn btn-danger mx-2'
-                    onClick={() => handleDeleteUserCourse(userCourse.id)}
-                  >
+                    onClick={() => handleDeleteUserCourse(userCourse.id)}>
                     Usuń
                   </button>
                 </td>
@@ -213,8 +217,7 @@ function UserCourses() {
         {showForm && (
           <form
             onSubmit={handleFormSubmit}
-            className={showForm ? 'add-form' : 'hidden'}
-          >
+            className={showForm ? 'add-form' : 'hidden'}>
             <h2 className='text-center m-4'>Nowe połączenie użytkownik-kurs</h2>
 
             <div className='form-group'>
@@ -228,10 +231,8 @@ function UserCourses() {
                   setSelectedUser(e.target.value);
                   setNewUser(e.target.value);
                 }}
-              >
-                <option value='no-room-type-selected'>
-                  Wybierz jedną z opcji...
-                </option>
+                required>
+                <option value=''>Wybierz jedną z opcji...</option>
                 {users.map((user) => (
                   <option key={user.id} value={user.email}>
                     {user.email}
@@ -251,10 +252,8 @@ function UserCourses() {
                   setSelectedCourse(e.target.value);
                   setNewCourse(e.target.value);
                 }}
-              >
-                <option value='no-room-type-selected'>
-                  Wybierz jedną z opcji...
-                </option>
+                required>
+                <option value=''>Wybierz jedną z opcji...</option>
                 {courses.map((course) => (
                   <option key={course.id} value={course.name}>
                     {course.name}
@@ -270,8 +269,7 @@ function UserCourses() {
               <button
                 type='button'
                 className='cancel-button'
-                onClick={handleCancel}
-              >
+                onClick={handleCancel}>
                 Anuluj
               </button>
             </div>

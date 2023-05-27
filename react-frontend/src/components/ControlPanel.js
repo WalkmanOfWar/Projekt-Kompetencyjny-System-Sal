@@ -8,6 +8,8 @@ import Users from './Users';
 import Facilities from './Facilities';
 import Reservations from './Reservations';
 import Class_schedule from './Class_schedule';
+import CourseFacilities from './CourseFacilities';
+import RoomFacilities from './RoomFacilities';
 
 function ControlPanel() {
   const [selectedButton, setSelectedButton] = useState('Room');
@@ -30,6 +32,10 @@ function ControlPanel() {
         return <Users />;
       case 'Facilities':
         return <Facilities />;
+      case 'CourseFacilities':
+        return <CourseFacilities />;
+      case 'RoomFacilities':
+        return <RoomFacilities />;
       case 'Reservations':
         return <Reservations />;
       case 'Class_schedule':
@@ -78,10 +84,22 @@ function ControlPanel() {
           onClick={() => handleButtonClick('Facilities')}>
           Dostępne udogodnienia
         </button>
-        {/* DODAĆ Udogodnienia przedmiotów */}
-        {/* DODAĆ Udogodnienia sal */}
+        <button
+          className={`btn btn-primary ${
+            selectedButton === 'CourseFacilities' ? 'selected' : ''
+          }`}
+          onClick={() => handleButtonClick('CourseFacilities')}>
+          Udogodnienia kursów
+        </button>
       </div>
       <div className='container-fluid'>
+        <button
+          className={`btn btn-primary ${
+            selectedButton === 'RoomFacilities' ? 'selected' : ''
+          }`}
+          onClick={() => handleButtonClick('RoomFacilities')}>
+          Udogodnienia sal
+        </button>
         <button
           className={`btn btn-primary ${
             selectedButton === 'Room_types' ? 'selected' : ''
