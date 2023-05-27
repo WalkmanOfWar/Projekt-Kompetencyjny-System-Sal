@@ -18,12 +18,38 @@ function Reservations() {
     setReservationList(result.data);
   };
 
+  //todo: dorobić to w backendzie
+  const updateReservationStatus = async (reservationId, newStatus) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/reservations/${reservationId}`,
+        {
+          status: newStatus,
+        }
+      );
+      if (response.status === 200) {
+        const updatedReservations = reservationList.map((reservation) => {
+          if (reservation.id === reservationId) {
+            return { ...reservation, status: newStatus };
+          }
+          return reservation;
+        });
+        setReservationList(updatedReservations);
+        console.log('Reservation status updated successfully.');
+      }
+    } catch (error) {
+      console.error('Error updating reservation status:', error);
+    }
+  };
+
   const displayStatus = (status) => {
     switch (status) {
       case 0:
-        return 'Niezaakceptowana';
+        return 'Oczekująca';
       case 1:
         return 'Zaakceptowana';
+      case 2:
+        return 'Odrzucona';
       default:
         break;
     }
@@ -55,6 +81,14 @@ function Reservations() {
       default:
         return 'Nie brane pod uwagę';
     }
+  };
+
+  const handleAcceptReservation = (reservationId) => {
+    updateReservationStatus(reservationId, 1);
+  };
+
+  const handleRejectReservation = (reservationId) => {
+    updateReservationStatus(reservationId, 2);
   };
 
   const generateReservationsDisplay = () => {
@@ -96,8 +130,18 @@ function Reservations() {
                 <td>{displayParity(reservation.classSchedule.is_parity)}</td>
                 <td>{displayStatus(reservation.status)}</td>
                 <td>
-                  <button className='btn btn-primary mx-2'>Edit</button>
-                  <button className='btn btn-danger mx-2'>Delete</button>
+                  <button
+                    className='btn btn-primary mx-2'
+                    onClick={() => handleAcceptReservation(reservation.id)}
+                  >
+                    Akceptuj
+                  </button>
+                  <button
+                    className='btn btn-danger mx-2'
+                    onClick={() => handleRejectReservation(reservation.id)}
+                  >
+                    Odrzuć
+                  </button>
                 </td>
               </tr>
             ))}

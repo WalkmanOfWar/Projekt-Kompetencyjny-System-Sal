@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './Room.css';
 import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { set } from 'react-hook-form';
 
 function Class_schedule() {
   const [classScheduleList, setClassScheduleList] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [newTimeDateId, setNewTimeDateId] = useState('');
+  const [editSchedule, setEditSchedule] = useState(null);
+
   const [newCourseId, setNewCourseId] = useState('');
+  const [newUserId, setNewUserId] = useState('');
   const [newRoomId, setNewRoomId] = useState('');
   const [newDayOfWeek, setNewDayOfWeek] = useState('');
   const [newStartTime, setNewStartTime] = useState('');
@@ -14,22 +19,22 @@ function Class_schedule() {
   const [newStartWeek, setNewStartWeek] = useState('');
   const [newEndWeek, setNewEndWeek] = useState('');
   const [newIsParity, setNewIsParity] = useState('');
-  const [newUserId, setNewUserId] = useState('');
   const [coursesList, setCourseList] = useState([]);
+
   const [roomList, setRoomList] = useState([]);
   const [userCourseList, setUserCourseList] = useState([]);
-  const [dayOfWeeks, setDayOfWeek] = useState([
+  const dayOfWeeks  = [
     { id: 1, name: 'Poniedziałek' },
     { id: 2, name: 'Wtorek' },
     { id: 3, name: 'Środa' },
     { id: 4, name: 'Czwartek' },
     { id: 5, name: 'Piątek' },
-  ]);
-  const [isParity, setisParity] = useState([
+  ];
+  const isParity =[
     { id: 0, name: '-' },
     { id: 1, name: 'x1' },
     { id: 2, name: 'x2' },
-  ]);
+  ];
 
   const startingTimeSlots = [
     { id: 0, text: '08:15:00' },
@@ -71,6 +76,20 @@ function Class_schedule() {
     return temp ? temp.name : '';
   };
 
+  const findStartTimeById = (id) => {
+    const result = startingTimeSlots.find(
+      (timeSlot) => timeSlot.id === parseInt(id)
+    );
+    return result ? result.text : null;
+  };
+
+  const findEndTimeById = (id) => {
+    const result = endingTimeSlots.find(
+      (timeSlot) => timeSlot.id === parseInt(id)
+    );
+    return result ? result.text : null;
+  };
+
   useEffect(() => {
     loadClassSchedules();
     loadCourses();
@@ -93,8 +112,9 @@ function Class_schedule() {
 
   const loadUserCourse = async (courseId) => {
     const result = await axios.get(
-      `http://localhost:8080/users/byCourse/${courseId}`
+      `http://localhost:8080/userCourse/byCourseId/${courseId}`
     );
+    console.log(result.data);
     setUserCourseList(result.data);
   };
 
@@ -104,11 +124,8 @@ function Class_schedule() {
   };
 
   const handleAddClassSchedule = () => {
+    setEditSchedule(null);
     setShowForm(true);
-  };
-
-  const handleTimeDateIdChange = (event) => {
-    setNewTimeDateId(event.target.value);
   };
 
   const handleCourseIdChange = (event) => {
@@ -150,52 +167,56 @@ function Class_schedule() {
     setNewUserId(event.target.value);
   };
 
-  const findStartTimeById = (id) => {
-    const result = startingTimeSlots.find(
-      (timeSlot) => timeSlot.id === parseInt(id)
-    );
-    return result ? result.text : null;
-  };
-
-  const findEndTimeById = (id) => {
-    const result = endingTimeSlots.find(
-      (timeSlot) => timeSlot.id === parseInt(id)
-    );
-    return result ? result.text : null;
-  };
+  
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    const newClassScheduleId = classScheduleList.length + 1;
-    const newClassSchedule = {
-      id: newClassScheduleId,
-      day_of_week: newDayOfWeek,
-      start_time: findStartTimeById(newStartTime),
-      end_time: findEndTimeById(newEndTime),
-      start_week: newStartWeek,
-      end_week: newEndWeek,
-      is_parity: newIsParity,
-      course: { id: newCourseId },
-      room: { id: newRoomId },
-      user: { id: newUserId },
-    };
 
-    try {
-      console.log(newClassSchedule);
+
+    if(editSchedule){
+      const updatedSchedule = {
+        id: editSchedule.id,
+        day_of_week: newDayOfWeek,
+        start_time: findStartTimeById(newStartTime),
+        end_time: findEndTimeById(newEndTime),
+        start_week: newStartWeek,
+        end_week: newEndWeek,
+        is_parity: newIsParity,
+        course: { id: newCourseId },
+        room: { id: newRoomId },
+        user: { id: newUserId },
+      };
+      await axios.put(
+        `http://localhost:8080/class_schedules/${editSchedule.id}`,
+        updatedSchedule
+      );
+      setEditSchedule(null);
+      toast.success("Zaktualizowano plan zajęć");
+    }else{
+      const newClassSchedule = {
+        day_of_week: newDayOfWeek,
+        start_time: findStartTimeById(newStartTime),
+        end_time: findEndTimeById(newEndTime),
+        start_week: newStartWeek,
+        end_week: newEndWeek,
+        is_parity: newIsParity,
+        course: { id: newCourseId },
+        room: { id: newRoomId },
+        user: { id: newUserId },
+      };
       await axios.post(
         'http://localhost:8080/new_classSchedule',
         newClassSchedule
       );
       setClassScheduleList([...classScheduleList, newClassSchedule]);
-      handleCancel();
-      loadClassSchedules();
-    } catch (error) {
-      console.error('Error while adding class schedule', error);
+      toast.success("Dodano nowy plan zajęć");
     }
+
+    handleCancel();
+    loadClassSchedules();
   };
 
   const handleCancel = () => {
-    setNewTimeDateId('');
     setNewCourseId('');
     setNewRoomId('');
     setNewDayOfWeek('');
@@ -206,6 +227,36 @@ function Class_schedule() {
     setNewIsParity('');
     setShowForm(false);
   };
+
+  const handleDeleteSchedule = async (courseId) => {
+    try {
+      await axios.delete(`http://localhost:8080/delete_schedule/${courseId}`);
+      loadClassSchedules();
+      toast.success("Plan został usunięty.");
+    } catch (error) {
+      console.log("Wystąpił błąd podczas usuwania planu:", error);
+      toast.error("Wystąpił błąd podczas usuwania .");
+    }
+  };
+
+  const handleEditSchedule = (scheduleID) => {
+
+    const schedule = classScheduleList.find((schedule) => schedule.id === scheduleID);
+    setEditSchedule(schedule);
+    setNewCourseId(schedule.course.id);
+    setNewRoomId(schedule.room.id);
+    setNewDayOfWeek(schedule.day_of_week);
+    setNewStartTime(schedule.start_time);
+    setNewEndTime(schedule.end_time);
+    setNewStartWeek(schedule.start_week);
+    setNewEndWeek(schedule.end_week);
+    setNewIsParity(schedule.is_parity);
+    setNewUserId(schedule.user.id);
+    loadUserCourse(schedule.course.id);
+
+    setShowForm(true);
+  };
+
 
   function enableScroll() {
     document.body.classList.remove('disable-scroll');
@@ -255,8 +306,9 @@ function Class_schedule() {
               <td>{classSchedule.end_week}</td>
               <td>{getisParityName(classSchedule.is_parity)}</td>
               <td>
-                <button className='btn btn-primary mx-2'>Edit</button>
-                <button className='btn btn-danger mx-2'>Delete</button>
+                <button className='btn btn-primary mx-2'
+                onClick={() => handleEditSchedule(classSchedule.id)}>Edit</button>
+                <button className='btn btn-danger mx-2' onClick={() => handleDeleteSchedule(classSchedule.id)}>Delete</button>
               </td>
             </tr>
           ))}
@@ -329,7 +381,7 @@ function Class_schedule() {
               {startingTimeSlots.map((startTime) => (
                 <option
                   key={startTime.id}
-                  value={startTime.id}
+                  value={startTime.text}
                   disabled={
                     newEndTime !== '' && newEndTime <= startTime.id - 1
                   }>
@@ -350,7 +402,7 @@ function Class_schedule() {
               {endingTimeSlots.map((endTime) => (
                 <option
                   key={endTime.id}
-                  value={endTime.id}
+                  value={endTime.text}
                   disabled={
                     newStartTime !== '' && newStartTime >= endTime.id + 1
                   }>
@@ -427,7 +479,7 @@ function Class_schedule() {
                 <>
                   <option value=''>Wybierz prowadzącego</option>
                   {userCourseList.map((userCourse) => (
-                    <option key={userCourse.user.id} value={userCourse.user.id}>
+                    <option key={userCourse.user.id} value={userCourse.user}>
                       {userCourse.user.first_name}
                     </option>
                   ))}
@@ -437,7 +489,7 @@ function Class_schedule() {
           </div>
           <div className='form-buttons'>
             <button type='submit' className='add-button'>
-              Dodaj
+            {editSchedule ? "Zaktualizuj" : "Dodaj"}
             </button>
             <button
               type='button'
@@ -448,6 +500,7 @@ function Class_schedule() {
           </div>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 }

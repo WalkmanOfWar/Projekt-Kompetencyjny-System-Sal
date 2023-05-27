@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Room.css";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function Facilities() {
   const [facilityList, setFacilityList] = useState([]);
@@ -21,15 +24,30 @@ function Facilities() {
   };
 
   const loadFacilities = async () => {
-    const result = await axios.get(
-      "http://localhost:8080/facilities_available"
-    );
-    setFacilityList(result.data);
+    try {
+      const result = await axios.get("http://localhost:8080/facilities_available");
+      setFacilityList(result.data);
+    } catch (error) {
+      console.log("Wystąpił błąd podczas wczytywania udogodnień:", error);
+      toast.error("Wystąpił błąd podczas wczytywania udogodnień.");
+    }
+  };
+
+  const handleDeleteFacility = async (facilityId) => {
+    try {
+      await axios.delete(`http://localhost:8080/delete_facility/${facilityId}`);
+      loadFacilities();
+      toast.success("Udogodnienie zostało usunięte.");
+    } catch (error) {
+      console.log("Wystąpił błąd podczas usuwania udogodnienia:", error);
+      toast.error("Wystąpił błąd podczas usuwania udogodnienia.");
+    }
   };
 
   const handleAddFacility = () => {
     setShowForm(true);
   };
+  
   const handleCancel = () => {
     setShowForm(false);
   };
@@ -39,14 +57,22 @@ function Facilities() {
       (existingFacility) => existingFacility.name === facility.name
     );
   };
-
+  
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!checkIfFacilityExists(facility)) {
-      await axios.post("http://localhost:8080/new_facilityAvailable", facility);
+      try {
+        await axios.post("http://localhost:8080/create_new_facility", facility);
+        handleCancel();
+        loadFacilities();
+        toast.success("Udogodnienie zostało dodane.");
+      } catch (error) {
+        console.log("Wystąpił błąd podczas dodawania udogodnienia:", error);
+        toast.error("Wystąpił błąd podczas dodawania udogodnienia.");
+      }
+    } else {
+      toast.error("Udogodnienie o podanej nazwie już istnieje.");
     }
-    handleCancel();
-    loadFacilities();
   };
 
   function generateFacilitiesDisplay() {
@@ -68,8 +94,12 @@ function Facilities() {
                 <td>{index + 1}.</td>
                 <td>{facility.name}</td>
                 <td>
-                  <button className="btn btn-primary mx-2">Edit</button>
-                  <button className="btn btn-danger mx-2">Delete</button>
+                  <button
+                    className="btn btn-danger mx-2"
+                    onClick={() => handleDeleteFacility(facility.id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -90,7 +120,8 @@ function Facilities() {
         {showForm && (
           <form
             onSubmit={(e) => handleFormSubmit(e)}
-            className={showForm ? "add-form" : "hidden"}>
+            className={showForm ? "add-form" : "hidden"}
+          >
             <h2 className="text-center m-4">Nowe udogodnienie</h2>
             <div className="form-group">
               <label htmlFor="Name" className="form-label">
@@ -112,7 +143,8 @@ function Facilities() {
               <button
                 type="button"
                 className="cancel-button"
-                onClick={handleCancel}>
+                onClick={handleCancel}
+              >
                 Anuluj
               </button>
             </div>
@@ -126,6 +158,7 @@ function Facilities() {
     <div className="room-wrapper">
       {generateFacilitiesDisplay()}
       {generateNewFacilityForm()}
+      <ToastContainer />
     </div>
   );
 }

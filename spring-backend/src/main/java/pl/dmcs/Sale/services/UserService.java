@@ -5,10 +5,12 @@ import pl.dmcs.Sale.DTOs.LoginRequest;
 import pl.dmcs.Sale.models.User;
 import pl.dmcs.Sale.repositories.UserRepository;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public boolean isUserRegistered(String username) {
         return userRepository.findByEmail(username) != null;
@@ -24,5 +26,34 @@ public class UserService {
                 .is_admin(false)
                 .build();
         userRepository.save(user);
+    }
+
+    public User findByEmail(String username) {
+        return userRepository.findByEmail(username);
+    }
+
+    public User save(User newUser) {
+        return userRepository.save(newUser);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public void updateUser(long l, User user) {
+        User existingUser = userRepository.findById(l).orElseThrow(() -> new IllegalArgumentException("Nie można znaleźć użytkownika o podanym id: " + l));
+        existingUser.setLogin(user.getLogin());
+        existingUser.setPassword(user.getPassword());
+        existingUser.setIs_admin(user.getIs_admin());
+        existingUser.setFirst_name(user.getFirst_name());
+        existingUser.setLast_name(user.getLast_name());
+        existingUser.setSeed(user.getSeed());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setReservations(user.getReservations());
+        userRepository.save(existingUser);
+    }
+
+    public void deleteById(long l) {
+        userRepository.deleteById(l);
     }
 }
