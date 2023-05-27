@@ -112,8 +112,9 @@ function Class_schedule() {
 
   const loadUserCourse = async (courseId) => {
     const result = await axios.get(
-      `http://localhost:8080/users/byCourse/${courseId}`
+      `http://localhost:8080/userCourse/byCourseId/${courseId}`
     );
+    console.log(result.data);
     setUserCourseList(result.data);
   };
 
@@ -241,7 +242,6 @@ function Class_schedule() {
   const handleEditSchedule = (scheduleID) => {
 
     const schedule = classScheduleList.find((schedule) => schedule.id === scheduleID);
-
     setEditSchedule(schedule);
     setNewCourseId(schedule.course.id);
     setNewRoomId(schedule.room.id);
@@ -252,6 +252,7 @@ function Class_schedule() {
     setNewEndWeek(schedule.end_week);
     setNewIsParity(schedule.is_parity);
     setNewUserId(schedule.user.id);
+    loadUserCourse(schedule.course.id);
 
     setShowForm(true);
   };
@@ -380,7 +381,7 @@ function Class_schedule() {
               {startingTimeSlots.map((startTime) => (
                 <option
                   key={startTime.id}
-                  value={startTime.id}
+                  value={startTime.text}
                   disabled={
                     newEndTime !== '' && newEndTime <= startTime.id - 1
                   }>
@@ -401,7 +402,7 @@ function Class_schedule() {
               {endingTimeSlots.map((endTime) => (
                 <option
                   key={endTime.id}
-                  value={endTime.id}
+                  value={endTime.text}
                   disabled={
                     newStartTime !== '' && newStartTime >= endTime.id + 1
                   }>
@@ -478,7 +479,7 @@ function Class_schedule() {
                 <>
                   <option value=''>Wybierz prowadzącego</option>
                   {userCourseList.map((userCourse) => (
-                    <option key={userCourse.user.id} value={userCourse.user.id}>
+                    <option key={userCourse.user.id} value={userCourse.user}>
                       {userCourse.user.first_name}
                     </option>
                   ))}

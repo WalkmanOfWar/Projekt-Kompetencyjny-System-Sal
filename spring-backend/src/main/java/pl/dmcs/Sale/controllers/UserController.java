@@ -1,12 +1,11 @@
 package pl.dmcs.Sale.controllers;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.DTOs.LoginRequest;
 import pl.dmcs.Sale.models.User;
-import pl.dmcs.Sale.repositories.UserRepository;
+import pl.dmcs.Sale.services.UserCourseService;
 import pl.dmcs.Sale.services.UserService;
 
 @AllArgsConstructor
@@ -14,10 +13,8 @@ import pl.dmcs.Sale.services.UserService;
 @CrossOrigin("http://localhost:3000")
 public class UserController {
 
-    @Autowired
     UserService userService;
-
-    private final UserRepository userRepository;
+    UserCourseService userCourseService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -27,7 +24,7 @@ public class UserController {
         if (isRegistered) {
             String password = loginRequest.getPassword();
             if (userService.isPasswordCorrect(username, password)) {
-                User user = userRepository.findByEmail(username);
+                User user = userService.findByEmail(username);
                 // zaloguj użytkownika
                 return ResponseEntity.ok(user);
             } else {
@@ -60,7 +57,7 @@ public class UserController {
 
     @GetMapping("/user/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userService.findByEmail(email);
         System.out.println(user);
 
         if (user != null) {
@@ -69,4 +66,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 }

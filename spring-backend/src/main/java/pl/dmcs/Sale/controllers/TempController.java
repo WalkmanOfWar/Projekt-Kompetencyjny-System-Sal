@@ -40,25 +40,12 @@ public class TempController {
     }
 
 
-
-    @PostMapping("/new_userCourse")
-    public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
-        if (userCourseRepository.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        UserCourse savedUserCourse = userCourseRepository.save(userCourse);
-        return ResponseEntity.ok(savedUserCourse);
-    }
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/user_course")
-    public List<UserCourse> getUserCourse() {
-        return userCourseRepository.findAll();
-    }
+
     @GetMapping("/class_schedules")
     public List<ClassSchedule> getClassSchedules() {
         return classScheduleRepository.findAll();
