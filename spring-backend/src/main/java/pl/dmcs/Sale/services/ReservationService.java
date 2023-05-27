@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReservationService {
-    ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
     public void insertNewReservation(Reservation reservation) {
         reservationRepository.save(reservation);
     }

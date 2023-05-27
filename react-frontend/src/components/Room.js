@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Room.css";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 function Room() {
   const [roomList, setRoomList] = useState([]);
@@ -9,6 +10,8 @@ function Room() {
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const [newRoomTypeId, setNewRoomTypeId] = useState("");
   const [roomTypes, setRoomTypes] = useState([]);
+  const [editRoomId, setEditRoomId] = useState(null); // Nowy stan przechowujący ID edytowanej sali
+
   useEffect(() => {
     loadRooms();
     loadRoomTypes();
@@ -28,6 +31,26 @@ function Room() {
     setShowForm(true);
   };
 
+  const handleEditRoom = (roomId) => {
+    setEditRoomId(roomId);
+    const room = roomList.find((room) => room.id === roomId);
+    setNewRoomName(room.name);
+    setNewRoomDescription(room.description);
+    setNewRoomTypeId(room.roomType.id);
+    setShowForm(true);
+  };
+
+  const handleDeleteRoom = async (roomId) => {
+    try{
+      await axios.delete(`http://localhost:8080/rooms/${roomId}`);
+      toast.success("Sala została usunięta.");
+    }catch(error){
+      console.error("Error deleting room:", error);
+      toast.error("Wystąpił błąd podczas usuwania sali.");
+    }
+    loadRooms();
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     const newRoom = {
@@ -36,7 +59,26 @@ function Room() {
       roomType: { id: newRoomTypeId, room_name: "" },
     };
 
-    await axios.post("http://localhost:8080/new_room", newRoom);
+    if (editRoomId) {
+      // Edycja istniejącej sali
+      try{
+        await axios.put(`http://localhost:8080/rooms/${editRoomId}`, newRoom);
+        toast.success("Sala została zaktualizowana.");
+      }catch(error){
+        console.error("Error updating room:", error);
+        toast.error("Wystąpił błąd podczas aktualizacji sali.");
+      }
+      
+    } else {
+      // Dodawanie nowej sali
+      try{
+        await axios.post("http://localhost:8080/rooms", newRoom);
+        toast.success("Sala została dodana.");
+      }catch(error){
+        console.error("Error adding room:", error);
+        toast.error("Wystąpił błąd podczas dodawania sali.");
+      }
+    }
     handleCancel();
     loadRooms();
   };
@@ -46,6 +88,7 @@ function Room() {
     setNewRoomName("");
     setNewRoomDescription("");
     setNewRoomTypeId("");
+    setEditRoomId(null);
   };
 
   return (
@@ -70,8 +113,8 @@ function Room() {
               <td>{room.description}</td>
               <td>{room.roomType.room_name}</td>
               <td>
-                <button className="btn btn-primary mx-2">Edytuj</button>
-                <button className="btn btn-danger mx-2">Usuń</button>
+                <button className="btn btn-primary mx-2" onClick={() => handleEditRoom(room.id)}>Edytuj</button>
+                <button className="btn btn-danger mx-2" onClick={() => handleDeleteRoom(room.id)}>Usuń</button>
               </td>
             </tr>
           ))}
@@ -84,7 +127,7 @@ function Room() {
       </div>
       {showForm && (
         <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
-          <h2 className="text-center m-4">Nowa sala</h2>
+          <h2 className="text-center m-4">{editRoomId ? "Edytuj salę" : "Nowa sala"}</h2>
           <div className="form-group">
             <label htmlFor="name" className="form-label">
               Nazwa:
@@ -133,7 +176,7 @@ function Room() {
           
           <div className="form-buttons">
             <button type="submit" className="add-button">
-              Dodaj
+              {editRoomId ? "Zapisz" : "Dodaj"}
             </button>
             <button type="button" className="cancel-button" onClick={handleCancel}>
               Anuluj
@@ -141,6 +184,7 @@ function Room() {
           </div>
         </form>
       )}
+      <ToastContainer/>
     </div>
   );
 }

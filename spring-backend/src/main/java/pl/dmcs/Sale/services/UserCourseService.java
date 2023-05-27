@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserCourseService {
-    UserCourseRepository userCourseRepository;
+    private final UserCourseRepository userCourseRepository;
 
 
     public boolean existsByUserAndCourse(User user, Course course) {

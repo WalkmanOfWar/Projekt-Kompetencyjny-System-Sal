@@ -8,7 +8,7 @@ import pl.dmcs.Sale.repositories.UserRepository;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public boolean isUserRegistered(String username) {
         return userRepository.findByEmail(username) != null;
@@ -28,5 +28,9 @@ public class UserService {
 
     public User findByEmail(String username) {
         return userRepository.findByEmail(username);
+    }
+
+    public User save(User newUser) {
+        return userRepository.save(newUser);
     }
 }

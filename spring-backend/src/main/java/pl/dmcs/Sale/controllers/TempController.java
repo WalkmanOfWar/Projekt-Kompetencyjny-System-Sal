@@ -18,19 +18,11 @@ public class TempController {
     private final CourseFacilityRepository courseFacilityRepository;
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
-    private final RoomRepository roomRepository;
-    private final UserCourseRepository userCourseRepository;
     private final UserRepository userRepository;
 
-    @PostMapping("/new_user")
-    User newUser(@RequestBody User newUser) {
-        return userRepository.save(newUser);
-    }
 
-    @PostMapping("/new_room")
-    Room newRoom(@RequestBody Room newRoom) {
-        return roomRepository.save(newRoom);
-    }
+
+
 
 
 
@@ -50,10 +42,7 @@ public class TempController {
     public List<ClassSchedule> getClassSchedules() {
         return classScheduleRepository.findAll();
     }
-    @GetMapping("/rooms")
-    public List<Room> getRooms() {
-        return roomRepository.findAll();
-    }
+
 
     @GetMapping("/course_facilities")
     public List<CourseFacility> getCourseFacilities() {
@@ -76,9 +65,6 @@ public class TempController {
         System.out.println(classScheduleRepository.findByRoomName(roomName));
         return classScheduleRepository.findByRoomName(roomName);
     }
-    @GetMapping("rooms/id/{roomId}")
-    public Optional<Room> getRoom(@PathVariable("roomId") String roomId) {
-        return roomRepository.findById(Long.parseLong(roomId));
-    }
+
 
 }

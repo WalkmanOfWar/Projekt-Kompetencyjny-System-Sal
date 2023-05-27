@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class RoomTypeService {
-    RoomTypeRepository roomTypeRepository;
+    private final RoomTypeRepository roomTypeRepository;
 
 
     public List<RoomType> findAllRoomTypes() {
