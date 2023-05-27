@@ -8,6 +8,8 @@ import pl.dmcs.Sale.models.User;
 import pl.dmcs.Sale.services.UserCourseService;
 import pl.dmcs.Sale.services.UserService;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -70,5 +72,19 @@ public class UserController {
     @PostMapping("/new_user")
     User newUser(@RequestBody User newUser) {
         return userService.save(newUser);
+    }
+
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userService.findAll();
+    }
+    @PutMapping("/users/{userId}")
+    void updateUser(@PathVariable("userId") String userId, @RequestBody User user) {
+        userService.updateUser(Long.parseLong(userId), user);
+    }
+
+    @DeleteMapping("/users/{userId}")
+    void deleteUser(@PathVariable("userId") String userId) {
+        userService.deleteById(Long.parseLong(userId));
     }
 }

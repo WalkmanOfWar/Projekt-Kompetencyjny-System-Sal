@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./Room.css";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Users() {
   const [userList, setUserList] = useState([]);
@@ -41,7 +43,27 @@ function Users() {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await axios.post("http://localhost:8080/new_user", user);
+        if (user.id) {
+          // Edycja istniejącego użytkownika
+          try{
+            await axios.put(`http://localhost:8080/users/${user.id}`, user);
+            toast.success("Użytkownik zaktualizowany");
+          }catch(error){
+            console.error("Error updating user:", error);
+            toast.error("Wystąpił błąd podczas aktualizacji użytkownika.");
+          }
+        } else {
+          // Dodawanie nowego użytkownika
+          try{
+            await axios.post("http://localhost:8080/new_user", user);
+            toast.success("Nowy użytkownik dodany");
+          }
+          catch(error){
+            console.error("Error adding user:", error);
+            toast.error("Wystąpił błąd podczas dodawania użytkownika.");
+          }
+          
+        }
         handleCancel();
         loadUsers();
       } catch (error) {
@@ -85,6 +107,22 @@ function Users() {
     setFormError("");
   };
 
+  const handleEditUser = (editedUser) => {
+    setShowForm(true);
+    setUser(editedUser);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await axios.delete(`http://localhost:8080/users/${userId}`);
+      toast.success("Użytkownik usunięty");
+      loadUsers();
+    } catch (error) {
+      toast.error("Wystąpił błąd podczas usuwania użytkownika");
+      console.log(error);
+    }
+  };
+
   return (
     <div className="room-wrapper">
       <h2 className="room-title">Lista prowadzących</h2>
@@ -107,8 +145,12 @@ function Users() {
               <td>{user.last_name}</td>
               <td>{user.email}</td>
               <td>
-                <button className="btn btn-primary mx-2">Edit</button>
-                <button className="btn btn-danger mx-2">Delete</button>
+                <button className="btn btn-primary mx-2" onClick={() => handleEditUser(user)}>
+                  Edytuj
+                </button>
+                <button className="btn btn-danger mx-2" onClick={() => handleDeleteUser(user.id)}>
+                  Usuń
+                </button>
               </td>
             </tr>
           ))}
@@ -121,7 +163,7 @@ function Users() {
       </div>
       {showForm && (
         <form onSubmit={handleFormSubmit} className={showForm ? "add-form" : "hidden"}>
-          <h2 className="text-center m-4">Nowy użytkownik</h2>
+          <h2 className="text-center m-4">{user.id ? "Edytuj użytkownika" : "Nowy użytkownik"}</h2>
           <div className="form-group">
             <label htmlFor="Login" className="form-label">
               Login:
@@ -201,7 +243,7 @@ function Users() {
 
           <div className="form-buttons">
             <button type="submit" className="add-button">
-              Dodaj
+              {user.id ? "Zapisz" : "Dodaj"}
             </button>
             <button type="button" className="cancel-button" onClick={handleCancel}>
               Anuluj
@@ -209,6 +251,7 @@ function Users() {
           </div>
         </form>
       )}
+      <ToastContainer />
     </div>
   );
 }

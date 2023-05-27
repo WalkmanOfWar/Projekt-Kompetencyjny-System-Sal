@@ -18,25 +18,12 @@ public class TempController {
     private final CourseFacilityRepository courseFacilityRepository;
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
-    private final UserRepository userRepository;
-
-
-
-
-
 
 
     @PostMapping("/new_reservation")
     Reservation newReservation(@RequestBody Reservation newReservation) {
         return reservationRepository.save(newReservation);
     }
-
-
-    @GetMapping("/users")
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
-
 
     @GetMapping("/class_schedules")
     public List<ClassSchedule> getClassSchedules() {
