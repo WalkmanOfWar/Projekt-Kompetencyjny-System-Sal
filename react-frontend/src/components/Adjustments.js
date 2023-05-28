@@ -64,7 +64,7 @@ export default function Adjustments() {
   };
 
   useEffect(() => {
-    displayMessage("To jest przykładowa wiadomość");
+    displayMessage("To  ");
   }, []);
 
 
@@ -259,25 +259,23 @@ export default function Adjustments() {
             </select>
           </div>
           <div className="col-2 mb-3 mx-2 d-flex flex-column p-3">
-            <button className="btn btn-primary mb-2" onClick={() => {}}>
-              Zapisz
-            </button>
+         
             <button className="btn btn-primary" onClick={() => {}}>
               Generowanie
             </button>
           </div>
         </div>
       </div>
-  {/* KOMPONENT LOGGERA */}
-  <div className="logger">
+
+ 
+      {generateTable()}
+
+      <div className="logger">
         {messages.map((message, index) => (
           <p key={index}>{message}</p>
         ))}
       </div>
-      {/* TUTAJ GENEROWANA TABELKA */}
-      {generateTable()}
 
-    
     </div>
     
   );

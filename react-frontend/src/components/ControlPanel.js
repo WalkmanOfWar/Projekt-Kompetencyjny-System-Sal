@@ -10,6 +10,7 @@ import Reservations from './Reservations';
 import Class_schedule from './Class_schedule';
 import CourseFacilities from './CourseFacilities';
 import RoomFacilities from './RoomFacilities';
+import Adjustments from './Adjustments';
 
 function ControlPanel() {
   const [selectedButton, setSelectedButton] = useState('Room');
