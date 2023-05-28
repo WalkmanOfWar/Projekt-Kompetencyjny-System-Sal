@@ -94,15 +94,22 @@ function Class_schedule() {
     return result ? result.text : null;
   };
 
+  function getIdByValueStartingTime(value) {
+    const slot = startingTimeSlots.find((slot) => slot.text === value);
+    return slot ? slot.id : null;
+  }
+
+  function getIdByValueEndingTime(value) {
+    const slot = endingTimeSlots.find((slot) => slot.text === value);
+    return slot ? slot.id : null;
+  }
+
   useEffect(() => {
     loadClassSchedules();
     loadCourses();
     loadRooms();
   }, []);
 
-  useEffect(() => {
-    console.log(newStartTime);
-  }, [newStartTime]);
 
   const loadClassSchedules = async () => {
     const result = await axios.get('http://localhost:8080/class_schedules');
@@ -118,7 +125,6 @@ function Class_schedule() {
     const result = await axios.get(
       `http://localhost:8080/userCourse/byCourseId/${courseId}`
     );
-    console.log(result.data);
     setUserCourseList(result.data);
   };
 
@@ -134,9 +140,7 @@ function Class_schedule() {
 
   const handleCourseIdChange = (event) => {
     setNewCourseId(event.target.value);
-    console.log(event.target.value);
     loadUserCourse(event.target.value);
-    console.log(userCourseList);
   };
 
   const handleRoomIdChange = (event) => {
@@ -173,7 +177,7 @@ function Class_schedule() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (editSchedule) {
       const updatedSchedule = {
         id: editSchedule.id,
@@ -187,12 +191,19 @@ function Class_schedule() {
         room: { id: newRoomId },
         user: { id: newUserId },
       };
-      await axios.put(
-        `http://localhost:8080/class_schedules/${editSchedule.id}`,
-        updatedSchedule
-      );
-      setEditSchedule(null);
-      toast.success('Zaktualizowano plan zajęć');
+  
+      try {
+        console.log(updatedSchedule);
+        await axios.put(
+          `http://localhost:8080/class_schedules/${editSchedule.id}`,
+          updatedSchedule
+        );
+        setEditSchedule(null);
+        toast.success('Zaktualizowano plan zajęć');
+      } catch (error) {
+        console.log(error);
+        toast.error('Wystąpił błąd podczas aktualizacji planu zajęć');
+      }
     } else {
       const newClassSchedule = {
         day_of_week: newDayOfWeek,
@@ -205,17 +216,22 @@ function Class_schedule() {
         room: { id: newRoomId },
         user: { id: newUserId },
       };
-      await axios.post(
-        'http://localhost:8080/new_classSchedule',
-        newClassSchedule
-      );
-      setClassScheduleList([...classScheduleList, newClassSchedule]);
-      toast.success('Dodano nowy plan zajęć');
+  
+      try {
+        console.log(newClassSchedule);
+        await axios.post('http://localhost:8080/new_classSchedule', newClassSchedule);
+        setClassScheduleList([...classScheduleList, newClassSchedule]);
+        toast.success('Dodano nowy plan zajęć');
+      } catch (error) {
+        console.log(error);
+        toast.error('Wystąpił błąd podczas dodawania nowego planu zajęć');
+      }
     }
-
+  
     handleCancel();
     loadClassSchedules();
   };
+  
 
   const handleCancel = () => {
     setNewCourseId('');
@@ -248,8 +264,8 @@ function Class_schedule() {
     setNewCourseId(schedule.course.id);
     setNewRoomId(schedule.room.id);
     setNewDayOfWeek(schedule.day_of_week);
-    setNewStartTime(schedule.start_time);
-    setNewEndTime(schedule.end_time);
+    setNewStartTime(getIdByValueStartingTime(schedule.start_time));
+    setNewEndTime(getIdByValueEndingTime(schedule.end_time));
     setNewStartWeek(schedule.start_week);
     setNewEndWeek(schedule.end_week);
     setNewIsParity(schedule.is_parity);
@@ -275,8 +291,6 @@ function Class_schedule() {
 
   const generateClassSchedulesDisplay = () => {
     let sortedClassSchedules = [...classScheduleList];
-    console.log(sortedClassSchedules);
-
     if (sortBy === 'user') {
       sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
         a.user.email.localeCompare(b.user.email)
@@ -454,7 +468,7 @@ function Class_schedule() {
                 {startingTimeSlots.map((startTime) => (
                   <option
                     key={startTime.id}
-                    value={startTime.text}
+                    value={startTime.id}
                     disabled={
                       newEndTime !== '' && newEndTime <= startTime.id - 1
                     }>
@@ -475,7 +489,7 @@ function Class_schedule() {
                 {endingTimeSlots.map((endTime) => (
                   <option
                     key={endTime.id}
-                    value={endTime.text}
+                    value={endTime.id}
                     disabled={
                       newStartTime !== '' && newStartTime >= endTime.id + 1
                     }>
@@ -552,7 +566,7 @@ function Class_schedule() {
                   <>
                     <option value=''>Wybierz prowadzącego</option>
                     {userCourseList.map((userCourse) => (
-                      <option key={userCourse.user.id} value={userCourse.user}>
+                      <option key={userCourse.user.id} value={userCourse.user.id}>
                         {userCourse.user.first_name}
                       </option>
                     ))}
