@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReservationService {
-    ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
     public void insertNewReservation(Reservation reservation) {
         reservationRepository.save(reservation);
     }
@@ -21,5 +21,11 @@ public class ReservationService {
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
+    }
+
+    public Reservation updateReservation(Long id, Reservation reservation) {
+        Reservation existingReservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Nie można znaleźć rezerwacji o podanym id: " + id));
+        existingReservation.setStatus(reservation.getStatus());
+        return reservationRepository.save(existingReservation);
     }
 }

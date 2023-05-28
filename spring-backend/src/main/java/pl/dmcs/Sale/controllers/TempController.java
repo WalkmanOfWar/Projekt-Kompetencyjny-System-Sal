@@ -18,20 +18,6 @@ public class TempController {
     private final CourseFacilityRepository courseFacilityRepository;
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
-    private final RoomRepository roomRepository;
-    private final UserCourseRepository userCourseRepository;
-    private final UserRepository userRepository;
-
-    @PostMapping("/new_user")
-    User newUser(@RequestBody User newUser) {
-        return userRepository.save(newUser);
-    }
-
-    @PostMapping("/new_room")
-    Room newRoom(@RequestBody Room newRoom) {
-        return roomRepository.save(newRoom);
-    }
-
 
 
     @PostMapping("/new_reservation")
@@ -39,42 +25,9 @@ public class TempController {
         return reservationRepository.save(newReservation);
     }
 
-
-
-    @PostMapping("/new_userCourse")
-    public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
-        if (userCourseRepository.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        UserCourse savedUserCourse = userCourseRepository.save(userCourse);
-        return ResponseEntity.ok(savedUserCourse);
-    }
-    @GetMapping("/users")
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
-
-    @GetMapping("/user_course")
-    public List<UserCourse> getUserCourse() {
-        return userCourseRepository.findAll();
-    }
     @GetMapping("/class_schedules")
     public List<ClassSchedule> getClassSchedules() {
         return classScheduleRepository.findAll();
-    }
-    @GetMapping("/rooms")
-    public List<Room> getRooms() {
-        return roomRepository.findAll();
-    }
-
-    @GetMapping("/course_facilities")
-    public List<CourseFacility> getCourseFacilities() {
-        return courseFacilityRepository.findAll();
-    }
-    @GetMapping("/room_facilities")
-    public List<RoomFacility> getRoomFacilities() {
-        return roomFacilityRepository.findAll();
     }
 
 
@@ -89,9 +42,6 @@ public class TempController {
         System.out.println(classScheduleRepository.findByRoomName(roomName));
         return classScheduleRepository.findByRoomName(roomName);
     }
-    @GetMapping("rooms/id/{roomId}")
-    public Optional<Room> getRoom(@PathVariable("roomId") String roomId) {
-        return roomRepository.findById(Long.parseLong(roomId));
-    }
+
 
 }
