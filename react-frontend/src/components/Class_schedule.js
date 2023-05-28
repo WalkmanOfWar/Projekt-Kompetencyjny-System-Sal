@@ -94,6 +94,16 @@ function Class_schedule() {
     return result ? result.text : null;
   };
 
+  function getIdByValueStartingTime(value) {
+    const slot = startingTimeSlots.find((slot) => slot.text === value);
+    return slot ? slot.id : null;
+  }
+
+  function getIdByValueEndingTime(value) {
+    const slot = endingTimeSlots.find((slot) => slot.text === value);
+    return slot ? slot.id : null;
+  }
+
   useEffect(() => {
     loadClassSchedules();
     loadCourses();
@@ -254,8 +264,8 @@ function Class_schedule() {
     setNewCourseId(schedule.course.id);
     setNewRoomId(schedule.room.id);
     setNewDayOfWeek(schedule.day_of_week);
-    setNewStartTime(schedule.start_time);
-    setNewEndTime(schedule.end_time);
+    setNewStartTime(getIdByValueStartingTime(schedule.start_time));
+    setNewEndTime(getIdByValueEndingTime(schedule.end_time));
     setNewStartWeek(schedule.start_week);
     setNewEndWeek(schedule.end_week);
     setNewIsParity(schedule.is_parity);
