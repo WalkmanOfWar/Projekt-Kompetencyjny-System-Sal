@@ -3,13 +3,17 @@ package pl.dmcs.Sale.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.dmcs.Sale.models.ClassSchedule;
+import pl.dmcs.Sale.models.Reservation;
 import pl.dmcs.Sale.repositories.ClassScheduleRepository;
 import pl.dmcs.Sale.repositories.CourseRepository;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class ClassScheduleService {
     private final ClassScheduleRepository classScheduleRepository;
+    private final ReservationService reservationService;
 
 
     public ClassSchedule insertNewClassSchedule(ClassSchedule newClassSchedule) {
@@ -17,7 +21,17 @@ public class ClassScheduleService {
     }
 
     public void deleteClassScheduleById(Long id) {
-        classScheduleRepository.deleteById(id);
+        ClassSchedule classSchedule = classScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("ClassSchedule not found"));
+
+        // Usuwanie powiązanych rezerwacji
+        List<Reservation> reservations = reservationService.findByClassScheduleId(classSchedule.getId());
+        for (Reservation reservation : reservations) {
+            reservationService.deleteReservationById(reservation.getId());
+        }
+
+        // Usuwanie class_schedule
+        classScheduleRepository.delete(classSchedule);
     }
 
     public void updateClassScheduleById(Long id, ClassSchedule classSchedule) {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./Adjustments.css";
-
 import axios from "axios";
 
 export default function Adjustments() {
@@ -10,6 +9,8 @@ export default function Adjustments() {
   const [course, setCourse] = useState("");
   const [room, setRoom] = useState("");
   const [messages, setMessages] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
 
   const days = [
     { value: 1, text: "Poniedziałek" },
@@ -18,11 +19,6 @@ export default function Adjustments() {
     { value: 4, text: "Czwartek" },
     { value: 5, text: "Piątek" },
   ];
-
-
-
-
-
 
   const startingTimeSlots = [
     "08:15:00",
@@ -58,22 +54,13 @@ export default function Adjustments() {
     loadRooms();
   }, []);
 
-
   const displayMessage = (message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   useEffect(() => {
-    displayMessage("To  ");
+    displayMessage("To");
   }, []);
-
-
-
-
-
-
-
-
 
   const loadRooms = async () => {
     const result = await axios.get("http://localhost:8080/rooms");
@@ -82,6 +69,36 @@ export default function Adjustments() {
 
   const handleSelectedRoom = (e) => {
     setSelectedRoom(e.target.value);
+  };
+
+  const handleDeleteConfirmation = (reservation) => {
+    setSelectedReservation(reservation);
+    setShowConfirmation(true);
+  };
+
+  const handleDelete = () => {
+    if (selectedReservation) {
+      try {
+        axios
+          .delete(
+            `http://localhost:8080/delete_schedule/${selectedReservation.id}`
+          )
+          .then(() => {
+            fetchReservations();
+          })
+          .catch((error) => {
+            console.log("Wystąpił błąd podczas usuwania planu:", error);
+          });
+      } catch (error) {
+        console.log("Wystąpił błąd podczas usuwania planu:", error);
+      }
+    }
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedReservation(null);
+    setShowConfirmation(false);
   };
 
   function generateTableHeader() {
@@ -123,10 +140,17 @@ export default function Adjustments() {
   }, [reservations]);
 
   function generateSingleReservationCard(reservation) {
+    const handleCardClick = () => {
+      handleDeleteConfirmation(reservation);
+    };
+
     return (
       <td>
         <div className="card-container">
-          <div className="card text-black bg-striped">
+          <div
+            className="card text-black bg-striped"
+            onClick={handleCardClick}
+          >
             <h5 className="card-header">
               {reservation
                 ? displayCourseType(reservation.course.course_type) +
@@ -152,7 +176,6 @@ export default function Adjustments() {
             </div>
           </div>
         </div>
-        <button className="btn btn-primary">Dodaj</button>
       </td>
     );
   }
@@ -219,6 +242,26 @@ export default function Adjustments() {
     );
   }
 
+  const handleConfirmDelete = () => {
+    if (selectedReservation) {
+      try {
+        axios
+          .delete(
+            `http://localhost:8080/delete_schedule/${selectedReservation.id}`
+          )
+          .then(() => {
+            fetchReservations();
+          })
+          .catch((error) => {
+            console.log("Wystąpił błąd podczas usuwania planu:", error);
+          });
+      } catch (error) {
+        console.log("Wystąpił błąd podczas usuwania planu:", error);
+      }
+    }
+    setShowConfirmation(false);
+  };
+
   function generateTable() {
     const room = roomList.find((option) => option.name === selectedRoom);
     const roomText = room ? room.name : "";
@@ -275,8 +318,22 @@ export default function Adjustments() {
           <p key={index}>{message}</p>
         ))}
       </div>
-
+     
+      {showConfirmation && (
+        <div className="confirmation-modal">
+          <div className="confirmation-modal-content">
+            <p>Czy na pewno chcesz usunąć ten plan zajęć?</p>
+            <div className="confirmation-buttons">
+              <button className="btn btn-danger" onClick={handleConfirmDelete}>
+                Tak
+              </button>
+              <button className="btn btn-secondary" onClick={handleCancelDelete}>
+                Nie
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    
   );
 }
