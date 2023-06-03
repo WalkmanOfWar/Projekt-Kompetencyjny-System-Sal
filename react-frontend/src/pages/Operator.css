@@ -48,14 +48,14 @@
 }
 
 .img {
-  background-image: url('/images/avatar.png');
+  background-image: url('https://picsum.photos/1000/1000');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 70%;
+  background-size: cover;
   width: 100px;
   height: 100px;
+  border-radius: 50%;
 }
-
 .center {
   align-items: center;
 }
