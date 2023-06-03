@@ -182,14 +182,12 @@ export default function Adjustments() {
             {Array.from({ length: 12 }, (_, index) => {
               const startTime = parseTime(startingTimeSlots[index]);
               const endTime = parseTime(endingTimeSlots[index]);
-  
               const overlappingReservations = reservations.filter(
                 (reservation) =>
                   day.value === reservation.day_of_week &&
                   compareTime(startTime, parseTime(reservation.start_time)) >= 0 &&
-                  compareTime(parseTime(reservation.end_time), endTime) > 0
+                  compareTime(parseTime(reservation.end_time), endTime) >= 0
               );
-  
               if (overlappingReservations.length > 0) {
                 return generateSingleReservationCard(overlappingReservations);
               } else {
@@ -199,7 +197,6 @@ export default function Adjustments() {
                     compareTime(startTime, parseTime(reservation.start_time)) >= 0 &&
                     compareTime(parseTime(reservation.end_time), endTime) === 0
                 );
-  
                 if (reservation) {
                   return generateSingleReservationCard([reservation]);
                 } else {
@@ -214,6 +211,7 @@ export default function Adjustments() {
   }
   
   
+
 
   const fetchReservations = async () => {
     try {
@@ -244,45 +242,6 @@ export default function Adjustments() {
 
   function compareTime(time1, time2) {
     return time1.getTime() - time2.getTime();
-  }
-  function generateTableContent() {
-    return (
-      <tbody>
-        {days.map((day) => (
-          <tr key={day.value}>
-            <td style={{ color: "white", textAlign: "center", verticalAlign: "middle" }}>{day.text}</td>
-            {Array.from({ length: 12 }, (_, index) => {
-              const startTime = parseTime(startingTimeSlots[index]);
-              const endTime = parseTime(endingTimeSlots[index]);
-  
-              const overlappingReservations = reservations.filter(
-                (reservation) =>
-                  day.value === reservation.day_of_week &&
-                  compareTime(startTime, parseTime(reservation.start_time)) >= 0 &&
-                  compareTime(parseTime(reservation.end_time), endTime) > 0
-              );
-  
-              if (overlappingReservations.length > 0) {
-                return generateSingleReservationCard(overlappingReservations);
-              } else {
-                const reservation = reservations.find(
-                  (reservation) =>
-                    day.value === reservation.day_of_week &&
-                    compareTime(startTime, parseTime(reservation.start_time)) >= 0 &&
-                    compareTime(parseTime(reservation.end_time), endTime) === 0
-                );
-  
-                if (reservation) {
-                  return generateSingleReservationCard([reservation]);
-                } else {
-                  return <td></td>;
-                }
-              }
-            })}
-          </tr>
-        ))}
-      </tbody>
-    );
   }
 
   const handleConfirmDelete = () => {
