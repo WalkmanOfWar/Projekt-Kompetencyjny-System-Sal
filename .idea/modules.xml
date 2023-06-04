@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Projekt-Kompetencyjny-System-Sal.iml" filepath="$PROJECT_DIR$/.idea/Projekt-Kompetencyjny-System-Sal.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring-backend/Sale.iml" filepath="$PROJECT_DIR$/spring-backend/Sale.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-backend/zadanie1.iml" filepath="$PROJECT_DIR$/spring-backend/zadanie1.iml" />
     </modules>
   </component>
 </project>

@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
+
     public void insertNewReservation(Reservation reservation) {
         reservationRepository.save(reservation);
     }
@@ -19,13 +20,23 @@ public class ReservationService {
         return reservationRepository.findByUserEmail(email);
     }
 
+    public List<Reservation> findByClassScheduleId(Long classScheduleId) {
+        return reservationRepository.findByClassScheduleId(classScheduleId);
+    }
+
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
     }
 
     public Reservation updateReservation(Long id, Reservation reservation) {
-        Reservation existingReservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Nie można znaleźć rezerwacji o podanym id: " + id));
+        Reservation existingReservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find reservation with ID: " + id));
+
         existingReservation.setStatus(reservation.getStatus());
         return reservationRepository.save(existingReservation);
+    }
+
+    public void deleteReservationById(Long id) {
+        reservationRepository.deleteById(id);
     }
 }

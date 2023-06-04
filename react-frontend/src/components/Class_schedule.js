@@ -23,6 +23,8 @@ function Class_schedule() {
   const [newStartWeek, setNewStartWeek] = useState('');
   const [newEndWeek, setNewEndWeek] = useState('');
   const [newIsParity, setNewIsParity] = useState('');
+ 
+
   const [coursesList, setCourseList] = useState([]);
 
   const [roomList, setRoomList] = useState([]);
@@ -170,6 +172,7 @@ function Class_schedule() {
   const handleIsParityChange = (event) => {
     setNewIsParity(event.target.value);
   };
+ 
 
   const handleNewUserId = (event) => {
     setNewUserId(event.target.value);
@@ -179,6 +182,7 @@ function Class_schedule() {
     event.preventDefault();
   
     if (editSchedule) {
+      let h=5;
       const updatedSchedule = {
         id: editSchedule.id,
         day_of_week: newDayOfWeek,
@@ -187,6 +191,8 @@ function Class_schedule() {
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
+        hours: h,
+
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
@@ -205,6 +211,7 @@ function Class_schedule() {
         toast.error('Wystąpił błąd podczas aktualizacji planu zajęć');
       }
     } else {
+      let h=5;
       const newClassSchedule = {
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
@@ -212,6 +219,8 @@ function Class_schedule() {
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
+        hours: h,
+
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
@@ -242,6 +251,7 @@ function Class_schedule() {
     setNewStartWeek('');
     setNewEndWeek('');
     setNewIsParity('');
+ 
     setShowForm(false);
   };
 
@@ -269,6 +279,7 @@ function Class_schedule() {
     setNewStartWeek(schedule.start_week);
     setNewEndWeek(schedule.end_week);
     setNewIsParity(schedule.is_parity);
+ 
     setNewUserId(schedule.user.id);
     loadUserCourse(schedule.course.id);
 
@@ -330,6 +341,11 @@ function Class_schedule() {
         return a.end_week - b.end_week;
       });
     }
+    else if (sortBy === 'hours') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) => {
+        return a.hours - b.hours;
+      });
+    }
     return (
       <>
         <h2 className='room-title'>Lista planów zajęć</h2>
@@ -353,6 +369,8 @@ function Class_schedule() {
             <option value='endTime'>Czas - koniec</option>
             <option value='startWeek'>Tydzień - początek</option>
             <option value='endWeek'>Tydzień - koniec</option>
+            <option value='hours'>Godziny</option>
+
           </select>
         </div>
         <table className='room-table'>
@@ -367,6 +385,7 @@ function Class_schedule() {
               <th>Koniec - czas</th>
               <th>Początek - tydzień</th>
               <th>Koniec - tydzień</th>
+              <th>Godziny</th>
               <th>Parzystość</th>
               <th>Akcja</th>
             </tr>
@@ -383,6 +402,8 @@ function Class_schedule() {
                 <td>{classSchedule.end_time}</td>
                 <td>{classSchedule.start_week}</td>
                 <td>{classSchedule.end_week}</td>
+                <td>{classSchedule.hours}</td>
+
                 <td>{getisParityName(classSchedule.is_parity)}</td>
                 <td>
                   <button
@@ -536,6 +557,7 @@ function Class_schedule() {
                 ))}
               </select>
             </div>
+  
             <div className='form-group'>
               <label htmlFor='newIsParity'>Parzystość:</label>
               <select

@@ -10,6 +10,7 @@ import Reservations from './Reservations';
 import Class_schedule from './Class_schedule';
 import CourseFacilities from './CourseFacilities';
 import RoomFacilities from './RoomFacilities';
+import Adjustments from './Adjustments';
 
 function ControlPanel() {
   const [selectedButton, setSelectedButton] = useState('Room');
@@ -40,6 +41,8 @@ function ControlPanel() {
         return <Reservations />;
       case 'Class_schedule':
         return <Class_schedule />;
+        case 'Adjustments':
+          return <Adjustments />;
       default:
         return <Room />;
     }
@@ -123,9 +126,9 @@ function ControlPanel() {
         </button>
         <button
           className={`btn btn-primary ${
-            selectedButton === 'Generowanie' ? 'selected' : ''
+            selectedButton === 'Adjustments' ? 'selected' : ''
           }`}
-          onClick={() => handleButtonClick('Generowanie')}>
+          onClick={() => handleButtonClick('Adjustments')}>
           Generowanie
         </button>
       </div>
