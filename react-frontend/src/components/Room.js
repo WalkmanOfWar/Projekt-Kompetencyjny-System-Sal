@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function Room() {
   const [roomList, setRoomList] = useState([]);
+  const [facilitiesAvailable, setFacilitiesAvailable] = useState([]); // Nowy stan dla dostępnych udogodnień
   const [showForm, setShowForm] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
   const [newRoomDescription, setNewRoomDescription] = useState('');
@@ -12,6 +13,8 @@ function Room() {
   const [roomTypes, setRoomTypes] = useState([]);
   const [editRoomId, setEditRoomId] = useState(null); // Nowy stan przechowujący ID edytowanej sali
   const [sortBy, setSortBy] = useState('');
+  const [searchFacilities, setSearchFacilities] = useState([]); // Nowy stan dla udogodnień
+  const [minQuantities, setMinQuantities] = useState([]); // Nowy stan dla minimalnej liczby  
   const handleSortBy = (e) => {
     setSortBy(e.target.value);
   };
@@ -19,10 +22,24 @@ function Room() {
   useEffect(() => {
     loadRooms();
     loadRoomTypes();
-  }, []);
+    loadFacilitiesAvailable(); // Dodaj ładowanie dostępnych udogodnień
+  }, [searchFacilities, minQuantities]); // Dodaj nowe zmienne stanu do listy zależności
+
+  const loadFacilitiesAvailable = async () => {
+    const result = await axios.get('http://localhost:8080/facilities_available');
+    setFacilitiesAvailable(result.data);
+  };
+  const handleRemoveFacility = (indexToRemove) => {
+    setSearchFacilities(searchFacilities.filter((_, index) => index !== indexToRemove));
+    setMinQuantities(minQuantities.filter((_, index) => index !== indexToRemove));
+  };
 
   const loadRooms = async () => {
-    const result = await axios.get('http://localhost:8080/rooms');
+    const facilitiesString = searchFacilities.join(",");
+    const quantitiesString = minQuantities.join(",");
+    console.log(facilitiesString);
+    console.log(quantitiesString);
+    const result = await axios.get(`http://localhost:8080/rooms/search?facilities=${facilitiesString}&minQuantities=${quantitiesString}`);
     setRoomList(result.data);
   };
 
@@ -30,6 +47,27 @@ function Room() {
     const result = await axios.get('http://localhost:8080/room_types');
     setRoomTypes(result.data);
   };
+
+  // Przykładowe obsługiwanie wielu pól wejściowych dla udogodnień i ilości
+const handleAddFacility = () => {
+  setSearchFacilities([...searchFacilities, ""]);
+  setMinQuantities([...minQuantities, 0]);
+};
+
+const handleFacilityChange = (index, event) => {
+  const newFacilities = [...searchFacilities];
+  newFacilities[index] = event.target.value;
+  setSearchFacilities(newFacilities);
+};
+
+const handleQuantityChange = (index, event) => {
+  const newQuantities = [...minQuantities];
+  newQuantities[index] = event.target.value;
+  setMinQuantities(newQuantities);
+};
+
+
+
 
   const handleAddRoom = () => {
     setShowForm(true);
@@ -97,6 +135,8 @@ function Room() {
   const generateRoomsDisplay = () => {
     let sortedRooms = [...roomList];
 
+    
+
     if (sortBy === 'roomName') {
       sortedRooms = sortedRooms.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortBy === 'roomType') {
@@ -107,6 +147,32 @@ function Room() {
     return (
       <>
         <h2 className='room-title'>Lista sal</h2>
+        <div className='search-container'>
+        {searchFacilities.map((facility, index) => (
+    <div key={index}>
+      <select
+      className='form-select'
+        value={facility}
+        onChange={(e) => handleFacilityChange(index, e)}>
+        <option value=''>Wybierz udogodnienie</option>
+        {facilitiesAvailable.map((facilityAvailable, i) => (
+          <option key={i} value={facilityAvailable.name}>
+            {facilityAvailable.name}
+          </option>
+        ))}
+      </select>
+      <input
+        type='number'
+        className='search-input'
+        placeholder='Podaj minimalną liczbę'
+        value={minQuantities[index]}
+        onChange={(e) => handleQuantityChange(index, e)}
+      />
+      <button className="btn btn-danger" onClick={() => handleRemoveFacility(index)}>-</button>
+    </div>
+  ))}
+  <button className="btn btn-primary" onClick={handleAddFacility}>Dodaj udogodnienie</button>
+</div>
         <div className='horizontal-line'></div>
         <div className='sort-container'>
           <h4 htmlFor='sort' className='label text-light'>
@@ -193,7 +259,7 @@ function Room() {
                 placeholder='Podaj opis'
                 name='description'
                 value={newRoomDescription}
-                onChange={(e) => setNewRoomDescription(e.target.value)}
+                disabled
               />
             </div>
 

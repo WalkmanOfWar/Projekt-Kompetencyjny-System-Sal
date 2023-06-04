@@ -33,4 +33,8 @@ public class RoomFacilityService {
         existingRoomFacility.setDescription(roomFacility.getDescription());
         roomFacilityRepository.save(existingRoomFacility);
     }
+
+    public List<RoomFacility> findByRoom(Room room) {
+        return roomFacilityRepository.findByRoom(room);
+    }
 }

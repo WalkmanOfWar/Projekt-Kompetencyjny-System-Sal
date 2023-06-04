@@ -3,6 +3,8 @@ package pl.dmcs.Sale.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.dmcs.Sale.models.Room;
+import pl.dmcs.Sale.models.RoomFacility;
+import pl.dmcs.Sale.repositories.RoomFacilityRepository;
 import pl.dmcs.Sale.repositories.RoomRepository;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final RoomFacilityRepository roomFacilityRepository;
 
     public List<Room> findAll() {
         return roomRepository.findAll();
@@ -40,5 +43,21 @@ public class RoomService {
         } else {
             throw new IllegalArgumentException("Nie można znaleźć sali o podanym id: " + l);
         }
+    }
+
+    public void updateDescription() {
+        List<Room> rooms = findAll();
+        rooms.forEach(room -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            List<RoomFacility> roomFacilities = roomFacilityRepository.findByRoom(room);
+            for(RoomFacility roomFacility : roomFacilities) {
+                stringBuilder.append(roomFacility.getFacilityAvailable().getName());
+                stringBuilder.append(": ");
+                stringBuilder.append(roomFacility.getQuantity());
+                stringBuilder.append(",\n");
+            }
+            room.setDescription(stringBuilder.toString());
+            roomRepository.save(room);
+        });
     }
 }
