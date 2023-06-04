@@ -27,6 +27,7 @@ public class ClassSchedule {
     private Long start_week;
     private Long end_week;
     private Long is_parity;
+    private Long hours;
 
     @OneToOne
     @JoinColumn(name = "course_id")

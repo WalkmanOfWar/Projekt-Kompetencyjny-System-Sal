@@ -134,7 +134,15 @@ function Reservations() {
       sortedReservations = sortedReservations.sort((a, b) => {
         return a.classSchedule.end_week - b.classSchedule.end_week;
       });
-    } else if (sortBy === 'status') {
+    } 
+    else if (sortBy === 'hours') {
+      sortedReservations = sortedReservations.sort((a, b) => {
+        return a.classSchedule.hours - b.classSchedule.hours;
+      });
+    } 
+    
+    
+    else if (sortBy === 'status') {
       sortedReservations = sortedReservations.sort((a, b) => {
         return a.status - b.status;
       });
@@ -162,6 +170,8 @@ function Reservations() {
             <option value='endTime'>Czas - koniec</option>
             <option value='startWeek'>Tydzień - początek</option>
             <option value='endWeek'>Tydzień - koniec</option>
+            <option value='hours'>Godziny</option>
+
             <option value='status'>Status rezerwacji</option>
           </select>
         </div>
@@ -177,6 +187,7 @@ function Reservations() {
               <th>Koniec - dzień</th>
               <th>Początek - tydzień</th>
               <th>Koniec - tydzień</th>
+              <th>Godziny</th>
               <th>Parzystość</th>
               <th>Status</th>
               <th>Akcja</th>
@@ -196,6 +207,7 @@ function Reservations() {
                 <td>{reservation.classSchedule.end_time}</td>
                 <td>{reservation.classSchedule.start_week}</td>
                 <td>{reservation.classSchedule.end_week}</td>
+                <td>{reservation.classSchedule.hours}</td>
                 <td>{displayParity(reservation.classSchedule.is_parity)}</td>
                 <td>{displayStatus(reservation.status)}</td>
                 <td>

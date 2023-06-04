@@ -139,37 +139,44 @@ export default function Adjustments() {
     console.log(reservations);
   }, [reservations]);
 
-  function generateSingleReservationCard(reservations) {
+  function generateSingleReservationCard(reservations, allRoomReservations) {
     const handleCardClick = (reservation) => {
       handleDeleteConfirmation(reservation);
     };
   
     return (
       <td>
-        {reservations.map((reservation) => (
-          <div
-            key={reservation.id}
-            className="card text-black bg-striped"
-            onClick={() => handleCardClick(reservation)}
-          >
-            <h5 className="card-header">
-              {displayCourseType(reservation.course.course_type) +
-                reservation.start_week +
-                "-" +
-                reservation.end_week}
-            </h5>
-            <div className="card-body">
-              <p className="card-text course-text">{reservation.course.name}</p>
-              <p className="card-text room-text">{reservation.room.name}</p>
-              <p className="card-text">
-                {reservation.user.first_name + " " + reservation.user.last_name}
-              </p>
+        {reservations.map((reservation) => {
+          const hasConflict = hasConflicts(reservation, allRoomReservations);
+          const cardClassName = hasConflict ? "card text-black bg-danger" : "card text-black bg-striped";
+  
+          return (
+            <div
+              key={reservation.id}
+              className={cardClassName}
+              onClick={() => handleCardClick(reservation)}
+            >
+              <h5 className="card-header">
+                {displayCourseType(reservation.course.course_type) +
+                  reservation.start_week +
+                  "-" +
+                  reservation.end_week}
+              </h5>
+              <div className="card-body">
+                <p className="card-text course-text">{reservation.course.name}</p>
+                <p className="card-text room-text">{reservation.room.name}</p>
+                <p className="card-text">
+                  {reservation.user.first_name + " " + reservation.user.last_name}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </td>
     );
   }
+  
+  
   
   function generateTableContent() {
     return (
@@ -189,7 +196,7 @@ export default function Adjustments() {
                   compareTime(parseTime(reservation.end_time), endTime) >= 0
               );
               if (overlappingReservations.length > 0) {
-                return generateSingleReservationCard(overlappingReservations);
+                return generateSingleReservationCard(overlappingReservations,reservations);
               } else {
                 const reservation = reservations.find(
                   (reservation) =>
@@ -198,10 +205,8 @@ export default function Adjustments() {
                     compareTime(parseTime(reservation.end_time), endTime) === 0
                 );
                 if (reservation) {
-                  return generateSingleReservationCard([reservation]);
-                } else {
-                  return <td></td>;
-                }
+                  return generateSingleReservationCard([reservation],reservations);
+                }  
               }
             })}
           </tr>
@@ -263,6 +268,63 @@ export default function Adjustments() {
     }
     setShowConfirmation(false);
   };
+
+  const hasConflicts = (reservation, allReservations) => {
+    const conflictingReservations = allReservations.filter((otherReservation) => {
+      if (reservation.id === otherReservation.id) {
+        return false; // Ignoruj ten sam plan zajęć
+      }
+  
+      const sameDayOfWeek = reservation.day_of_week === otherReservation.day_of_week;
+  
+      const reservationWeeks = getWeeksArray(reservation.start_week, reservation.end_week, reservation.is_parity);
+      const otherReservationWeeks = getWeeksArray(otherReservation.start_week, otherReservation.end_week, otherReservation.is_parity);
+  
+      const overlappingWeeks = reservationWeeks.some((week) => otherReservationWeeks.includes(week));
+  
+      const overlappingTime =
+        (reservation.start_time < otherReservation.end_time &&
+        otherReservation.start_time <= reservation.start_time)||(otherReservation.start_time < reservation.end_time &&
+         reservation.start_time <= otherReservation.start_time);
+  
+      return sameDayOfWeek && overlappingWeeks && overlappingTime;
+    });
+  
+    return conflictingReservations.length > 0;
+  };
+  
+  const getWeeksArray = (startWeek, endWeek, isParity) => {
+    const weeks = [];
+  
+    if (isParity === 1) {
+      // Tylko nieparzyste tygodnie
+      for (let week = startWeek; week <= endWeek; week++) {
+        if (week % 2 !== 0) {
+          weeks.push(week);
+        }
+      }
+    } else if (isParity === 2) {
+      // Tylko parzyste tygodnie
+      for (let week = startWeek; week <= endWeek; week++) {
+        if (week % 2 === 0) {
+          weeks.push(week);
+        }
+      }
+    } else if (isParity === 0) {
+      // Wszystkie tygodnie
+      for (let week = startWeek; week <= endWeek; week++) {
+        weeks.push(week);
+      }
+    }
+  
+    return weeks;
+  };
+  
+
+
+
+
+
 
   function generateTable() {
     const room = roomList.find((option) => option.name === selectedRoom);

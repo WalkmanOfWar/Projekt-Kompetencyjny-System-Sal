@@ -46,6 +46,8 @@ public class ClassScheduleService {
         existingClassSchedule.setStart_week(classSchedule.getStart_week());
         existingClassSchedule.setEnd_week(classSchedule.getEnd_week());
         existingClassSchedule.setIs_parity(classSchedule.getIs_parity());
+        existingClassSchedule.setHours(classSchedule.getHours());
+
         existingClassSchedule.setCourse(classSchedule.getCourse());
         existingClassSchedule.setRoom(classSchedule.getRoom());
         existingClassSchedule.setUser(classSchedule.getUser());
