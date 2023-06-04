@@ -205,8 +205,10 @@ export default function Adjustments() {
                     compareTime(parseTime(reservation.end_time), endTime) === 0
                 );
                 if (reservation) {
-                  return generateSingleReservationCard([reservation],reservations);
-                }  
+                  return generateSingleReservationCard([reservation]);
+                } else {
+                  return <td></td>;
+                }
               }
             })}
           </tr>

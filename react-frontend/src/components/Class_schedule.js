@@ -22,6 +22,8 @@ function Class_schedule() {
   const [newEndTime, setNewEndTime] = useState('');
   const [newStartWeek, setNewStartWeek] = useState('');
   const [newEndWeek, setNewEndWeek] = useState('');
+  const [newHours, setNewHours] = useState('');
+
   const [newIsParity, setNewIsParity] = useState('');
  
 
@@ -169,6 +171,11 @@ function Class_schedule() {
     setNewEndWeek(event.target.value);
   };
 
+  const handleHoursChange = (event) => {
+    setNewHours(event.target.value);
+  };
+
+
   const handleIsParityChange = (event) => {
     setNewIsParity(event.target.value);
   };
@@ -177,13 +184,20 @@ function Class_schedule() {
   const handleNewUserId = (event) => {
     setNewUserId(event.target.value);
   };
-
+  function parsesTime(timeString) {
+    if (timeString===null)
+    return 0;
+    const [hours ] = timeString.split(":");
+    return (hours);
+  }
   const handleFormSubmit = async (event) => {
     event.preventDefault();
   
     if (editSchedule) {
-      let h=5;
-      const updatedSchedule = {
+      const diffInMillis =parsesTime(findEndTimeById(newEndTime))-parsesTime(findStartTimeById(newStartTime));
+      const hoursString = Math.ceil(diffInMillis).toString();
+
+       const updatedSchedule = {
         id: editSchedule.id,
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
@@ -191,7 +205,7 @@ function Class_schedule() {
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
-        hours: h,
+        hours:  hoursString ,
 
         course: { id: newCourseId },
         room: { id: newRoomId },
@@ -211,16 +225,18 @@ function Class_schedule() {
         toast.error('Wystąpił błąd podczas aktualizacji planu zajęć');
       }
     } else {
-      let h=5;
+     const diffInMillis =parsesTime(findEndTimeById(newEndTime))-parsesTime(findStartTimeById(newStartTime));
+      const hoursString = Math.ceil(diffInMillis).toString();
+
       const newClassSchedule = {
+        
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
         end_time: findEndTimeById(newEndTime),
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
-        hours: h,
-
+        hours:   hoursString ,
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
@@ -250,6 +266,7 @@ function Class_schedule() {
     setNewEndTime('');
     setNewStartWeek('');
     setNewEndWeek('');
+    setNewHours('');
     setNewIsParity('');
  
     setShowForm(false);
@@ -278,6 +295,8 @@ function Class_schedule() {
     setNewEndTime(getIdByValueEndingTime(schedule.end_time));
     setNewStartWeek(schedule.start_week);
     setNewEndWeek(schedule.end_week);
+    setNewHours(schedule.hours);
+
     setNewIsParity(schedule.is_parity);
  
     setNewUserId(schedule.user.id);
