@@ -7,8 +7,7 @@ import pl.dmcs.Sale.models.RoomFacility;
 import pl.dmcs.Sale.repositories.RoomFacilityRepository;
 import pl.dmcs.Sale.repositories.RoomRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -47,17 +46,33 @@ public class RoomService {
 
     public void updateDescription() {
         List<Room> rooms = findAll();
-        rooms.forEach(room -> {
-            StringBuilder stringBuilder = new StringBuilder();
-            List<RoomFacility> roomFacilities = roomFacilityRepository.findByRoom(room);
-            for(RoomFacility roomFacility : roomFacilities) {
-                stringBuilder.append(roomFacility.getFacilityAvailable().getName());
-                stringBuilder.append(": ");
-                stringBuilder.append(roomFacility.getQuantity());
-                stringBuilder.append(",\n");
+        List<RoomFacility> roomFacilities = roomFacilityRepository.findByRooms(rooms);
+        Map<Room, StringBuilder> descriptionMap = new HashMap<>();
+
+        for (RoomFacility roomFacility : roomFacilities) {
+            Room room = roomFacility.getRoom();
+            StringBuilder stringBuilder = descriptionMap.getOrDefault(room, new StringBuilder());
+
+            stringBuilder.append(roomFacility.getFacilityAvailable().getName());
+            stringBuilder.append(": ");
+            stringBuilder.append(roomFacility.getQuantity());
+            stringBuilder.append(",\n");
+
+            descriptionMap.put(room, stringBuilder);
+        }
+
+        List<Room> roomsToUpdate = new ArrayList<>();
+        for (Room room : rooms) {
+            StringBuilder stringBuilder = descriptionMap.get(room);
+            if (stringBuilder != null) {
+                String description = stringBuilder.toString();
+                room.setDescription(description);
+                roomsToUpdate.add(room);
             }
-            room.setDescription(stringBuilder.toString());
-            roomRepository.save(room);
-        });
+        }
+
+        if (!roomsToUpdate.isEmpty()) {
+            roomRepository.saveAll(roomsToUpdate);
+        }
     }
 }
