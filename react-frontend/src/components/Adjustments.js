@@ -8,6 +8,7 @@ export default function Adjustments() {
   const [reservations, setReservations] = useState([]);
   const [course, setCourse] = useState("");
   const [room, setRoom] = useState("");
+  const [classSchedules, setClassSchedules] = useState([]);
   const [messages, setMessages] = useState([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
@@ -196,7 +197,7 @@ export default function Adjustments() {
                   compareTime(parseTime(reservation.end_time), endTime) >= 0
               );
               if (overlappingReservations.length > 0) {
-                return generateSingleReservationCard(overlappingReservations,reservations);
+                return generateSingleReservationCard(overlappingReservations,classSchedules);
               } else {
                 const reservation = reservations.find(
                   (reservation) =>
@@ -205,7 +206,7 @@ export default function Adjustments() {
                     compareTime(parseTime(reservation.end_time), endTime) === 0
                 );
                 if (reservation) {
-                  return generateSingleReservationCard([reservation]);
+                  return generateSingleReservationCard([reservation],classSchedules);
                 } else {
                   return <td></td>;
                 }
@@ -217,8 +218,24 @@ export default function Adjustments() {
     );
   }
   
-  
-
+  const fetchClassSchedules  = async () => {
+    try {
+       const response = await fetch(
+        `http://localhost:8080/class_schedules`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setClassSchedules(data);
+      } else {
+        console.log("Failed to fetch class schedules");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+   };
+  useEffect(() => {
+    fetchClassSchedules();
+  }, []);
 
   const fetchReservations = async () => {
     try {
@@ -260,6 +277,8 @@ export default function Adjustments() {
           )
           .then(() => {
             fetchReservations();
+            fetchClassSchedules();
+
           })
           .catch((error) => {
             console.log("Wystąpił błąd podczas usuwania planu:", error);
@@ -289,7 +308,12 @@ export default function Adjustments() {
         otherReservation.start_time <= reservation.start_time)||(otherReservation.start_time < reservation.end_time &&
          reservation.start_time <= otherReservation.start_time);
   
-      return sameDayOfWeek && overlappingWeeks && overlappingTime;
+
+         const sameRoom=reservation.room.name===otherReservation.room.name;
+         const sameUser=reservation.user.id===otherReservation.user.id;
+         const sameTime=sameDayOfWeek && overlappingWeeks && overlappingTime
+
+      return (sameTime && sameRoom===true&&sameUser===false)||(sameTime && sameRoom===true&&sameUser===true)||(sameTime && sameRoom===false&&sameUser===true);
     });
   
     return conflictingReservations.length > 0;
