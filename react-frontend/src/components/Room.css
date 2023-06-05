@@ -220,3 +220,15 @@
   margin-bottom: 10px;
   width: 50%;
 }
+.facility-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+}
+.facility-inputs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 20px;
+}

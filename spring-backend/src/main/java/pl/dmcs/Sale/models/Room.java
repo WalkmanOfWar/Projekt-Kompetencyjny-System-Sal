@@ -20,4 +20,8 @@ public class Room {
     @OneToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
+
+    @OneToOne
+    @JoinColumn(name = "facility_id")
+    private FacilityAvailable facilityAvailable;
 }
