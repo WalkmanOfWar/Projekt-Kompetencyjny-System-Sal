@@ -307,7 +307,7 @@ export default function GenerateHomeTable() {
     }
   
     try {
-      const pdf = new jsPDF('l', 'pt', 'a2');
+      const pdf = new jsPDF('l', 'pt', 'a4');
       pdf.setLanguage("pl")
       pdf.setFont('PTSans');
       pdf.setFontSize(12);

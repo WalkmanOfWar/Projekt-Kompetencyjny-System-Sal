@@ -12,6 +12,8 @@ export default function Adjustments() {
   const [messages, setMessages] = useState([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [showSelector, setShowSelector] = useState(false);
+
 
   const days = [
     { value: 1, text: "Poniedziałek" },
@@ -77,30 +79,25 @@ export default function Adjustments() {
     setShowConfirmation(true);
   };
 
-  const handleDelete = () => {
-    if (selectedReservation) {
-      try {
-        axios
-          .delete(
-            `http://localhost:8080/delete_schedule/${selectedReservation.id}`
-          )
-          .then(() => {
-            fetchReservations();
-          })
-          .catch((error) => {
-            console.log("Wystąpił błąd podczas usuwania planu:", error);
-          });
-      } catch (error) {
-        console.log("Wystąpił błąd podczas usuwania planu:", error);
-      }
-    }
-    setShowConfirmation(false);
+  const handleAddButtonClick = () => {
+    setShowSelector(true);
   };
 
   const handleCancelDelete = () => {
     setSelectedReservation(null);
     setShowConfirmation(false);
   };
+
+
+
+  const handleCancelAdd = () => {
+     setShowSelector(false);
+  };
+
+  const handleAddClassSchedule = () => {
+    setShowSelector(false);
+ };
+
 
   function generateTableHeader() {
     return (
@@ -147,32 +144,35 @@ export default function Adjustments() {
   
     return (
       <td>
-        {reservations.map((reservation) => {
-          const hasConflict = hasConflicts(reservation, allRoomReservations);
-          const cardClassName = hasConflict ? "card text-black bg-danger" : "card text-black bg-striped";
+      {reservations.map((reservation) => {
+        const hasConflict = hasConflicts(reservation, allRoomReservations);
+        const cardClassName = hasConflict
+          ? "card text-black bg-danger"
+          : "card text-black bg-striped";
   
-          return (
-            <div
-              key={reservation.id}
-              className={cardClassName}
-              onClick={() => handleCardClick(reservation)}
-            >
-              <h5 className="card-header">
-                {displayCourseType(reservation.course.course_type) +
-                  reservation.start_week +
-                  "-" +
-                  reservation.end_week}
-              </h5>
-              <div className="card-body">
-                <p className="card-text course-text">{reservation.course.name}</p>
-                <p className="card-text room-text">{reservation.room.name}</p>
-                <p className="card-text">
-                  {reservation.user.first_name + " " + reservation.user.last_name}
-                </p>
-              </div>
+        return (
+          <div
+            key={reservation.id}
+            className={cardClassName}
+            onClick={() => handleCardClick(reservation)}
+          >
+            <h5 className="card-header">
+              {displayCourseType(reservation.course.course_type) +
+                reservation.start_week +
+                "-" +
+                reservation.end_week}
+            </h5>
+            <div className="card-body">
+              <p className="card-text course-text">{reservation.course.name}</p>
+              <p className="card-text room-text">{reservation.room.name}</p>
+              <p className="card-text">
+                {reservation.user.first_name + " " + reservation.user.last_name}
+              </p>
             </div>
-          );
-        })}
+          </div>
+        );
+      })}
+      <button className="btn btn-primary" onClick={handleAddButtonClick}> Dodaj</button> {/* Przycisk jest dodany tutaj */}
       </td>
     );
   }
@@ -208,7 +208,10 @@ export default function Adjustments() {
                 if (reservation) {
                   return generateSingleReservationCard([reservation],classSchedules);
                 } else {
-                  return <td></td>;
+                  return <td>
+                     <button className="btn btn-primary" onClick={handleAddButtonClick}> Dodaj</button> 
+
+                  </td>;
                 }
               }
             })}
@@ -424,6 +427,50 @@ export default function Adjustments() {
           </div>
         </div>
       )}
+
+
+
+
+      {showSelector && (
+          <div className="selector-modal">
+            <div className="selector-modal-content">
+              <p>Wybierz plan zajęć:</p>
+              <div className="selector-options" style={{ marginBottom: '10px' }}>
+              <select>
+  <option value="no-class_schedules-selected">
+    Wybierz jedną z opcji...
+  </option>
+  {classSchedules
+    .filter((schedule) => hasConflicts(schedule,classSchedules)===false)
+    .map((schedule) => (
+      <option key={schedule.value} value={schedule.value}>
+        {schedule.id}
+      </option>
+    ))}
+</select>
+              </div>
+              <div className="button-container">
+                <button className="btn btn-primary" onClick={handleAddClassSchedule}>
+                  Potwierdź
+                </button>
+                <button className="btn btn-primary" style={{ marginLeft: '10px' }} onClick={handleCancelAdd}>
+                  Anuluj
+                </button>
+              </div>
+            </div>
+          </div>
+      )}
+
+
+
+
+
+
+
+
+
+
+
     </div>
   );
 }
