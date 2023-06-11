@@ -30,6 +30,11 @@ public class UserCourseController {
         return ResponseEntity.ok(savedUserCourse);
     }
 
+    @GetMapping("/user_courses/{userID}")
+    public List<UserCourse> getAllByUserId(@PathVariable Long userID) {
+        return userCourseService.getByUserId(userID);
+    }
+
     @GetMapping("/user_course")
     public List<UserCourse> getUserCourse() {
         return userCourseService.findAll();

@@ -25,7 +25,6 @@ function Class_schedule() {
   const [newHours, setNewHours] = useState('');
 
   const [newIsParity, setNewIsParity] = useState('');
- 
 
   const [coursesList, setCourseList] = useState([]);
 
@@ -114,7 +113,6 @@ function Class_schedule() {
     loadRooms();
   }, []);
 
-
   const loadClassSchedules = async () => {
     const result = await axios.get('http://localhost:8080/class_schedules');
     setClassScheduleList(result.data);
@@ -175,29 +173,28 @@ function Class_schedule() {
     setNewHours(event.target.value);
   };
 
-
   const handleIsParityChange = (event) => {
     setNewIsParity(event.target.value);
   };
- 
 
   const handleNewUserId = (event) => {
     setNewUserId(event.target.value);
   };
   function parsesTime(timeString) {
-    if (timeString===null)
-    return 0;
-    const [hours ] = timeString.split(":");
-    return (hours);
+    if (timeString === null) return 0;
+    const [hours] = timeString.split(':');
+    return hours;
   }
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (editSchedule) {
-      const diffInMillis =parsesTime(findEndTimeById(newEndTime))-parsesTime(findStartTimeById(newStartTime));
+      const diffInMillis =
+        parsesTime(findEndTimeById(newEndTime)) -
+        parsesTime(findStartTimeById(newStartTime));
       const hoursString = Math.ceil(diffInMillis).toString();
 
-       const updatedSchedule = {
+      const updatedSchedule = {
         id: editSchedule.id,
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
@@ -205,13 +202,13 @@ function Class_schedule() {
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
-        hours:  hoursString ,
+        hours: hoursString,
 
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
       };
-  
+
       try {
         console.log(updatedSchedule);
         await axios.put(
@@ -225,26 +222,30 @@ function Class_schedule() {
         toast.error('Wystąpił błąd podczas aktualizacji planu zajęć');
       }
     } else {
-     const diffInMillis =parsesTime(findEndTimeById(newEndTime))-parsesTime(findStartTimeById(newStartTime));
+      const diffInMillis =
+        parsesTime(findEndTimeById(newEndTime)) -
+        parsesTime(findStartTimeById(newStartTime));
       const hoursString = Math.ceil(diffInMillis).toString();
 
       const newClassSchedule = {
-        
         day_of_week: newDayOfWeek,
         start_time: findStartTimeById(newStartTime),
         end_time: findEndTimeById(newEndTime),
         start_week: newStartWeek,
         end_week: newEndWeek,
         is_parity: newIsParity,
-        hours:   hoursString ,
+        hours: hoursString,
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
       };
-  
+
       try {
         console.log(newClassSchedule);
-        await axios.post('http://localhost:8080/new_classSchedule', newClassSchedule);
+        await axios.post(
+          'http://localhost:8080/new_classSchedule',
+          newClassSchedule
+        );
         setClassScheduleList([...classScheduleList, newClassSchedule]);
         toast.success('Dodano nowy plan zajęć');
       } catch (error) {
@@ -252,11 +253,10 @@ function Class_schedule() {
         toast.error('Wystąpił błąd podczas dodawania nowego planu zajęć');
       }
     }
-  
+
     handleCancel();
     loadClassSchedules();
   };
-  
 
   const handleCancel = () => {
     setNewCourseId('');
@@ -268,7 +268,7 @@ function Class_schedule() {
     setNewEndWeek('');
     setNewHours('');
     setNewIsParity('');
- 
+
     setShowForm(false);
   };
 
@@ -298,7 +298,7 @@ function Class_schedule() {
     setNewHours(schedule.hours);
 
     setNewIsParity(schedule.is_parity);
- 
+
     setNewUserId(schedule.user.id);
     loadUserCourse(schedule.course.id);
 
@@ -359,8 +359,7 @@ function Class_schedule() {
       sortedClassSchedules = sortedClassSchedules.sort((a, b) => {
         return a.end_week - b.end_week;
       });
-    }
-    else if (sortBy === 'hours') {
+    } else if (sortBy === 'hours') {
       sortedClassSchedules = sortedClassSchedules.sort((a, b) => {
         return a.hours - b.hours;
       });
@@ -389,7 +388,6 @@ function Class_schedule() {
             <option value='startWeek'>Tydzień - początek</option>
             <option value='endWeek'>Tydzień - koniec</option>
             <option value='hours'>Godziny</option>
-
           </select>
         </div>
         <table className='room-table'>
@@ -576,7 +574,7 @@ function Class_schedule() {
                 ))}
               </select>
             </div>
-  
+
             <div className='form-group'>
               <label htmlFor='newIsParity'>Parzystość:</label>
               <select
@@ -607,7 +605,9 @@ function Class_schedule() {
                   <>
                     <option value=''>Wybierz prowadzącego</option>
                     {userCourseList.map((userCourse) => (
-                      <option key={userCourse.user.id} value={userCourse.user.id}>
+                      <option
+                        key={userCourse.user.id}
+                        value={userCourse.user.id}>
                         {userCourse.user.first_name}
                       </option>
                     ))}

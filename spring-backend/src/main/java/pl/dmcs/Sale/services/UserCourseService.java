@@ -41,4 +41,8 @@ public class UserCourseService {
         existingUserCourse.setUser(userCourse.getUser());
         userCourseRepository.save(existingUserCourse);
     }
+
+    public List<UserCourse> getByUserId(Long userID) {
+        return userCourseRepository.findAllByUserId(userID);
+    }
 }

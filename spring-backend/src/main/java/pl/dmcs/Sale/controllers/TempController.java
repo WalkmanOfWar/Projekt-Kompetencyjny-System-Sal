@@ -19,18 +19,6 @@ public class TempController {
     private final ReservationRepository reservationRepository;
     private final RoomFacilityRepository roomFacilityRepository;
 
-
-    @PostMapping("/new_reservation")
-    Reservation newReservation(@RequestBody Reservation newReservation) {
-        return reservationRepository.save(newReservation);
-    }
-
-    @GetMapping("/class_schedules")
-    public List<ClassSchedule> getClassSchedules() {
-        return classScheduleRepository.findAll();
-    }
-
-
     @GetMapping("/class_schedules/room/id/{roomName}")
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);

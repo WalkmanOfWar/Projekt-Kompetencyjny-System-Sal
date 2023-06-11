@@ -52,6 +52,23 @@ function ProfileReservations() {
     }
   };
 
+  const displayDayOfWeeks = (day) => {
+    switch (day) {
+      case 1:
+        return 'Poniedziałek';
+      case 2:
+        return 'Wtorek';
+      case 3:
+        return 'Środa';
+      case 4:
+        return 'Czwartek';
+      case 5:
+        return 'Piątek';
+      default:
+        return '-';
+    }
+  };
+
   const renderUserReservations = () => {
     return (
       <div className='room-wrapper'>
@@ -81,7 +98,9 @@ function ProfileReservations() {
                 <td>{reservation.user.email}</td>
                 <td>{reservation.classSchedule.course.name}</td>
                 <td>{reservation.classSchedule.room.name}</td>
-                <td>{reservation.classSchedule.day_of_week}</td>
+                <td>
+                  {displayDayOfWeeks(reservation.classSchedule.day_of_week)}
+                </td>
                 <td>{reservation.classSchedule.start_time}</td>
                 <td>{reservation.classSchedule.end_time}</td>
                 <td>{reservation.classSchedule.start_week}</td>

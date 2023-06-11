@@ -26,4 +26,9 @@ public class ReservationController {
     public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
         return reservationService.updateReservation(id, reservation);
     }
+
+    @PostMapping("/new_reservation")
+    public void addReservation(@RequestBody Reservation reservation) {
+        reservationService.insertNewReservation(reservation);
+    }
 }

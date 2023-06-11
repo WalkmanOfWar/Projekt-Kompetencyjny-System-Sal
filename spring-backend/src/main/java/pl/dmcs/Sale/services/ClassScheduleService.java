@@ -55,4 +55,8 @@ public class ClassScheduleService {
         // Save the updated classSchedule
         classScheduleRepository.save(existingClassSchedule);
     }
+
+    public List<ClassSchedule> getAll() {
+        return classScheduleRepository.findAll();
+    }
 }

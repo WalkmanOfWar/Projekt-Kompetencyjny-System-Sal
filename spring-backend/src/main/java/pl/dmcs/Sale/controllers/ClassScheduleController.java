@@ -6,12 +6,20 @@ import pl.dmcs.Sale.models.ClassSchedule;
 import pl.dmcs.Sale.models.Reservation;
 import pl.dmcs.Sale.services.ClassScheduleService;
 import pl.dmcs.Sale.services.ReservationService;
+
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @CrossOrigin("http://localhost:3000")
 public class ClassScheduleController {
     ClassScheduleService classScheduleService;
     ReservationService reservationService;
+
+    @GetMapping("/class_schedules")
+    public List<ClassSchedule> getClassSchedules() {
+        return classScheduleService.getAll();
+    }
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
         try {
