@@ -1,5 +1,6 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -41,4 +42,8 @@ public class ClassSchedule {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "classSchedule")
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 }

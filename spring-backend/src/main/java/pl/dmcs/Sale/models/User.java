@@ -1,5 +1,8 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +28,15 @@ public class User {
     private String email;
     private Boolean is_admin;
 
-    @OneToMany
-    @JoinColumn(name = "reservations")
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
     private List<Reservation> reservations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<UserCourse> courses;
 }

@@ -20,14 +20,11 @@ public class CourseFacility {
     private Long quantity;
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "facility_id")
     private FacilityAvailable facilityAvailable;
-//    @OneToMany
-//    @JoinColumn(name = "facility_id")
-//    private List<FacilityAvailable> facilities;
 }

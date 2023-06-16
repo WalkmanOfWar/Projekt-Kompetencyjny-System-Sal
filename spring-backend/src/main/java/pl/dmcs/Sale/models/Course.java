@@ -1,7 +1,10 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,4 +23,16 @@ public class Course {
     @OneToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "course",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<CourseFacility> courseFacilities;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "course",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<UserCourse> userCourses;
 }

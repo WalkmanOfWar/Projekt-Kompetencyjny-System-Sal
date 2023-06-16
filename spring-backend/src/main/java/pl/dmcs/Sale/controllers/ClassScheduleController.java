@@ -27,7 +27,7 @@ public class ClassScheduleController {
             Reservation reservation = new Reservation();
             reservation.setClassSchedule(savedClassSchedule);
             reservation.setStatus(0L);
-            reservation.setUser(savedClassSchedule.getUser());
+//            reservation.setUser(savedClassSchedule.getUser());
             reservationService.insertNewReservation(reservation);
             return savedClassSchedule;
         } catch (Exception e) {

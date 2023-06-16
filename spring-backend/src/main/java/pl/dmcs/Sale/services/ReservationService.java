@@ -16,10 +16,6 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public List<Reservation> findByUserEmail(String email) {
-        return reservationRepository.findByUserEmail(email);
-    }
-
     public List<Reservation> findByClassScheduleId(Long classScheduleId) {
         return reservationRepository.findByClassScheduleId(classScheduleId);
     }

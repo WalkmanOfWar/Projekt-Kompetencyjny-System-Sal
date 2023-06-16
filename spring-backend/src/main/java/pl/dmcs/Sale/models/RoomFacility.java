@@ -19,7 +19,7 @@ public class RoomFacility {
     private Long quantity;
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 

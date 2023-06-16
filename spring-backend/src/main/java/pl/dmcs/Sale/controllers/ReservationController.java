@@ -17,10 +17,10 @@ public class ReservationController {
     public List<Reservation> getReservations() {
         return reservationService.getAllReservations();
     }
-    @GetMapping("reservations/{email}")
-    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
-        return reservationService.findByUserEmail(email);
-    }
+//    @GetMapping("reservations/{email}")
+//    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
+//        return reservationService.findByUserEmail(email);
+//    }
 
     @PutMapping("/reservations/{id}")
     public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {

@@ -1,7 +1,10 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,4 +27,10 @@ public class Room {
     @OneToOne
     @JoinColumn(name = "facility_id")
     private FacilityAvailable facilityAvailable;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "room",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<RoomFacility> roomFacilities;
 }
