@@ -1,9 +1,8 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -11,6 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "room_facilities")
 public class RoomFacility {
     @Id
@@ -19,6 +19,7 @@ public class RoomFacility {
     private Long quantity;
     private String description;
 
+    @JsonIgnoreProperties("roomFacilities")
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
@@ -26,8 +27,4 @@ public class RoomFacility {
     @OneToOne
     @JoinColumn(name = "facility_id")
     private FacilityAvailable facilityAvailable;
-
-//    @OneToMany
-//    @JoinColumn(name = "facility_id")
-//    private List<FacilityAvailable> facilities;
 }

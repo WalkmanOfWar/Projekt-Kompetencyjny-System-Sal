@@ -16,7 +16,9 @@ public class RoomService {
     private final RoomFacilityRepository roomFacilityRepository;
 
     public List<Room> findAll() {
-        return roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAll();
+        rooms.sort(Comparator.comparing(Room::getName));
+        return rooms;
     }
 
     public Room save(Room newRoom) {

@@ -69,6 +69,17 @@
       displayMessage("To");
     }, []);
 
+    const generateOptimizedClassSchedules = async () => {
+      try { 
+        const response = await axios.put("http://localhost:8080/generate-classSchedules");
+        toast.success("Plan zajęć wygenerowany");
+        console.log(response.data);
+      } catch(error) {
+        toast.error("Nie udało się wygenerować planu zajęć")
+        console.log(error);
+      }
+    }
+
     const loadRooms = async () => {
       const result = await axios.get("http://localhost:8080/rooms");
       setRoomList(result.data);
@@ -509,8 +520,8 @@
             </div>
             <div className="col-2 mb-3 mx-2 d-flex flex-column p-3">
           
-              <button className="btn btn-primary" onClick={() => {}}>
-                Generowanie
+              <button className="btn btn-primary" onClick={generateOptimizedClassSchedules}>
+                Generowanie planu zajęć
               </button>
             </div>
           </div>

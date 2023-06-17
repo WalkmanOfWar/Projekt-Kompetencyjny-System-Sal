@@ -20,6 +20,14 @@ public class ReservationService {
         return reservationRepository.findByClassScheduleId(classScheduleId);
     }
 
+    public List<Reservation> getAllAcceptedReservations() {
+        return reservationRepository.findByStatus(1L);
+    }
+
+    public List<Reservation> getAllAcceptedReservationsByRoomName(String roomName) {
+        return reservationRepository.findByStatusAndClassScheduleRoomName(1L, roomName); // 0 - niezaakceptowana, 1 - zaakceptowana, 2 - odrzucona
+    }
+
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
     }

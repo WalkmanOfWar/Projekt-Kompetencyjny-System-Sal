@@ -93,6 +93,7 @@ function Reservations() {
 
   const handleRejectReservation = (reservationId) => {
     updateReservationStatus(reservationId, 2);
+    // TODO: usunąć z bazy
   };
 
   const generateReservationsDisplay = () => {

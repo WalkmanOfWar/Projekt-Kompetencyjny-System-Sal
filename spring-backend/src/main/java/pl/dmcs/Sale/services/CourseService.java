@@ -40,6 +40,10 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public List<Course> getCoursesWithoutDeanGroupById(Long id) {
+        return courseRepository.findCoursesWithoutDeanGroup(id);
+    }
+
     public void deleteById(Long id) {
         courseRepository.deleteById(id);
     }

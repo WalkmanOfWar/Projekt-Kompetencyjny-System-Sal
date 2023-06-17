@@ -333,6 +333,10 @@ function Class_schedule() {
       sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
         a.course.name.localeCompare(b.course.name)
       );
+    } else if (sortBy === 'deanGroup') {
+      sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
+        a.deanGroup.name.localeCompare(b.deanGroup.name)
+      );
     } else if (sortBy === 'parity') {
       sortedClassSchedules = sortedClassSchedules.sort((a, b) =>
         getisParityName(a.is_parity).localeCompare(getisParityName(b.is_parity))
@@ -381,6 +385,7 @@ function Class_schedule() {
             <option value='user'>Prowadzący</option>
             <option value='room'>Nazwa sali</option>
             <option value='course'>Nazwa kursu</option>
+            <option value='deanGroup'>Grupa dziekańska</option>
             <option value='parity'>Parzystość</option>
             <option value='day'>Dzień</option>
             <option value='startTime'>Czas - początek</option>
@@ -395,7 +400,8 @@ function Class_schedule() {
             <tr>
               <th>Lp.</th>
               <th>Prowadzący</th>
-              <th>Przedmiot</th>
+              <th>Kurs</th>
+              <th>Grupa dziekańska</th>
               <th>Pokój</th>
               <th>Dzień tygodnia</th>
               <th>Początek - czas</th>
@@ -413,6 +419,7 @@ function Class_schedule() {
                 <td>{index + 1}.</td>
                 <td>{classSchedule.user.email}</td>
                 <td>{classSchedule.course.name}</td>
+                <td>{classSchedule.deanGroup.name}</td>
                 <td>{classSchedule.room.name}</td>
                 <td>{getDayOfWeekName(classSchedule.day_of_week)}</td>
                 <td>{classSchedule.start_time}</td>
@@ -426,6 +433,7 @@ function Class_schedule() {
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleEditSchedule(classSchedule.id)}>
+                      {console.log(classSchedule)}
                     Edit
                   </button>
                   <button

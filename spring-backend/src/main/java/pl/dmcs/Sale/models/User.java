@@ -2,7 +2,6 @@ package pl.dmcs.Sale.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,4 +38,15 @@ public class User {
             orphanRemoval = true,
             cascade = CascadeType.ALL)
     private List<UserCourse> courses;
+
+    public boolean hasCourse(Course course) {
+        if (courses != null && course != null) {
+            for (UserCourse userCourse : courses) {
+                if (userCourse.getCourse().equals(course)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

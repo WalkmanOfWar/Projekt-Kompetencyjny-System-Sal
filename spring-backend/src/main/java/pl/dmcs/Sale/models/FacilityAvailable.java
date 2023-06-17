@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "facilities_available")
@@ -24,4 +25,10 @@ public class FacilityAvailable {
             orphanRemoval = true,
             cascade = CascadeType.ALL)
     private List<CourseFacility> courseFacilities;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "facilityAvailable",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<RoomFacility> roomFacilties;
 }

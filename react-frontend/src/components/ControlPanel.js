@@ -11,6 +11,7 @@ import Class_schedule from './Class_schedule';
 import CourseFacilities from './CourseFacilities';
 import RoomFacilities from './RoomFacilities';
 import Adjustments from './Adjustments';
+import DeanGroups from './DeanGroups';
 
 function ControlPanel() {
   const [selectedButton, setSelectedButton] = useState('Room');
@@ -25,6 +26,8 @@ function ControlPanel() {
         return <Room />;
       case 'Room_types':
         return <Room_types />;
+      case 'DeanGroups':
+        return <DeanGroups/>;
       case 'User_courses':
         return <UserCourses />;
       case 'Courses':
@@ -109,6 +112,13 @@ function ControlPanel() {
           }`}
           onClick={() => handleButtonClick('Room_types')}>
           Typy sal
+        </button>
+        <button
+          className={`btn btn-primary ${
+            selectedButton === 'DeanGroups' ? 'selected' : ''
+          }`}
+          onClick={() => handleButtonClick('DeanGroups')}>
+          Grupy dziekańskie
         </button>
         <button
           className={`btn btn-primary ${
