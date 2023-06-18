@@ -406,7 +406,8 @@ export default function GenerateHomeTable() {
             <select
               className='form-select d-block w-100 mt-1'
               value={selectedRoom}
-              onChange={handleSelectedRoom}>
+              onChange={handleSelectedRoom}
+              disabled={selectedDeanGroup !== 'no-reservations'}>
               <option value='no-reservations'>Wybierz jedną z opcji...</option>
               {roomList.map((room) => (
                 <option value={room.value}>{room.name}</option>
@@ -420,7 +421,8 @@ export default function GenerateHomeTable() {
             <select
               className='form-select d-block w-100 mt-1'
               value={selectedDeanGroup}
-              onChange={handleSelectedDeanGroup}>
+              onChange={handleSelectedDeanGroup}
+              disabled={selectedRoom !== 'no-reservations'}>
               <option value='no-reservations'>Wybierz jedną z opcji...</option>
               {deanGroups.map((deanGroup) => (
                 <option value={deanGroup.value}>{deanGroup.name}</option>

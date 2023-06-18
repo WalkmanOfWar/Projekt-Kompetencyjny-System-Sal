@@ -44,13 +44,16 @@ public class TimetableGenerator {
             );
             for(Reservation reservation: reservations) {
                 ClassSchedule classSchedule = reservation.getClassSchedule();
+                DeanGroup deanGroup = reservation.getClassSchedule().getDeanGroup();
                 long hours = classSchedule.getHours();
                 boolean exit = false;
                 for(Room room: rooms) {
                     List<Reservation> roomReservations = savedReservations.stream().filter(res -> res.getClassSchedule().getRoom().equals(room)).toList();
                     List<Reservation> userReservations = savedReservations.stream().filter(res -> res.getClassSchedule().getUser().equals(user)).toList();
+                    List<Reservation> deanGroupReservations = savedReservations.stream().filter(res -> res.getClassSchedule().getDeanGroup().equals(deanGroup)).toList();
                     List<String> possibleRoomReservations = generateReservationsList((int)hours, roomReservations, maxHours);
                     List<String> possibleUserReservations = generateReservationsList((int)hours, userReservations, maxHours);
+                    List<String> possibleDeanGroupReservations = generateReservationsList((int)hours, deanGroupReservations, maxHours);
                     List<String> overlappingReservations = new ArrayList<>();
 
                     for (String roomReservation : possibleRoomReservations) {
@@ -60,9 +63,18 @@ public class TimetableGenerator {
                             }
                         }
                     }
+                    // grupy dziekańskie
+                    List<String> reservationsOut = new ArrayList<>();
+                    for (String overlappingReservation : overlappingReservations) {
+                        for (String deanGroupReservation : possibleDeanGroupReservations) {
+                            if (areReservationsOverlapping(overlappingReservation, deanGroupReservation)) {
+                                reservationsOut.add(overlappingReservation);
+                            }
+                        }
+                    }
 
-                    if(!overlappingReservations.isEmpty()) {
-                        String possibleReservation = findMostOptimalReservation(overlappingReservations);
+                    if(!reservationsOut.isEmpty()) {
+                        String possibleReservation = findMostOptimalReservation(reservationsOut);
                         String[] parts = possibleReservation.split("_");
                         int newDayOfWeek = Integer.parseInt(parts[0]);
                         int newStartHour = Integer.parseInt(parts[1]);
