@@ -5,12 +5,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import pl.dmcs.Sale.models.ClassSchedule;
-import pl.dmcs.Sale.models.Course;
-import pl.dmcs.Sale.models.Room;
-import pl.dmcs.Sale.models.User;
+import pl.dmcs.Sale.models.*;
+import pl.dmcs.Sale.repositories.*;
 import pl.dmcs.Sale.services.ClassScheduleService;
 import pl.dmcs.Sale.services.RoomService;
+import pl.dmcs.Sale.services.UserService;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -24,195 +23,144 @@ import java.util.*;
 public class TimetableGenerator {
     private final RoomService roomService;
     private final ClassScheduleService classScheduleService;
-    private List<ClassSchedule> acceptedClassSchedules;
-    private List<Room> rooms;
-    private final int MONDAY = 1, FRIDAY = 5;
+    private final DeanGroupRepository deanGroupRepository;
+    private final ReservationRepository reservationRepository;
+    private final RoomRepository roomRepository;
+    private final UserCourseRepository userCourseRepository;
+    private final UserService userService;
 
-    private void sortClassSchedules() {
-//        acceptedClassSchedules.sort(
-//                Comparator.comparing(ClassSchedule::getUser,
-//                        Comparator.comparing(user -> user.getEmail().toLowerCase()))
-//                        .thenComparingLong(ClassSchedule::getHours).reversed()
-//                        .thenComparing(classSchedule -> classSchedule.getCourse().getName(), String.CASE_INSENSITIVE_ORDER)
-//        );
-        acceptedClassSchedules.sort(Comparator.comparing(classSchedule -> classSchedule.getDeanGroup().getName())); // grupy dziekańskie
-    }
+    public void optimizeClassSchedules(int maxHours) {
+        List<Room> rooms = roomRepository.findAll();
+        List<Reservation> savedReservations = new ArrayList<>();
+        List<User> users = userService.findAll();
 
-//    private void optimizeClassSchedules() {
-//        Map<String, LocalTime> availableStartTimes = generateTimeMap(8, 19, 15);
-//        Set<String> reservedTimesSet = new HashSet<>();
-//        Set<ClassSchedule> updatedSchedules = new HashSet<>(); // Track updated class schedules
-//        rooms.sort(Comparator.comparing(Room::getId));
-//        System.out.println("Reservations size: " + acceptedClassSchedules.size());
-//        for (long i = MONDAY; i <= FRIDAY; i++) {
-//            for (Room room : rooms) {
-//                for (ClassSchedule classSchedule : acceptedClassSchedules) {
-//                    if (updatedSchedules.contains(classSchedule)) {
-//                        // Skip class schedules that have already been updated
-//                        continue;
-//                    }
-//
-//                    // Get the required details from the class schedule
-//                    Long requiredHours = classSchedule.getHours();
-//
-//                    // Iterate over the available time slots for the current room and day
-//                    for (int startHour = 8; startHour <= 20 - requiredHours; startHour++) {
-//                        String key = room.getName() + "_" + i + "_" + startHour;
-//                        LocalTime startTime = availableStartTimes.get(key);
-//
-//                        // Check if the current time slot is not reserved and has enough hours available
-//                        if (!reservedTimesSet.contains(key) && startTime != null) {
-//                            boolean allHoursAvailable = true;
-//                            for (int hour = startHour; hour < startHour + requiredHours; hour++) {
-//                                String timeKey = room.getName() + "_" + i + "_" + hour;
-//                                if (reservedTimesSet.contains(timeKey) || availableStartTimes.get(timeKey) == null) {
-//                                    allHoursAvailable = false;
-//                                    break;
-//                                }
-//                            }
-//
-//                            // If all hours are available, reserve the time slots
-//                            if (allHoursAvailable) {
-//                                for (int hour = startHour; hour < startHour + requiredHours; hour++) {
-//                                    String timeKey = room.getName() + "_" + i + "_" + hour;
-//                                    reservedTimesSet.add(timeKey);
-//                                }
-//
-//                                // Update the start and end times in the class schedule
-//                                classSchedule.setRoom(room);
-//                                classSchedule.setDay_of_week(i);
-//                                classSchedule.setStart_time(Time.valueOf(startTime));
-//                                classSchedule.setEnd_time(Time.valueOf(startTime.plusHours(requiredHours).minusMinutes(15)));
-//                                updatedSchedules.add(classSchedule); // Add class schedule to the updated set
-//                                classScheduleService.update(classSchedule);
-//                                break; // Move to the next class schedule
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println("Class schedule generated");
-//        // classScheduleService.updateAll(acceptedClassSchedules);
-//    }
-//
-//    private Map<String, LocalTime> generateTimeMap(int startHour, int lastHour, int minutes) {
-//        Map<String, LocalTime> availableStartTimes = new HashMap<>();
-//        // klucz: Pokój_dzień_godzina
-//        for(Room room: rooms) {
-//            for(int i = MONDAY; i <= FRIDAY; i++) {
-//                for(int start = startHour; start <= lastHour; start++) {
-//                    String key = room.getName() + "_" + i + "_" + start;
-//                    availableStartTimes.put(key, LocalTime.of(start,minutes));
-//                }
-//            }
-//        }
-//        return availableStartTimes;
-//    }
+        for(User user: users) {
+            List<Reservation> reservations = user.getReservations();
+            reservations.sort(
+                    Comparator.comparing(
+                            reservation -> reservation.getClassSchedule().getHours(),
+                            Comparator.reverseOrder()
+                    )
+            );
+            for(Reservation reservation: reservations) {
+                ClassSchedule classSchedule = reservation.getClassSchedule();
+                long hours = classSchedule.getHours();
+                boolean exit = false;
+                for(Room room: rooms) {
+                    List<Reservation> roomReservations = savedReservations.stream().filter(res -> res.getClassSchedule().getRoom().equals(room)).toList();
+                    List<Reservation> userReservations = savedReservations.stream().filter(res -> res.getClassSchedule().getUser().equals(user)).toList();
+                    List<String> possibleRoomReservations = generateReservationsList((int)hours, roomReservations, maxHours);
+                    List<String> possibleUserReservations = generateReservationsList((int)hours, userReservations, maxHours);
+                    List<String> overlappingReservations = new ArrayList<>();
 
-    public void optimizeClassSchedules() {
-        int roomPos = 0;
-        long dayOfWeek = 1;
-        int startHour = 8, minutes = 15;
-        List<ClassSchedule> changedClassSchedules = new ArrayList<>();
-        for(ClassSchedule classSchedule: acceptedClassSchedules) {
-            if(rooms.size() - 1 == roomPos) {
-                startHour = 8;
-                roomPos = 0;
-                if(dayOfWeek == 5L) {
-                    break;
-                }
-                dayOfWeek++;
-            }
-            long hours = classSchedule.getHours();
-            if(startHour + hours > 16) {
-                startHour = 8;
-                roomPos++;
-            }
+                    for (String roomReservation : possibleRoomReservations) {
+                        for (String userReservation : possibleUserReservations) {
+                            if (areReservationsOverlapping(userReservation, roomReservation)) {
+                                overlappingReservations.add(roomReservation);
+                            }
+                        }
+                    }
 
-            Time newStartTime = Time.valueOf(LocalTime.of(startHour, minutes));
-            Time newEndTime = Time.valueOf(LocalTime.of((int)(startHour + hours), 0));
+                    if(!overlappingReservations.isEmpty()) {
+                        String possibleReservation = findMostOptimalReservation(overlappingReservations);
+                        String[] parts = possibleReservation.split("_");
+                        int newDayOfWeek = Integer.parseInt(parts[0]);
+                        int newStartHour = Integer.parseInt(parts[1]);
+                        int newEndHour = Integer.parseInt(parts[2]);
 
-            boolean slotAvailable = true;
-            for(ClassSchedule check: changedClassSchedules) {
-                if(check.getDay_of_week() == dayOfWeek) {
-                    Time eStartTime = check.getStart_time();
-                    Time eEndTime = check.getEnd_time();
-                    System.out.printf("Nowe: [%s] | [%s]%n", newStartTime, newEndTime);
-                    System.out.printf("Stare: [%s] | [%s]%n", eStartTime, eEndTime);
-                    if(eStartTime.before(newEndTime) && eEndTime.after(newStartTime)) {
-                        slotAvailable = false;
+                        Time newStartTime = Time.valueOf(LocalTime.of(newStartHour, 15));
+                        Time newEndTime = Time.valueOf(LocalTime.of(newEndHour, 0));
+
+                        classSchedule.setDay_of_week((long)newDayOfWeek);
+                        classSchedule.setStart_time(newStartTime);
+                        classSchedule.setEnd_time(newEndTime);
+                        classSchedule.setRoom(room);
+                        reservation.setClassSchedule(classSchedule);
+                        exit = true;
+                        savedReservations.add(reservation);
+                    }
+                    if(exit) {
                         break;
                     }
                 }
             }
-
-            if(slotAvailable) {
-                classSchedule.setStart_time(newStartTime);
-                classSchedule.setEnd_time(newEndTime);
-                classSchedule.setDay_of_week(dayOfWeek);
-                classSchedule.setRoom(rooms.get(roomPos));
-                classScheduleService.update(classSchedule);
-                changedClassSchedules.add(classSchedule);
-                System.out.printf("Class schedule [%d] updated\n", classSchedule.getId());
-                startHour += hours;
-            }
-//            else { // nie udało się szukanie losowego innego dnia
-//                int tempStartHour = startHour;
-//                int tempRoomPos = 0;
-//                long tempDayOfWeek = dayOfWeek + 1;
-//
-//                while(true) {
-//                    if(rooms.size() - 1 == tempRoomPos) {
-//                        tempStartHour = 8;
-//                        tempRoomPos = 0;
-//                        if(tempDayOfWeek == 5L) {
-//                            break;
-//                        }
-//                        tempDayOfWeek++;
-//                    }
-//                    hours = classSchedule.getHours();
-//                    if(tempStartHour + hours > 16) {
-//                        tempStartHour = 8;
-//                        tempRoomPos++;
-//                    }
-//                    slotAvailable = true;
-//                    for(ClassSchedule check: changedClassSchedules) {
-//                        if(check.getDay_of_week() == dayOfWeek) {
-//                            Time eStartTime = check.getStart_time();
-//                            Time eEndTime = check.getEnd_time();
-//                            System.out.printf("Nowe: [%s] | [%s]%n", newStartTime, newEndTime);
-//                            System.out.printf("Stare: [%s] | [%s]%n", eStartTime, eEndTime);
-//                            if(eStartTime.before(newEndTime) && eEndTime.after(newStartTime)) {
-//                                slotAvailable = false;
-//                                break;
-//                            }
-//                        }
-//                    }
-//
-//                    if(slotAvailable) {
-//                        newStartTime = Time.valueOf(LocalTime.of(tempStartHour, minutes));
-//                        newEndTime = Time.valueOf(LocalTime.of((int)(tempStartHour + hours), 0));
-//                        classSchedule.setStart_time(newStartTime);
-//                        classSchedule.setEnd_time(newEndTime);
-//                        classSchedule.setDay_of_week(tempDayOfWeek);
-//                        classSchedule.setRoom(rooms.get(tempRoomPos));
-//                        classScheduleService.update(classSchedule);
-//                        changedClassSchedules.add(classSchedule);
-//                        System.out.printf("Class schedule [%d] updated\n", classSchedule.getId());
-//                    }
-//                }
-//
-//            }
         }
-        System.out.println("Class schedules optimized");
+
+        reservationRepository.saveAll(savedReservations);
+        System.out.println("Reservations generated");
     }
 
+    private String findMostOptimalReservation(List<String> possibleReservations) {
+        String best = possibleReservations.get(0);
+        String[] bestParts = best.split("_");
+        int bestStartHour = Integer.parseInt(bestParts[1]);
+        for(String reservation: possibleReservations) {
+            String[] parts = reservation.split("_");
+            int startHour = Integer.parseInt(parts[1]);
+            if(startHour < bestStartHour) {
+                bestStartHour = startHour;
+                best = reservation;
+            }
+        }
+
+        return best;
+    }
+    private boolean areReservationsOverlapping(String reservation1, String reservation2) {
+        String[] parts1 = reservation1.split("_");
+        String[] parts2 = reservation2.split("_");
+
+        int dayOfWeek1 = Integer.parseInt(parts1[0]);
+        int startHour1 = Integer.parseInt(parts1[1]);
+        int endHour1 = Integer.parseInt(parts1[2]);
+
+        int dayOfWeek2 = Integer.parseInt(parts2[0]);
+        int startHour2 = Integer.parseInt(parts2[1]);
+        int endHour2 = Integer.parseInt(parts2[2]);
+
+        return dayOfWeek1 == dayOfWeek2 && startHour1 == startHour2 && endHour1 == endHour2;
+    }
+
+    private List<String> generateReservationsList(int hours, List<Reservation> reservations, int maxHours) {
+        List<String> possibleReservations = new ArrayList<>();
+        for(int i = 1; i <= 5; i++) { // dayOfWeek_startHour_endHour
+            for(int j = 8; j <= maxHours - hours; j++) {
+                possibleReservations.add(String.format("%d_%d_%d", i, j, j + hours));
+            }
+        }
+
+        for(Reservation roomReservation: reservations) {
+            ClassSchedule classSchedule = roomReservation.getClassSchedule();
+            Long dayOfWeek = classSchedule.getDay_of_week();
+            int startHour = classSchedule.getStart_time().toLocalTime().getHour();
+            int endHour = classSchedule.getEnd_time().toLocalTime().getHour();
+
+            List<String> reservationsToRemove = new ArrayList<>();
+
+            for (String reservation : possibleReservations) {
+                String[] parts = reservation.split("_");
+                int resDayOfWeek = Integer.parseInt(parts[0]);
+                int resStartHour = Integer.parseInt(parts[1]);
+                int resEndHour = Integer.parseInt(parts[2]);
+
+                if (dayOfWeek == resDayOfWeek && testOverlap(startHour, endHour, resStartHour, resEndHour)) {
+                    reservationsToRemove.add(reservation);
+                }
+            }
+
+            possibleReservations.removeAll(reservationsToRemove);
+        }
+
+        return possibleReservations;
+    }
+
+    private boolean testOverlap(int x1, int x2, int y1, int y2) {
+        return (x1 >= y1 && x1 < y2) ||
+                (x2 > y1 && x2 <= y2) ||
+                (y1 >= x1 && y1 < x2) ||
+                (y2 > x1 && y2 <= x2);
+    }
 
     public void generateTimetable() {
-        acceptedClassSchedules = classScheduleService.getAllAcceptedClassSchedules();
-        rooms = roomService.findAll();
-        sortClassSchedules();
-        optimizeClassSchedules();
+        optimizeClassSchedules(16);
     }
 }

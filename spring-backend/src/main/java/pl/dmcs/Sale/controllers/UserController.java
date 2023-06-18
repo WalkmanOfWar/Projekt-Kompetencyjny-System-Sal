@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.DTOs.LoginRequest;
+import pl.dmcs.Sale.models.Reservation;
 import pl.dmcs.Sale.models.User;
+import pl.dmcs.Sale.repositories.ReservationRepository;
 import pl.dmcs.Sale.services.UserCourseService;
 import pl.dmcs.Sale.services.UserService;
 
@@ -77,6 +79,12 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return userService.findAll();
+    }
+
+    @GetMapping("/users/{email}/reservations")
+    public List<Reservation> getUserReservations(@PathVariable String email) {
+        User user = userService.findByEmail(email);
+        return user.getReservations();
     }
     @PutMapping("/users/{userId}")
     void updateUser(@PathVariable("userId") String userId, @RequestBody User user) {

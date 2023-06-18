@@ -115,6 +115,7 @@ function Class_schedule() {
 
   const loadClassSchedules = async () => {
     const result = await axios.get('http://localhost:8080/class_schedules');
+    console.log(result.data);
     setClassScheduleList(result.data);
   };
 
@@ -433,7 +434,7 @@ function Class_schedule() {
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleEditSchedule(classSchedule.id)}>
-                      {console.log(classSchedule)}
+                    {console.log(classSchedule)}
                     Edit
                   </button>
                   <button

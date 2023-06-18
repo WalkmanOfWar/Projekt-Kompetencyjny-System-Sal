@@ -1,24 +1,16 @@
 package pl.dmcs.Sale;
 
 import jakarta.transaction.Transactional;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import pl.dmcs.Sale.models.*;
 import pl.dmcs.Sale.repositories.*;
 
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Transactional
@@ -177,139 +169,148 @@ public class InitData implements ApplicationRunner {
         userCourseRepository.saveAll(userCourses);
     }
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    private void testReservations() {
-        Random rand = new Random();
-        List<User> users = userRepository.findAll();
-        List<Room> rooms = roomRepository.findAll();
+    public void generateReservations(int maxHours) {
+        Random random = new Random();
         List<DeanGroup> deanGroups = deanGroupRepository.findAll();
+        List<Room> rooms = roomRepository.findAll();
         List<Reservation> savedReservations = new ArrayList<>();
-        int roomPos = 0;
-        long startWeek = 1, endWeek = 15;
-        long parity = 0; // 0 brak, 1 - x1, 2 - x2
-        long reservationStatus = 1; // 0 - niezaakceptowana, 1 - zaakceptowana, 2 - odrzucona
-        int dayOfWeek = 1;
-        boolean leave = false;
-        int startHour = 8, minutes = 15;
-        for (DeanGroup deanGroup : deanGroups) {
-            if (leave) {
-                break;
-            }
-            List<Course> courses = deanGroup.getCourses(); // kursy grupy dziekańskiej
-            for (Course course : courses) {
-                long hours = rand.nextInt(6) + 2;
-                if (rooms.size() - 1 == roomPos) {
-                    roomPos = 0;
-                    startHour = 8;
-                    if (dayOfWeek == 5L) {
-                        leave = true;
-                        break;
-                    }
-                    dayOfWeek++;
+
+        for(DeanGroup deanGroup: deanGroups) {
+            List<Course> courses = deanGroup.getCourses();
+            for(Course course: courses) {
+                List<UserCourse> userCourses = userCourseRepository.findByCourseId(course.getId());
+                System.out.println("\n---------------USER COURSES " + userCourses.size());
+                if(userCourses.isEmpty()) {
+                   continue;
                 }
-                if (startHour + hours > 20) {
-                    roomPos++;
-                    startHour = 8;
-                }
+                boolean exit = false;
+                for(UserCourse userCourse: userCourses) {
+                    int hours = random.nextInt(3) + 2;
+                    User user = userCourse.getUser();
+                    List<Reservation> userReservations = savedReservations.stream().filter(reservation -> reservation.getClassSchedule().getUser().equals(user)).toList();
+                    System.out.println("USER RESERVATIONS " + userReservations.size());
+                    for(Room room: rooms) {
+                        List<Reservation> roomReservations = savedReservations.stream().filter(reservation -> reservation.getClassSchedule().getRoom().equals(room)).toList();
+                        List<String> possibleRoomReservations = generateReservationsList(hours, roomReservations);
+                        List<String> possibleUserReservations = generateReservationsList(hours, userReservations);
+                        List<String> overlappingReservations = new ArrayList<>();
 
-                Time startTime = Time.valueOf(LocalTime.of(startHour, minutes));
-                Time endTime = Time.valueOf(LocalTime.of((int) (startHour + hours), 0));
-
-                User foundUser = null;
-                for (User user : users) {
-                    boolean slotAvailable = true;
-                    if (user.hasCourse(course)) {
-                        List<Reservation> reservations = savedReservations.stream()
-                                .filter(reservation -> reservation.getClassSchedule().getUser().equals(user))
-                                .collect(Collectors.toList());
-                        System.out.println("Reservations size: " + reservations.size());
-                        for (Reservation reservation : reservations) {
-                            ClassSchedule classSchedule = reservation.getClassSchedule();
-                            System.out.printf("DAY of week [stary-nowy] [%d] [%d]\n", classSchedule.getDay_of_week(), dayOfWeek);
-                            if (classSchedule.getDay_of_week() == dayOfWeek) {
-                                Time eStartTime = classSchedule.getStart_time();
-                                Time eEndTime = classSchedule.getEnd_time();
-                                System.out.printf("Nowe: [%s] | [%s]\n", startTime, endTime);
-                                System.out.printf("Stare: [%s] | [%s]\n", eStartTime, eEndTime);
-
-                                DateTime start1 = new DateTime(startTime);
-                                DateTime start2 = new DateTime(eStartTime);
-                                DateTime end1 = new DateTime(endTime);
-                                DateTime end2 = new DateTime(eEndTime);
-                                Interval intervalNew = new Interval(start1, end1);
-                                Interval intervalOld = new Interval(start2, end2);
-                                if (intervalNew.overlaps(intervalOld) || intervalOld.overlaps(intervalNew)) {
-                                    System.out.println("WYNIK: [FALSZ]");
-                                    System.out.println("-----------------------------------");
-                                    slotAvailable = false;
-                                    break;
+                        for (String roomReservation : possibleRoomReservations) {
+                            for (String userReservation : possibleUserReservations) {
+                                if (areReservationsOverlapping(userReservation, roomReservation)) {
+                                    overlappingReservations.add(roomReservation);
                                 }
                             }
                         }
-                        if (slotAvailable) {
-                            System.out.println("WYNIK: [PRAWDA]");
-                            System.out.println("-----------------------------------");
-                            foundUser = user;
+
+                        if(!overlappingReservations.isEmpty()) {
+                            String possibleReservation = overlappingReservations.get(0);
+                            String[] parts = possibleReservation.split("_");
+                            int newDayOfWeek = Integer.parseInt(parts[0]);
+                            int newStartHour = Integer.parseInt(parts[1]);
+                            int newEndHour = Integer.parseInt(parts[2]);
+
+                            Time newStartTime = Time.valueOf(LocalTime.of(newStartHour, 15));
+                            Time newEndTime = Time.valueOf(LocalTime.of(newEndHour, 0));
+
+                            ClassSchedule classSchedule = ClassSchedule.builder()
+                                    .user(user)
+                                    .course(course)
+                                    .room(room)
+                                    .start_week(1L)
+                                    .end_week(15L)
+                                    .deanGroup(deanGroup)
+                                    .is_parity(0L)
+                                    .day_of_week((long)newDayOfWeek)
+                                    .start_time(newStartTime)
+                                    .end_time(newEndTime)
+                                    .hours((long)hours)
+                                    .build();
+                            Reservation reservation = Reservation.builder()
+                                    .status(1L)
+                                    .classSchedule(classSchedule)
+                                    .build();
+                            exit = true;
+                            savedReservations.add(reservation);
+                        }
+                        if(exit) {
                             break;
                         }
                     }
+                    if(exit) {
+                        break;
+                    }
                 }
-                if (foundUser == null) {
-                    continue;
-                }
-
-                ClassSchedule classSchedule = ClassSchedule.builder()
-                        .user(foundUser)
-                        .course(course)
-                        .room(rooms.get(roomPos))
-                        .start_week(startWeek)
-                        .end_week(endWeek)
-                        .deanGroup(deanGroup)
-                        .is_parity(parity)
-                        .day_of_week((long) dayOfWeek)
-                        .start_time(startTime)
-                        .end_time(endTime)
-                        .hours(hours)
-                        .build();
-                Reservation reservation = Reservation.builder()
-                        .status(reservationStatus)
-                        .classSchedule(classSchedule)
-                        .build();
-
-                savedReservations.add(reservation);
-                saveReservation(reservation); // Call the method to save the reservation immediately
-                startHour += hours;
             }
         }
-        System.out.println("All schedules generated");
+
+        reservationRepository.saveAll(savedReservations);
+        System.out.println("Reservations generated");
     }
 
-    @Transactional
-    public void saveReservation(Reservation reservation) {
-        TransactionDefinition txDef = new DefaultTransactionDefinition();
-        TransactionStatus txStatus = transactionManager.getTransaction(txDef);
+    private boolean areReservationsOverlapping(String reservation1, String reservation2) {
+        String[] parts1 = reservation1.split("_");
+        String[] parts2 = reservation2.split("_");
 
-        try {
-            reservationRepository.saveAndFlush(reservation);
-            transactionManager.commit(txStatus);
-        } catch (Exception e) {
-            transactionManager.rollback(txStatus);
-            // Handle the exception
+        int dayOfWeek1 = Integer.parseInt(parts1[0]);
+        int startHour1 = Integer.parseInt(parts1[1]);
+        int endHour1 = Integer.parseInt(parts1[2]);
+
+        int dayOfWeek2 = Integer.parseInt(parts2[0]);
+        int startHour2 = Integer.parseInt(parts2[1]);
+        int endHour2 = Integer.parseInt(parts2[2]);
+
+        return dayOfWeek1 == dayOfWeek2 && startHour1 == startHour2 && endHour1 == endHour2;
+    }
+
+    private List<String> generateReservationsList(int hours, List<Reservation> reservations) {
+        List<String> possibleReservations = new ArrayList<>();
+        for(int i = 1; i <= 5; i++) { // dayOfWeek_startHour_endHour
+            for(int j = 8; j <= 20 - hours; j++) {
+                possibleReservations.add(String.format("%d_%d_%d", i, j, j + hours));
+            }
         }
+        for(Reservation roomReservation: reservations) {
+            ClassSchedule classSchedule = roomReservation.getClassSchedule();
+            Long dayOfWeek = classSchedule.getDay_of_week();
+            int startHour = classSchedule.getStart_time().toLocalTime().getHour();
+            int endHour = classSchedule.getEnd_time().toLocalTime().getHour();
+
+            List<String> reservationsToRemove = new ArrayList<>();
+
+            for (String reservation : possibleReservations) {
+                String[] parts = reservation.split("_");
+                int resDayOfWeek = Integer.parseInt(parts[0]);
+                int resStartHour = Integer.parseInt(parts[1]);
+                int resEndHour = Integer.parseInt(parts[2]);
+
+                if (dayOfWeek == resDayOfWeek && testOverlap(startHour, endHour, resStartHour, resEndHour)) {
+                    reservationsToRemove.add(reservation);
+                }
+            }
+
+            possibleReservations.removeAll(reservationsToRemove);
+        }
+
+        return possibleReservations;
+    }
+
+    private boolean testOverlap(int x1, int x2, int y1, int y2) {
+        return (x1 >= y1 && x1 < y2) ||
+                (x2 > y1 && x2 <= y2) ||
+                (y1 >= x1 && y1 < x2) ||
+                (y2 > x1 && y2 <= x2);
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        reservationRepository.deleteAll();
-//        testReservations();
-//        delete();
 //        deanGroupRepository.deleteAll();
 //        courseRepository.deleteAll();
 //        courseFacilityRepository.deleteAll();
 //        userCourseRepository.deleteAll();
 //        deanGroupRepository.deleteAll();
+//        reservationRepository.deleteAll();
+//        generateReservations(20);
 //        generateRandomCourses();
 //        generateRandomCourseFacilities();
 //        generateRandomUserCourses();

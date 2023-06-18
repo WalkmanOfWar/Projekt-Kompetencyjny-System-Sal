@@ -94,4 +94,17 @@ public class ClassScheduleService {
     public List<ClassSchedule> getAll() {
         return classScheduleRepository.findAll();
     }
+
+    public List<ClassSchedule> getAllAcceptedClassSchedulesByDeanGroupName(String deanGroupName) {
+        List<Reservation> reservations = reservationService.getAllAcceptedReservationsByDeanGroupName(deanGroupName);
+        List<ClassSchedule> classSchedules = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            ClassSchedule classSchedule = reservation.getClassSchedule();
+            if (classSchedule != null) {
+                classSchedules.add(classSchedule);
+            }
+        }
+        return classSchedules;
+    }
 }

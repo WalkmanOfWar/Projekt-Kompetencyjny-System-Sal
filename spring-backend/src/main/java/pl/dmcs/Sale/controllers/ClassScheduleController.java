@@ -33,6 +33,12 @@ public class ClassScheduleController {
         return classScheduleService.getAllAcceptedClassSchedulesByRoomName(roomName);
     }
 
+    @GetMapping("/class_schedules/dean-group/name/{deanGroupName}")
+    public List<ClassSchedule> getClassSchedulesByDeanGroupName(@PathVariable String deanGroupName) {
+        return classScheduleService.getAllAcceptedClassSchedulesByDeanGroupName(deanGroupName);
+    }
+
+
     @PutMapping("/generate-classSchedules")
     public void generateClassSchedules() {
         System.out.println("HERE");

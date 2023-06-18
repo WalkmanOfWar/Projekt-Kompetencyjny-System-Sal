@@ -16,6 +16,10 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
+    public void deleteAll() {
+        reservationRepository.deleteAll();
+    }
+
     public List<Reservation> findByClassScheduleId(Long classScheduleId) {
         return reservationRepository.findByClassScheduleId(classScheduleId);
     }
@@ -42,5 +46,9 @@ public class ReservationService {
 
     public void deleteReservationById(Long id) {
         reservationRepository.deleteById(id);
+    }
+
+    public List<Reservation> getAllAcceptedReservationsByDeanGroupName(String deanGroupName) {
+        return reservationRepository.findByStatusAndClassScheduleDeanGroupName(1L, deanGroupName); // 0 - niezaakceptowana, 1 - zaakceptowana, 2 - odrzucona
     }
 }
