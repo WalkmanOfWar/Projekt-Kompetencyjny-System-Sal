@@ -13,7 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Sale" target="17" />
-      <module name="zadanie1" target="17" />
+      <module name="zadanie1" target="16" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
