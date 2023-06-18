@@ -7,8 +7,9 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "user_courses")
 public class UserCourse {
 
@@ -16,7 +17,7 @@ public class UserCourse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

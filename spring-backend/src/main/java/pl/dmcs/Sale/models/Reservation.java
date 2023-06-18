@@ -1,5 +1,6 @@
 package pl.dmcs.Sale.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +18,17 @@ public class Reservation {
     private Long id;
     private Long status;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @JsonIgnoreProperties("user")
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "class_schedule_id")
     private ClassSchedule classSchedule;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @PostPersist
+    public void updateUser() {
+        setUser(classSchedule.getUser());
+    }
 }

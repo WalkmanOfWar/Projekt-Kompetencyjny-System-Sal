@@ -2,7 +2,11 @@ package pl.dmcs.Sale.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.dmcs.Sale.DTOs.LoginRequest;
+import pl.dmcs.Sale.models.ClassSchedule;
 import pl.dmcs.Sale.models.User;
+import pl.dmcs.Sale.models.UserCourse;
+import pl.dmcs.Sale.repositories.ClassScheduleRepository;
+import pl.dmcs.Sale.repositories.UserCourseRepository;
 import pl.dmcs.Sale.repositories.UserRepository;
 
 import java.util.List;
@@ -10,7 +14,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserService {
+    private final ClassScheduleRepository classScheduleRepository;
     private final UserRepository userRepository;
+    private final UserCourseRepository userCourseRepository;
 
     public boolean isUserRegistered(String username) {
         return userRepository.findByEmail(username) != null;
@@ -54,6 +60,8 @@ public class UserService {
     }
 
     public void deleteById(long l) {
+        List<UserCourse> userCourses = userCourseRepository.findAllByUserId(l);
+        userCourseRepository.deleteAll(userCourses);
         userRepository.deleteById(l);
     }
 }

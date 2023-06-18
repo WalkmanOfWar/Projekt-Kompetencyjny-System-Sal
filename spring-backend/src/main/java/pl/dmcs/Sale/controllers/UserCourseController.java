@@ -20,6 +20,11 @@ public class UserCourseController {
 
     UserCourseService userCourseService;
 
+    @GetMapping("/user_courses")
+    public List<UserCourse> getAll() {
+        return userCourseService.findAll();
+    }
+
     @PostMapping("/new_userCourse")
     public ResponseEntity<UserCourse> newUserCourse(@RequestBody UserCourse userCourse) {
         if (userCourseService.existsByUserAndCourse(userCourse.getUser(), userCourse.getCourse())) {

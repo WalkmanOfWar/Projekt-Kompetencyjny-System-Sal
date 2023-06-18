@@ -1,4 +1,4 @@
-package pl.dmcs.Sale;
+package pl.dmcs.Sale.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

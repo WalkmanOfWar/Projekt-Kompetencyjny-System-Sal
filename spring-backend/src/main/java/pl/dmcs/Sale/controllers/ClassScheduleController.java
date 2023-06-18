@@ -6,6 +6,7 @@ import pl.dmcs.Sale.models.ClassSchedule;
 import pl.dmcs.Sale.models.Reservation;
 import pl.dmcs.Sale.services.ClassScheduleService;
 import pl.dmcs.Sale.services.ReservationService;
+import pl.dmcs.Sale.utils.TimetableGenerator;
 
 import java.util.List;
 
@@ -15,11 +16,35 @@ import java.util.List;
 public class ClassScheduleController {
     ClassScheduleService classScheduleService;
     ReservationService reservationService;
+    TimetableGenerator timetableGenerator;
 
     @GetMapping("/class_schedules")
     public List<ClassSchedule> getClassSchedules() {
         return classScheduleService.getAll();
     }
+
+    @GetMapping("/class_schedules/accepted")
+    public List<ClassSchedule> getAllAcceptedClassSchedules() {
+        return classScheduleService.getAllAcceptedClassSchedules();
+    }
+
+    @GetMapping("/class_schedules/room/name/{roomName}")
+    public List<ClassSchedule> getClassSchedulesByRoomName(@PathVariable String roomName) {
+        return classScheduleService.getAllAcceptedClassSchedulesByRoomName(roomName);
+    }
+
+    @GetMapping("/class_schedules/dean-group/name/{deanGroupName}")
+    public List<ClassSchedule> getClassSchedulesByDeanGroupName(@PathVariable String deanGroupName) {
+        return classScheduleService.getAllAcceptedClassSchedulesByDeanGroupName(deanGroupName);
+    }
+
+
+    @PutMapping("/generate-classSchedules")
+    public void generateClassSchedules() {
+        System.out.println("HERE");
+        timetableGenerator.generateTimetable();
+    }
+
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
         try {

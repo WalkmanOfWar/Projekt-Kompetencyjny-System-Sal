@@ -3,6 +3,7 @@ package pl.dmcs.Sale.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.Sale.models.Reservation;
+import pl.dmcs.Sale.models.User;
 import pl.dmcs.Sale.services.ReservationService;
 
 import java.util.List;
@@ -17,10 +18,6 @@ public class ReservationController {
     public List<Reservation> getReservations() {
         return reservationService.getAllReservations();
     }
-    @GetMapping("reservations/{email}")
-    public List<Reservation> getReservationsByEmail(@PathVariable String email) {
-        return reservationService.findByUserEmail(email);
-    }
 
     @PutMapping("/reservations/{id}")
     public Reservation updateReservation(@PathVariable Long id, @RequestBody Reservation reservation) {
@@ -30,5 +27,15 @@ public class ReservationController {
     @PostMapping("/new_reservation")
     public void addReservation(@RequestBody Reservation reservation) {
         reservationService.insertNewReservation(reservation);
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public void deleteReservation(@PathVariable Long id) {
+        reservationService.deleteReservationById(id);
+    }
+
+    @DeleteMapping("/deleteTestReservations")
+    public void deleteAll() {
+        reservationService.deleteAll();
     }
 }

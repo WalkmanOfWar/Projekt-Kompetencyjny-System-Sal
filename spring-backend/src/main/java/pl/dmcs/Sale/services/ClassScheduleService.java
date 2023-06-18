@@ -7,6 +7,7 @@ import pl.dmcs.Sale.models.Reservation;
 import pl.dmcs.Sale.repositories.ClassScheduleRepository;
 import pl.dmcs.Sale.repositories.CourseRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,7 +57,54 @@ public class ClassScheduleService {
         classScheduleRepository.save(existingClassSchedule);
     }
 
+    public List<ClassSchedule> getAllAcceptedClassSchedules() {
+        List<Reservation> reservations = reservationService.getAllAcceptedReservations();
+        List<ClassSchedule> classSchedules = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            ClassSchedule classSchedule = reservation.getClassSchedule();
+            if (classSchedule != null) {
+                classSchedules.add(classSchedule);
+            }
+        }
+        return classSchedules;
+    }
+
+    public void update(ClassSchedule classSchedule) {
+        classScheduleRepository.save(classSchedule);
+    }
+
+    public void updateAll(List<ClassSchedule> classSchedules) {
+        classScheduleRepository.saveAll(classSchedules);
+    }
+
+    public List<ClassSchedule> getAllAcceptedClassSchedulesByRoomName(String roomName) {
+        List<Reservation> reservations = reservationService.getAllAcceptedReservationsByRoomName(roomName);
+        List<ClassSchedule> classSchedules = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            ClassSchedule classSchedule = reservation.getClassSchedule();
+            if (classSchedule != null) {
+                classSchedules.add(classSchedule);
+            }
+        }
+        return classSchedules;
+    }
+
     public List<ClassSchedule> getAll() {
         return classScheduleRepository.findAll();
+    }
+
+    public List<ClassSchedule> getAllAcceptedClassSchedulesByDeanGroupName(String deanGroupName) {
+        List<Reservation> reservations = reservationService.getAllAcceptedReservationsByDeanGroupName(deanGroupName);
+        List<ClassSchedule> classSchedules = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            ClassSchedule classSchedule = reservation.getClassSchedule();
+            if (classSchedule != null) {
+                classSchedules.add(classSchedule);
+            }
+        }
+        return classSchedules;
     }
 }

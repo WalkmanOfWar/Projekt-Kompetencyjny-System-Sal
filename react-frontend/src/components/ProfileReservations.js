@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ProfileInfo.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 function ProfileReservations() {
   const navigate = useNavigate();
@@ -18,16 +19,20 @@ function ProfileReservations() {
   }, []);
 
   useEffect(() => {
-    console.log(userData);
-    userData && loadReservations();
+    loadReservations();
   }, [userData]);
 
   const loadReservations = async () => {
-    const result = await axios.get(
-      `http://localhost:8080/reservations/${userData.email}`
-    );
-    console.log('Here');
-    setReservationsList(result.data);
+    try {
+      if (userData.email) {
+        const result = await axios.get(
+          `http://localhost:8080/users/${userData.email}/reservations`
+        );
+        setReservationsList(result.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const displayStatus = (status) => {
@@ -66,6 +71,18 @@ function ProfileReservations() {
         return 'Piątek';
       default:
         return '-';
+    }
+  };
+
+  const handleDeleteReservation = async (e, id) => {
+    e.preventDefault();
+    try {
+      await axios.delete(`http://localhost:8080/reservations/${id}`);
+      await loadReservations();
+      toast.success('Rezerwacja usunięta pomyślnie');
+    } catch (error) {
+      console.log(error);
+      toast.error('Nie udało się usunąć rezerwacji');
     }
   };
 
@@ -108,7 +125,11 @@ function ProfileReservations() {
                 <td>{displayParity(reservation.classSchedule.is_parity)}</td>
                 <td>{displayStatus(reservation.status)}</td>
                 <td>
-                  <button className='btn btn-danger mx-2'>Delete</button>
+                  <button
+                    className='btn btn-danger mx-2'
+                    onClick={(e) => handleDeleteReservation(e, reservation.id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -118,7 +139,12 @@ function ProfileReservations() {
     );
   };
 
-  return renderUserReservations();
+  return (
+    <div>
+      {renderUserReservations()}
+      <ToastContainer />
+    </div>
+  );
 }
 
 export default ProfileReservations;

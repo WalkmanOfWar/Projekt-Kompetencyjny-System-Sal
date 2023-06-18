@@ -23,13 +23,4 @@ public class TempController {
     public List<ClassSchedule> getClassSchedulesByRoomId(@PathVariable("roomName") String roomName) {
         return classScheduleRepository.findByRoomName(roomName);
     }
-
-    @GetMapping("/class_schedules/room/name/{roomName}")
-    public List<ClassSchedule> getClassSchedulesByRoomName(@PathVariable("roomName") String roomName) {
-        System.out.println(roomName);
-        System.out.println(classScheduleRepository.findByRoomName(roomName));
-        return classScheduleRepository.findByRoomName(roomName);
-    }
-
-
 }
