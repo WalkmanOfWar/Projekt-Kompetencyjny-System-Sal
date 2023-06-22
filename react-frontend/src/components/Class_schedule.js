@@ -17,6 +17,7 @@ function Class_schedule() {
   const [newCourseId, setNewCourseId] = useState('');
   const [newUserId, setNewUserId] = useState('');
   const [newRoomId, setNewRoomId] = useState('');
+  const [newDeanGroupId, setNewDeanGroupId] = useState('');
   const [newDayOfWeek, setNewDayOfWeek] = useState('');
   const [newStartTime, setNewStartTime] = useState('');
   const [newEndTime, setNewEndTime] = useState('');
@@ -27,6 +28,8 @@ function Class_schedule() {
   const [newIsParity, setNewIsParity] = useState('');
 
   const [coursesList, setCourseList] = useState([]);
+  const [deanGroupList, setDeanGroupList] = useState([]);
+  const [deanGroupCourses, setDeanGroupCourses] = useState([]);
 
   const [roomList, setRoomList] = useState([]);
   const [userCourseList, setUserCourseList] = useState([]);
@@ -111,29 +114,60 @@ function Class_schedule() {
     loadClassSchedules();
     loadCourses();
     loadRooms();
+    loadDeanGroups();
   }, []);
 
+  const loadDeanGroups = async () => {
+    try {
+      const result = await axios.get('http://localhost:8080/dean-groups');
+      console.log(result.data);
+      setDeanGroupList(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const loadClassSchedules = async () => {
-    const result = await axios.get('http://localhost:8080/class_schedules');
-    console.log(result.data);
-    setClassScheduleList(result.data);
+    try {
+      const result = await axios.get('http://localhost:8080/class_schedules');
+      console.log(result.data);
+      setClassScheduleList(result.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const loadCourses = async () => {
-    const result = await axios.get('http://localhost:8080/courses');
-    setCourseList(result.data);
+    try {
+      const result = await axios.get('http://localhost:8080/courses');
+      setCourseList(result.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const loadUserCourse = async (courseId) => {
-    const result = await axios.get(
-      `http://localhost:8080/userCourse/byCourseId/${courseId}`
-    );
-    setUserCourseList(result.data);
+    try {
+      if (courseId != '') {
+        const result = await axios.get(
+          `http://localhost:8080/userCourse/byCourseId/${courseId}`
+        );
+        setUserCourseList(result.data);
+      } else {
+        setUserCourseList([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const loadRooms = async () => {
-    const result = await axios.get('http://localhost:8080/rooms');
-    setRoomList(result.data);
+    try {
+      const result = await axios.get('http://localhost:8080/rooms');
+      setRoomList(result.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAddClassSchedule = () => {
@@ -141,8 +175,32 @@ function Class_schedule() {
     setShowForm(true);
   };
 
+  const handleDeanGroupIdChange = (event) => {
+    setNewDeanGroupId(event.target.value);
+    if (event.target.value != '') {
+      console.log(event.target.value);
+      const filteredDeanGroup = deanGroupList.find(
+        (deanGroup) => deanGroup.id == event.target.value
+      );
+
+      const filteredCourses = filteredDeanGroup.courses.filter(
+        (course) =>
+          !classScheduleList.some(
+            (schedule) =>
+              schedule.course.id === course.id &&
+              schedule.deanGroup.id === filteredDeanGroup.id
+          )
+      );
+      console.log(filteredCourses);
+      setDeanGroupCourses(filteredCourses);
+    } else {
+      setDeanGroupCourses([]);
+    }
+  };
+
   const handleCourseIdChange = (event) => {
     setNewCourseId(event.target.value);
+    console.log(event.target.value);
     loadUserCourse(event.target.value);
   };
 
@@ -208,6 +266,7 @@ function Class_schedule() {
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
+        deanGroup: { id: newDeanGroupId },
       };
 
       try {
@@ -239,6 +298,7 @@ function Class_schedule() {
         course: { id: newCourseId },
         room: { id: newRoomId },
         user: { id: newUserId },
+        deanGroup: { id: newDeanGroupId },
       };
 
       try {
@@ -262,6 +322,7 @@ function Class_schedule() {
   const handleCancel = () => {
     setNewCourseId('');
     setNewRoomId('');
+    setNewDeanGroupId('');
     setNewDayOfWeek('');
     setNewStartTime('');
     setNewEndTime('');
@@ -291,6 +352,7 @@ function Class_schedule() {
     setEditSchedule(schedule);
     setNewCourseId(schedule.course.id);
     setNewRoomId(schedule.room.id);
+    setNewDeanGroupId(schedule.deanGroup.id);
     setNewDayOfWeek(schedule.day_of_week);
     setNewStartTime(getIdByValueStartingTime(schedule.start_time));
     setNewEndTime(getIdByValueEndingTime(schedule.end_time));
@@ -434,13 +496,12 @@ function Class_schedule() {
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleEditSchedule(classSchedule.id)}>
-                    {console.log(classSchedule)}
-                    Edit
+                    Edytuj
                   </button>
                   <button
                     className='btn btn-danger mx-2'
                     onClick={() => handleDeleteSchedule(classSchedule.id)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>
@@ -456,16 +517,32 @@ function Class_schedule() {
           <form
             onSubmit={handleFormSubmit}
             className={showForm ? 'add-form' : 'hidden'}
-            style={{ paddingTop: '300px', paddingBottom: '100px' }}>
+            style={{ paddingTop: '400px', paddingBottom: '150px' }}>
+            <div className='form-group'>
+              <label htmlFor='newDeanGroupId'>Grupa dziekańska:</label>
+              <select
+                className='form-select'
+                id='newDeanGroupId'
+                value={newDeanGroupId}
+                onChange={handleDeanGroupIdChange}>
+                <option value=''>Wybierz grupę dziekańską</option>
+                {deanGroupList.map((deanGroup) => (
+                  <option key={deanGroup.id} value={deanGroup.id}>
+                    {deanGroup.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className='form-group'>
               <label htmlFor='newCourseId'>Nazwa przedmiotu:</label>
               <select
                 className='form-select'
                 id='newCourseId'
                 value={newCourseId}
-                onChange={handleCourseIdChange}>
+                onChange={handleCourseIdChange}
+                disabled={newDeanGroupId === ''}>
                 <option value=''>Wybierz przedmiot</option>
-                {coursesList.map((courses) => (
+                {deanGroupCourses.map((courses) => (
                   <option key={courses.id} value={courses.id}>
                     {courses.name}
                   </option>

@@ -27,7 +27,7 @@ function ControlPanel() {
       case 'Room_types':
         return <Room_types />;
       case 'DeanGroups':
-        return <DeanGroups/>;
+        return <DeanGroups />;
       case 'User_courses':
         return <UserCourses />;
       case 'Courses':
@@ -44,106 +44,96 @@ function ControlPanel() {
         return <Reservations />;
       case 'Class_schedule':
         return <Class_schedule />;
-        case 'Adjustments':
-          return <Adjustments />;
+      case 'Adjustments':
+        return <Adjustments />;
       default:
         return <Room />;
     }
   };
 
   return (
-    <div className='info-wrapper'>
-      <span className='panel-text'>Panel sterowania</span>
-      <div className='container-fluid'>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Room' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Room')}>
-          Sale
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Users' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Users')}>
-          Użytkownicy
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Courses' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Courses')}>
-          Przedmioty
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Class_schedule' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Class_schedule')}>
-          Plan zajęć
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Facilities' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Facilities')}>
-          Dostępne udogodnienia
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'CourseFacilities' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('CourseFacilities')}>
-          Udogodnienia kursów
-        </button>
+    <>
+      <div className='info-wrapper'>
+        <span className='panel-text text-center text-light'>
+          Panel sterowania
+        </span>
+        <select className='form-select d-flex w-100'>
+          <option
+            value='Room'
+            selected={selectedButton === 'Room'}
+            onClick={() => handleButtonClick('Room')}>
+            Sale
+          </option>
+          <option
+            value='Users'
+            selected={selectedButton === 'Users'}
+            onClick={() => handleButtonClick('Users')}>
+            Użytkownicy
+          </option>
+          <option
+            value='Courses'
+            selected={selectedButton === 'Courses'}
+            onClick={() => handleButtonClick('Courses')}>
+            Przedmioty
+          </option>
+          <option
+            value='Class_schedule'
+            selected={selectedButton === 'Class_schedule'}
+            onClick={() => handleButtonClick('Class_schedule')}>
+            Plan zajęć
+          </option>
+          <option
+            value='Facilities'
+            selected={selectedButton === 'Facilities'}
+            onClick={() => handleButtonClick('Facilities')}>
+            Dostępne udogodnienia
+          </option>
+          <option
+            value='CourseFacilities'
+            selected={selectedButton === 'CourseFacilities'}
+            onClick={() => handleButtonClick('CourseFacilities')}>
+            Udogodnienia kursów
+          </option>
+          <option
+            value='RoomFacilities'
+            selected={selectedButton === 'RoomFacilities'}
+            onClick={() => handleButtonClick('RoomFacilities')}>
+            Udogodnienia sal
+          </option>
+          <option
+            value='Room_types'
+            selected={selectedButton === 'Room_types'}
+            onClick={() => handleButtonClick('Room_types')}>
+            Typy sal
+          </option>
+          <option
+            value='DeanGroups'
+            selected={selectedButton === 'DeanGroups'}
+            onClick={() => handleButtonClick('DeanGroups')}>
+            Grupy dziekańskie
+          </option>
+          <option
+            value='User_courses'
+            selected={selectedButton === 'User_courses'}
+            onClick={() => handleButtonClick('User_courses')}>
+            Przedmioty prowadzących
+          </option>
+          <option
+            value='Reservations'
+            selected={selectedButton === 'Reservations'}
+            onClick={() => handleButtonClick('Reservations')}>
+            Rezerwacje
+          </option>
+          <option
+            value='Adjustments'
+            selected={selectedButton === 'Adjustments'}
+            onClick={() => handleButtonClick('Adjustments')}>
+            Generowanie
+          </option>
+        </select>
+        {renderComponent()}
       </div>
-      <div className='container-fluid'>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'RoomFacilities' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('RoomFacilities')}>
-          Udogodnienia sal
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Room_types' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Room_types')}>
-          Typy sal
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'DeanGroups' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('DeanGroups')}>
-          Grupy dziekańskie
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'User_courses' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('User_courses')}>
-          Przedmioty prowadzących
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Reservations' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Reservations')}>
-          Rezerwacje
-        </button>
-        <button
-          className={`btn btn-primary ${
-            selectedButton === 'Adjustments' ? 'selected' : ''
-          }`}
-          onClick={() => handleButtonClick('Adjustments')}>
-          Generowanie
-        </button>
-      </div>
-      {renderComponent()}
-    </div>
+    </>
   );
 }
 

@@ -138,12 +138,12 @@ function RoomTypes() {
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleEditRoomType(roomType)}>
-                    Edit
+                    Edytuj
                   </button>
                   <button
                     className='btn btn-danger mx-2'
                     onClick={() => handleDeleteRoomType(roomType)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>

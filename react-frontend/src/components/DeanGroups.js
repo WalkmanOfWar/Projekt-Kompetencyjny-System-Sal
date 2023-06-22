@@ -34,7 +34,7 @@ function DeanGroups() {
   const loadCourses = async () => {
     const result = await axios.get('http://localhost:8080/courses');
     setCourses(result.data);
-  }
+  };
 
   const handleAddDeanGroup = () => {
     setEditDeanGroup(null);
@@ -89,22 +89,26 @@ function DeanGroups() {
   const handleAddDeanGroupCourse = async (e) => {
     e.preventDefault();
     try {
-        const foundCourse = newCourses.find((course) => course.name === newCourse);
-        await axios.put(`http://localhost:8080/dean_groups/${viewMoreDeanGroupId}/new-course/${foundCourse.id}`)
-        toast.success('Nowy kurs dodany');
-        loadDeanGroups();
-    } catch(error) {
-        console.log(error);
-        toast.error('Nie udało sie dodać nowego kursu');
+      const foundCourse = newCourses.find(
+        (course) => course.name === newCourse
+      );
+      await axios.put(
+        `http://localhost:8080/dean_groups/${viewMoreDeanGroupId}/new-course/${foundCourse.id}`
+      );
+      toast.success('Nowy kurs dodany');
+      loadDeanGroups();
+    } catch (error) {
+      console.log(error);
+      toast.error('Nie udało sie dodać nowego kursu');
     }
 
     setViewMore(true);
     setShowAddCourseForm(false);
-  }
+  };
 
   const handleDeanGroupDelete = async (deanGroupId) => {
     try {
-        console.log(deanGroupId)
+      console.log(deanGroupId);
       await axios.delete(`http://localhost:8080/dean_groups/${deanGroupId}`);
       loadDeanGroups();
       toast.success('Kurs został usunięty.');
@@ -114,34 +118,46 @@ function DeanGroups() {
     }
   };
 
-  const handleDeanGroupCourseDelete = async (deanGroupId, deanGroupCourseId) => {
+  const handleDeanGroupCourseDelete = async (
+    deanGroupId,
+    deanGroupCourseId
+  ) => {
     try {
-        console.log(deanGroupId)
-        console.log(deanGroupCourseId);
-        await axios.put(`http://localhost:8080/dean-groups/${deanGroupId}/courses/${deanGroupCourseId}`);
-        setdeanGroupCourses(deanGroupCourses.filter((course) => course.id !== deanGroupCourseId))
-        toast.success('Kurs grupy dziekańskiej został usunięty');
-    } catch(error) {
-        console.log('Wystąpił błąd podczas usuwania kursu grupy dziekańskiej');
-        toast.error('Wystąpił błąd podczas usuwania kursu grupy dziekańskiej');
+      console.log(deanGroupId);
+      console.log(deanGroupCourseId);
+      await axios.put(
+        `http://localhost:8080/dean-groups/${deanGroupId}/courses/${deanGroupCourseId}`
+      );
+      setdeanGroupCourses(
+        deanGroupCourses.filter((course) => course.id !== deanGroupCourseId)
+      );
+      toast.success('Kurs grupy dziekańskiej został usunięty');
+    } catch (error) {
+      console.log('Wystąpił błąd podczas usuwania kursu grupy dziekańskiej');
+      toast.error('Wystąpił błąd podczas usuwania kursu grupy dziekańskiej');
     }
-  }
+  };
 
   const handleShowMoreDeanGroup = async (deanGroupId) => {
-    const deanGroup = deanGroups.find((deanGroup) => deanGroup.id === deanGroupId);
+    const deanGroup = deanGroups.find(
+      (deanGroup) => deanGroup.id === deanGroupId
+    );
     const deanCourses = deanGroup.courses;
-    console.log(courses)
-    console.log(deanCourses)
-    const filteredCourses = courses.filter((course) => !deanCourses.some((deanCourse) => deanCourse.id === course.id));
+    console.log(courses);
+    console.log(deanCourses);
+    const filteredCourses = courses.filter(
+      (course) => !deanCourses.some((deanCourse) => deanCourse.id === course.id)
+    );
     setNewCourses(filteredCourses);
-    setdeanGroupCourses(deanGroup.courses)
+    setdeanGroupCourses(deanGroup.courses);
     setViewMoreDeanGroupId(deanGroup.id);
     setViewMore(true);
-
-  }
+  };
   const handleDeanGroupEdit = (deanGroupId) => {
     // Find the course with the given id
-    const deanGroupToEdit = deanGroups.find((deanGroup) => deanGroup.id === deanGroupId);
+    const deanGroupToEdit = deanGroups.find(
+      (deanGroup) => deanGroup.id === deanGroupId
+    );
 
     // Set the form values with the course data
     setEditDeanGroup(deanGroupToEdit);
@@ -155,7 +171,7 @@ function DeanGroups() {
     let sortedDeanGroups = [...deanGroups];
 
     if (sortBy === 'name') {
-        sortedDeanGroups = sortedDeanGroups.sort((a, b) =>
+      sortedDeanGroups = sortedDeanGroups.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
     }
@@ -191,19 +207,19 @@ function DeanGroups() {
                 <td>{deanGroup.name}</td>
                 <td>
                   <button
-                        className='btn btn-primary mx-2'
-                        onClick={() => handleShowMoreDeanGroup(deanGroup.id)}>
-                        Show more
+                    className='btn btn-primary mx-2'
+                    onClick={() => handleShowMoreDeanGroup(deanGroup.id)}>
+                    Zobacz więcej
                   </button>
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleDeanGroupEdit(deanGroup.id)}>
-                    Edit
+                    Edytuj
                   </button>
                   <button
                     className='btn btn-danger mx-2'
                     onClick={() => handleDeanGroupDelete(deanGroup.id)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>
@@ -218,7 +234,9 @@ function DeanGroups() {
         {showForm && (
           <form onSubmit={handleFormSubmit} className='add-form'>
             <div className='form-group'>
-              <label htmlFor='newDeanGroupName'>Nazwa grupy dziekańskiej:</label>
+              <label htmlFor='newDeanGroupName'>
+                Nazwa grupy dziekańskiej:
+              </label>
               <input
                 type='text'
                 id='newDeanGroupName'
@@ -247,7 +265,6 @@ function DeanGroups() {
 
         {showAddCourseForm && (
           <form onSubmit={handleAddDeanGroupCourse} className='add-form'>
-
             <h2 className='text-center m-4'>Nowy kurs</h2>
 
             <div className='form-group'>
@@ -286,53 +303,58 @@ function DeanGroups() {
         )}
 
         {viewMore && (
-            <div onSubmit={handleFormSubmit} className='add-form'>
-                <div className='form-group'>
-                <table className='room-table'>
-                    <thead>
-                        <tr>
-                        <th scope='col'>Lp.</th>
-                        <th scope='col'>Nazwa kursu</th>
-                        <th scope='col'>Akcja</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {deanGroupCourses.map((deanGroup, index) => (
-                        <tr key={deanGroup.id}>
-                            <td>{index + 1}.</td>
-                            <td>{deanGroup.name}</td>
-                            <td>
-                                <button
-                                    className='btn btn-danger mx-2'
-                                    onClick={() => handleDeanGroupCourseDelete(viewMoreDeanGroupId, deanGroup.id)}>
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                    </table>
-                    <div className='form-buttons'>
-                            <button
-                                type='button'
-                                className='cancel-button'
-                                onClick={() => {
-                                setViewMore(false);
-                                }}>
-                                Anuluj
-                            </button>
-                            <button
-                                type='button'
-                                className='add-button'
-                                onClick={() => {
-                                setViewMore(false);
-                                setShowAddCourseForm(true);
-                                }}>
-                                Dodaj
-                            </button>
-                        </div>
+          <div onSubmit={handleFormSubmit} className='add-form'>
+            <div className='form-group'>
+              <table className='room-table'>
+                <thead>
+                  <tr>
+                    <th scope='col'>Lp.</th>
+                    <th scope='col'>Nazwa kursu</th>
+                    <th scope='col'>Akcja</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deanGroupCourses.map((deanGroup, index) => (
+                    <tr key={deanGroup.id}>
+                      <td>{index + 1}.</td>
+                      <td>{deanGroup.name}</td>
+                      <td>
+                        <button
+                          className='btn btn-danger mx-2'
+                          onClick={() =>
+                            handleDeanGroupCourseDelete(
+                              viewMoreDeanGroupId,
+                              deanGroup.id
+                            )
+                          }>
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className='form-buttons'>
+                <button
+                  type='button'
+                  className='cancel-button'
+                  onClick={() => {
+                    setViewMore(false);
+                  }}>
+                  Anuluj
+                </button>
+                <button
+                  type='button'
+                  className='add-button'
+                  onClick={() => {
+                    setViewMore(false);
+                    setShowAddCourseForm(true);
+                  }}>
+                  Dodaj
+                </button>
+              </div>
             </div>
-        </div>
+          </div>
         )}
       </>
     );

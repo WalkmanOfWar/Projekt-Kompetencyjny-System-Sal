@@ -214,8 +214,8 @@ export default function GenerateHomeTable() {
     return (
       <>
         {reservations.map((reservation, index) => (
-          <div className='card-container' key={index}>
-            <div className='card text-white bg-dark'>
+          <div className='card-container pe-none' key={index}>
+            <div className='card text-dark bg-light'>
               <h5 className='card-header' style={{ fontSize: '14px' }}>
                 {displayCourseType(reservation.course.course_type)}{' '}
                 {reservation.start_week}-{reservation.end_week},{' '}
@@ -239,8 +239,8 @@ export default function GenerateHomeTable() {
   function generateSingleReservationCard(reservation) {
     if (!reservation) {
       return (
-        <div className='card-container'>
-          <div className='card text-white bg-dark'>
+        <div className='card-container pe-none'>
+          <div className='card text-dark bg-light'>
             <div className='card-body'>
               <p className='card-text'>&nbsp;</p>
             </div>
@@ -250,8 +250,8 @@ export default function GenerateHomeTable() {
     }
 
     return (
-      <div className='card-container'>
-        <div className='card text-white bg-dark'>
+      <div className='card-container pe-none'>
+        <div className='card text-dark bg-light'>
           <h5 className='card-header' style={{ fontSize: '14px' }}>
             {displayCourseType(reservation.course.course_type)}{' '}
             {reservation.start_week}-{reservation.end_week},{' '}
@@ -282,16 +282,16 @@ export default function GenerateHomeTable() {
     return (
       <table
         id='pdf-content-wrapper'
-        className='card justify-content-center align-items-center text-white bg-dark mb-3'
+        className='card justify-content-center align-items-center text-dark bg-light mb-3'
         style={{ display: 'inline-block', padding: '10px' }}>
-        <div className='card-header'>{scheduleTypeText}</div>
+        <div className='card-header bg-light'>{scheduleTypeText}</div>
         <div className='card-title'>{roomText}</div>
         <div className='card-title'>
           {selectedDeanGroup !== 'no-reservations' ? selectedDeanGroup : ''}
         </div>
         <div className='card-body'>
           <div
-            className='table table-responsive table-dark'
+            className='table table-responsive table-light'
             xs={{ width: '100%', height: '100%' }}>
             {generateTableHeader()}
             {generateTableContent()}

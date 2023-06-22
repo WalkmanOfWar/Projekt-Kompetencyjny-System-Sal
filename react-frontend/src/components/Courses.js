@@ -193,12 +193,12 @@ function Courses() {
                   <button
                     className='btn btn-primary mx-2'
                     onClick={() => handleCourseEdit(course.id)}>
-                    Edit
+                    Edytuj
                   </button>
                   <button
                     className='btn btn-danger mx-2'
                     onClick={() => handleCourseDelete(course.id)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>

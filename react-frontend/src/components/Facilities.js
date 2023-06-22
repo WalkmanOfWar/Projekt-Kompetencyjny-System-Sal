@@ -122,7 +122,7 @@ function Facilities() {
                   <button
                     className='btn btn-danger mx-2'
                     onClick={() => handleDeleteFacility(facility.id)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>

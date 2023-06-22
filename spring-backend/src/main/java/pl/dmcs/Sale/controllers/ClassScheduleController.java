@@ -48,6 +48,7 @@ public class ClassScheduleController {
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
         try {
+            System.out.println(newClassSchedule);
             ClassSchedule savedClassSchedule = classScheduleService.insertNewClassSchedule(newClassSchedule);
             Reservation reservation = new Reservation();
             reservation.setClassSchedule(savedClassSchedule);

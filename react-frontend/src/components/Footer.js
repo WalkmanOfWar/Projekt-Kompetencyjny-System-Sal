@@ -1,29 +1,24 @@
-import React from "react";
-import "./Footer.css";
-import { Link } from "react-router-dom";
+import React from 'react';
+import './Footer.css';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <div className="container-fluid footer-background">
-      <footer className="py-1">
-        <ul className="nav justify-content-center border-bottom py-3 mb-3">
-          <li className="nav-item">
-            <Link to={"/"} className="nav-link px-3">
-              <p className="text-white">Strona główna</p>
+    <div className='container-fluid footer-background'>
+      <footer className='py-1'>
+        <ul className='nav justify-content-center border-bottom py-3 mb-3'>
+          <li className='nav-item'>
+            <Link to={'/'} className='nav-link px-3'>
+              <p className='text-white'>Strona główna</p>
             </Link>
           </li>
-          <li className="nav-item">
-            <Link to={"/profile"} className="nav-link px-3">
-              <p className="text-white">Profil</p>
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to={"/operator"} className="nav-link px-3">
-              <p className="text-white">Operator</p>
+          <li className='nav-item'>
+            <Link to={'/profile'} className='nav-link px-3'>
+              <p className='text-white'>Profil</p>
             </Link>
           </li>
         </ul>
-        <div className="text-center text-white">
+        <div className='text-center text-white'>
           <p>Made by:</p>
           <p>Piotr Pabich</p>
           <p>Maciej Sierzputowski</p>
