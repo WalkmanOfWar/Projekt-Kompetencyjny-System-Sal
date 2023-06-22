@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import "./Adjustments.css";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { set } from "react-hook-form";
+import React, { useState, useEffect } from 'react';
+import './Adjustments.css';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { set } from 'react-hook-form';
 
 export default function Adjustments() {
   const [roomList, setRoomList] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState('');
   let [selectedSchedule, setSelectedSchedule] = useState(null);
   const [reservations, setReservations] = useState([]);
-  const [course, setCourse] = useState("");
-  const [room, setRoom] = useState("");
+  const [course, setCourse] = useState('');
+  const [room, setRoom] = useState('');
   const [classSchedules, setClassSchedules] = useState([]);
   const [messages, setMessages] = useState([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -21,41 +21,41 @@ export default function Adjustments() {
   let [day, setDay] = useState(null);
   let [countConflicts, setCountConflicts] = useState(0);
   const days = [
-    { value: 1, text: "Poniedziałek" },
-    { value: 2, text: "Wtorek" },
-    { value: 3, text: "Środa" },
-    { value: 4, text: "Czwartek" },
-    { value: 5, text: "Piątek" },
+    { value: 1, text: 'Poniedziałek' },
+    { value: 2, text: 'Wtorek' },
+    { value: 3, text: 'Środa' },
+    { value: 4, text: 'Czwartek' },
+    { value: 5, text: 'Piątek' },
   ];
 
   const startingTimeSlots = [
-    "08:15:00",
-    "09:15:00",
-    "10:15:00",
-    "11:15:00",
-    "12:15:00",
-    "13:15:00",
-    "14:15:00",
-    "15:15:00",
-    "16:15:00",
-    "17:15:00",
-    "18:15:00",
-    "19:15:00",
+    '08:15:00',
+    '09:15:00',
+    '10:15:00',
+    '11:15:00',
+    '12:15:00',
+    '13:15:00',
+    '14:15:00',
+    '15:15:00',
+    '16:15:00',
+    '17:15:00',
+    '18:15:00',
+    '19:15:00',
   ];
 
   const endingTimeSlots = [
-    "09:00:00",
-    "10:00:00",
-    "11:00:00",
-    "12:00:00",
-    "13:00:00",
-    "14:00:00",
-    "15:00:00",
-    "16:00:00",
-    "17:00:00",
-    "18:00:00",
-    "19:00:00",
-    "20:00:00",
+    '09:00:00',
+    '10:00:00',
+    '11:00:00',
+    '12:00:00',
+    '13:00:00',
+    '14:00:00',
+    '15:00:00',
+    '16:00:00',
+    '17:00:00',
+    '18:00:00',
+    '19:00:00',
+    '20:00:00',
   ];
 
   useEffect(() => {
@@ -65,18 +65,31 @@ export default function Adjustments() {
   const generateOptimizedClassSchedules = async () => {
     try {
       const response = await axios.put(
-        "http://localhost:8080/generate-classSchedules"
+        'http://localhost:8080/generate-classSchedules'
       );
-      toast.success("Plan zajęć wygenerowany");
+      toast.success('Plan zajęć wygenerowany');
       console.log(response.data);
     } catch (error) {
-      toast.error("Nie udało się wygenerować planu zajęć");
+      toast.error('Nie udało się wygenerować planu zajęć');
+      console.log(error);
+    }
+  };
+
+  const shuffleClassSchedules = async () => {
+    try {
+      const response = await axios.put(
+        'http://localhost:8080/shuffle-classSchedules'
+      );
+      toast.success('Plan zajęć wygenerowany');
+      console.log(response.data);
+    } catch (error) {
+      toast.error('Nie udało się wygenerować planu zajęć');
       console.log(error);
     }
   };
 
   const loadRooms = async () => {
-    const result = await axios.get("http://localhost:8080/rooms");
+    const result = await axios.get('http://localhost:8080/rooms');
     setRoomList(result.data);
   };
 
@@ -93,7 +106,7 @@ export default function Adjustments() {
   };
 
   const handleAddButtonClick = (index, dayy) => {
-    if (selectedRoom !== "") {
+    if (selectedRoom !== '') {
       setTimeIndex(index);
       setDay(dayy);
       setShowSelector(true);
@@ -114,7 +127,7 @@ export default function Adjustments() {
 
   const handleAddClassSchedule = async () => {
     if (selectedSchedule === null) {
-      console.log("pusto");
+      console.log('pusto');
     } else {
       const start = startingTimeSlots[timeindex];
 
@@ -165,17 +178,16 @@ export default function Adjustments() {
     return (
       <thead>
         <tr>
-          <th style={{ color: "white" }}>Lp.</th>
+          <th style={{ color: 'white' }}>Lp.</th>
           {startingTimeSlots.map((timeSlot, index) => (
             <th
               key={index}
               style={{
-                color: "white",
-                whiteSpace: "nowrap",
-                width: "8%",
-                textAlign: "center",
-              }}
-            >
+                color: 'white',
+                whiteSpace: 'nowrap',
+                width: '8%',
+                textAlign: 'center',
+              }}>
               {timeSlot.slice(0, 5)} - {endingTimeSlots[index].slice(0, 5)}
             </th>
           ))}
@@ -187,11 +199,11 @@ export default function Adjustments() {
   const displayCourseType = (courseType) => {
     switch (courseType) {
       case 0:
-        return "L, ";
+        return 'L, ';
       case 1:
-        return "W, ";
+        return 'W, ';
       default:
-        return "";
+        return '';
     }
   };
 
@@ -214,28 +226,27 @@ export default function Adjustments() {
         {reservations.map((reservation) => {
           const hasConflict = hasConflicts(reservation, allRoomReservations);
           const cardClassName = hasConflict
-            ? "card text-black bg-danger"
-            : "card text-black bg-striped";
+            ? 'card text-black bg-danger'
+            : 'card text-black bg-striped';
           return (
             <div
               key={reservation.id}
               className={cardClassName}
-              onClick={() => handleCardClick(reservation)}
-            >
-              <h5 className="card-header">
+              onClick={() => handleCardClick(reservation)}>
+              <h5 className='card-header'>
                 {displayCourseType(reservation.course.course_type) +
                   reservation.start_week +
-                  "-" +
+                  '-' +
                   reservation.end_week}
               </h5>
-              <div className="card-body">
-                <p className="card-text course-text">
+              <div className='card-body'>
+                <p className='card-text course-text'>
                   {reservation.course.name}
                 </p>
-                <p className="card-text room-text">{reservation.room.name}</p>
-                <p className="card-text">
+                <p className='card-text room-text'>{reservation.room.name}</p>
+                <p className='card-text'>
                   {reservation.user.first_name +
-                    " " +
+                    ' ' +
                     reservation.user.last_name}
                 </p>
               </div>
@@ -243,12 +254,11 @@ export default function Adjustments() {
           );
         })}
         <button
-          className="btn btn-primary"
-          onClick={() => handleAddButtonClick(indexx, dayy)}
-        >
-          {" "}
+          className='btn btn-primary'
+          onClick={() => handleAddButtonClick(indexx, dayy)}>
+          {' '}
           Dodaj
-        </button>{" "}
+        </button>{' '}
         {/* Przycisk jest dodany tutaj */}
       </td>
     );
@@ -261,11 +271,10 @@ export default function Adjustments() {
           <tr key={day.value}>
             <td
               style={{
-                color: "white",
-                textAlign: "center",
-                verticalAlign: "middle",
-              }}
-            >
+                color: 'white',
+                textAlign: 'center',
+                verticalAlign: 'middle',
+              }}>
               {day.text}
             </td>
             {Array.from({ length: 12 }, (_, index) => {
@@ -304,10 +313,9 @@ export default function Adjustments() {
                   return (
                     <td>
                       <button
-                        className="btn btn-primary"
-                        onClick={() => handleAddButtonClick(index, day.value)}
-                      >
-                        {" "}
+                        className='btn btn-primary'
+                        onClick={() => handleAddButtonClick(index, day.value)}>
+                        {' '}
                         Dodaj
                       </button>
                     </td>
@@ -330,10 +338,10 @@ export default function Adjustments() {
         const conflicts = writeConflicts(data);
         setMessages(conflicts);
       } else {
-        console.log("Failed to fetch class schedules");
+        console.log('Failed to fetch class schedules');
       }
     } catch (error) {
-      console.log("Error:", error);
+      console.log('Error:', error);
     }
   };
   useEffect(() => {
@@ -350,10 +358,10 @@ export default function Adjustments() {
         const data = await response.json();
         setReservations(data);
       } else {
-        console.log("Failed to fetch reservations");
+        console.log('Failed to fetch reservations');
       }
     } catch (error) {
-      console.log("Error:", error);
+      console.log('Error:', error);
     }
     console.log(reservations);
   };
@@ -363,7 +371,7 @@ export default function Adjustments() {
   }, [selectedRoom]);
 
   function parseTime(timeString) {
-    const [hours, minutes, seconds] = timeString.split(":");
+    const [hours, minutes, seconds] = timeString.split(':');
     return new Date(0, 0, 0, hours, minutes, seconds);
   }
 
@@ -383,10 +391,10 @@ export default function Adjustments() {
             fetchClassSchedules();
           })
           .catch((error) => {
-            console.log("Wystąpił błąd podczas usuwania planu:", error);
+            console.log('Wystąpił błąd podczas usuwania planu:', error);
           });
       } catch (error) {
-        console.log("Wystąpił błąd podczas usuwania planu:", error);
+        console.log('Wystąpił błąd podczas usuwania planu:', error);
       }
     }
     setShowConfirmation(false);
@@ -539,23 +547,23 @@ export default function Adjustments() {
         }
         const first =
           reservationA.room.name +
-          "/" +
+          '/' +
           reservationA.course.name +
-          "/" +
+          '/' +
           reservationA.start_time +
-          "-" +
+          '-' +
           reservationA.end_time +
-          "/" +
+          '/' +
           reservationA.user.last_name;
         const second =
           reservationB.room.name +
-          "/" +
+          '/' +
           reservationB.course.name +
-          "/" +
+          '/' +
           reservationB.start_time +
-          "-" +
+          '-' +
           reservationB.end_time +
-          "/" +
+          '/' +
           reservationB.user.last_name;
 
         const sameDayOfWeek =
@@ -593,85 +601,82 @@ export default function Adjustments() {
           if (licznik_poj === 0) {
             licznik_poj = 1;
 
-            conflicts.push(first + " : " + second);
+            conflicts.push(first + ' : ' + second);
           }
-          if(sameGroup===true)
-          conflicts.push(
-            "Konflikt: różni prowadzący ,ta sama grupa w tej samej sali i czasie."
-          );
+          if (sameGroup === true)
+            conflicts.push(
+              'Konflikt: różni prowadzący ,ta sama grupa w tej samej sali i czasie.'
+            );
           else
-          conflicts.push(
-            "Konflikt: różni prowadzący, różne grupy w tej samej sali i czasie."
-          );
+            conflicts.push(
+              'Konflikt: różni prowadzący, różne grupy w tej samej sali i czasie.'
+            );
         } else if (sameTime && sameRoom === true && sameUser === true) {
           licznik = licznik + 1;
           if (licznik_poj === 0) {
             licznik_poj = 1;
 
-            conflicts.push(first + " : " + second);
+            conflicts.push(first + ' : ' + second);
           }
 
-
-          if(sameGroup===true)
-          conflicts.push(
-            "Konflikt: ten sam prowadzący, ta sama grupa w tej samej sali i czasie."
-          );
+          if (sameGroup === true)
+            conflicts.push(
+              'Konflikt: ten sam prowadzący, ta sama grupa w tej samej sali i czasie.'
+            );
           else
-          conflicts.push(
-            "Konflikt: ten sam prowadzący, różne grupy w tej samej sali i czasie."
-          );
+            conflicts.push(
+              'Konflikt: ten sam prowadzący, różne grupy w tej samej sali i czasie.'
+            );
         } else if (sameTime && sameRoom === false && sameUser === true) {
           licznik = licznik + 1;
           if (licznik_poj === 0) {
             licznik_poj = 1;
 
-            conflicts.push(first + " : " + second);
+            conflicts.push(first + ' : ' + second);
           }
-          if(sameGroup===true)
-          conflicts.push(
-            "Konflikt: ten sam prowadzący, ta sama grupa w różnych salach i w tym samym czasie."
-          );
+          if (sameGroup === true)
+            conflicts.push(
+              'Konflikt: ten sam prowadzący, ta sama grupa w różnych salach i w tym samym czasie.'
+            );
           else
-          conflicts.push(
-            "Konflikt: ten sam prowadzący, różne grupy w różnych salach i w tym samym czasie."
-          );
-        }
-
-        else if (sameTime && sameRoom === false && sameUser === false && sameGroup===true) {
+            conflicts.push(
+              'Konflikt: ten sam prowadzący, różne grupy w różnych salach i w tym samym czasie.'
+            );
+        } else if (
+          sameTime &&
+          sameRoom === false &&
+          sameUser === false &&
+          sameGroup === true
+        ) {
           licznik = licznik + 1;
           if (licznik_poj === 0) {
             licznik_poj = 1;
 
-            conflicts.push(first + " : " + second);
+            conflicts.push(first + ' : ' + second);
           }
           conflicts.push(
-            "Konflikt: Ta sama grupa dziekańska w tym samym czasie."
+            'Konflikt: Ta sama grupa dziekańska w tym samym czasie.'
           );
         }
-
-
-
-
-
       }
     }
     setCountConflicts(licznik);
     if (licznik === 0) {
-      conflicts.push("Brak konfliktów");
+      conflicts.push('Brak konfliktów');
     } else {
-      conflicts.push("Liczba konfliktów: " + licznik);
+      conflicts.push('Liczba konfliktów: ' + licznik);
     }
     return conflicts;
   };
 
   function generateTable() {
     const room = roomList.find((option) => option.name === selectedRoom);
-    const roomText = room ? room.name : "";
+    const roomText = room ? room.name : '';
     return (
-      <div className="card justfiy-content-center align-items-center text-white bg-dark mb-3">
-        <div className="card-title">{roomText}</div>
-        <div className="card-body">
-          <div className="table table-responsive table-striped">
+      <div className='card justfiy-content-center align-items-center text-white bg-dark mb-3'>
+        <div className='card-title'>{roomText}</div>
+        <div className='card-body'>
+          <div className='table table-responsive table-striped'>
             {generateTableHeader()}
             {generateTableContent()}
           </div>
@@ -681,21 +686,20 @@ export default function Adjustments() {
   }
 
   return (
-    <div className="container-fluid background">
+    <div className='container-fluid background'>
       <ToastContainer />
 
-      <div className="row">
-        <div className="d-inline-flex justify-content-center">
-          <div className="col-2 mb-3 mx-2 d-flex flex-column p-3">
-            <label className="text-center" htmlFor="room">
+      <div className='row'>
+        <div className='d-inline-flex justify-content-center'>
+          <div className='col-2 mb-3 mx-2 d-flex flex-column p-3'>
+            <label className='text-center' htmlFor='room'>
               Wybór sali
             </label>
             <select
-              className="form-select d-block w-100 mt-1"
+              className='form-select d-block w-100 mt-1'
               value={selectedRoom}
-              onChange={handleSelectedRoom}
-            >
-              <option value="no-room-selected">Wybierz jedną z opcji...</option>
+              onChange={handleSelectedRoom}>
+              <option value='no-room-selected'>Wybierz jedną z opcji...</option>
               {roomList.map((room) => (
                 <option key={room.value} value={room.value}>
                   {room.name}
@@ -703,12 +707,16 @@ export default function Adjustments() {
               ))}
             </select>
           </div>
-          <div className="col-2 mb-3 mx-2 d-flex flex-column p-3">
+          <div className='col-2 mb-3 mx-2 d-flex flex-column p-3'>
             <button
-              className="btn btn-primary"
-              onClick={generateOptimizedClassSchedules}
-            >
+              className='btn btn-primary'
+              onClick={generateOptimizedClassSchedules}>
               Generowanie planu zajęć
+            </button>
+          </div>
+          <div className='col-2 mb-3 mx-2 d-flex flex-column p-3'>
+            <button className='btn btn-primary' onClick={shuffleClassSchedules}>
+              Losowanie planu zajęć
             </button>
           </div>
         </div>
@@ -716,29 +724,27 @@ export default function Adjustments() {
 
       {generateTable()}
 
-      <div className="logger">
+      <div className='logger'>
         {messages.map((message, index) => (
           <p
             key={index}
-            style={{ color: countConflicts === 0 ? "green" : "red" }}
-          >
+            style={{ color: countConflicts === 0 ? 'green' : 'red' }}>
             {message}
           </p>
         ))}
       </div>
 
       {showConfirmation && (
-        <div className="confirmation-modal">
-          <div className="confirmation-modal-content">
+        <div className='confirmation-modal'>
+          <div className='confirmation-modal-content'>
             <p>Czy na pewno chcesz usunąć ten plan zajęć?</p>
-            <div className="confirmation-buttons">
-              <button className="btn btn-danger" onClick={handleConfirmDelete}>
+            <div className='confirmation-buttons'>
+              <button className='btn btn-danger' onClick={handleConfirmDelete}>
                 Tak
               </button>
               <button
-                className="btn btn-secondary"
-                onClick={handleCancelDelete}
-              >
+                className='btn btn-secondary'
+                onClick={handleCancelDelete}>
                 Nie
               </button>
             </div>
@@ -747,15 +753,14 @@ export default function Adjustments() {
       )}
 
       {showSelector && (
-        <div className="selector-modal">
-          <div className="selector-modal-content">
+        <div className='selector-modal'>
+          <div className='selector-modal-content'>
             <p>Wybierz plan zajęć:</p>
-            <div className="selector-options" style={{ marginBottom: "10px" }}>
+            <div className='selector-options' style={{ marginBottom: '10px' }}>
               <select
                 value={selectedSchedule}
-                onChange={handleSelectedSchedule}
-              >
-                <option value="no-class_schedules-selected">
+                onChange={handleSelectedSchedule}>
+                <option value='no-class_schedules-selected'>
                   Wybierz jedną z opcji...
                 </option>
                 {classSchedules
@@ -779,18 +784,16 @@ export default function Adjustments() {
                   ))}
               </select>
             </div>
-            <div className="button-container">
+            <div className='button-container'>
               <button
-                className="btn btn-primary"
-                onClick={handleAddClassSchedule}
-              >
+                className='btn btn-primary'
+                onClick={handleAddClassSchedule}>
                 Potwierdź
               </button>
               <button
-                className="btn btn-primary"
-                style={{ marginLeft: "10px" }}
-                onClick={handleCancelAdd}
-              >
+                className='btn btn-primary'
+                style={{ marginLeft: '10px' }}
+                onClick={handleCancelAdd}>
                 Anuluj
               </button>
             </div>

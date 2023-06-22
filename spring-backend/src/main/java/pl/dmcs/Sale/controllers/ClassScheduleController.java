@@ -2,8 +2,11 @@ package pl.dmcs.Sale.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import pl.dmcs.Sale.models.ClassSchedule;
-import pl.dmcs.Sale.models.Reservation;
+import pl.dmcs.Sale.models.*;
+import pl.dmcs.Sale.repositories.CourseRepository;
+import pl.dmcs.Sale.repositories.DeanGroupRepository;
+import pl.dmcs.Sale.repositories.RoomRepository;
+import pl.dmcs.Sale.repositories.UserRepository;
 import pl.dmcs.Sale.services.ClassScheduleService;
 import pl.dmcs.Sale.services.ReservationService;
 import pl.dmcs.Sale.utils.TimetableGenerator;
@@ -17,6 +20,10 @@ public class ClassScheduleController {
     ClassScheduleService classScheduleService;
     ReservationService reservationService;
     TimetableGenerator timetableGenerator;
+    private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
+    private final DeanGroupRepository deanGroupRepository;
+    private final CourseRepository courseRepository;
 
     @GetMapping("/class_schedules")
     public List<ClassSchedule> getClassSchedules() {
@@ -45,10 +52,23 @@ public class ClassScheduleController {
         timetableGenerator.generateTimetable();
     }
 
+    @PutMapping("/shuffle-classSchedules")
+    public void shuffleClassSchedules() {
+        timetableGenerator.shuffleTimetable();
+    }
+
     @PostMapping("/new_classSchedule")
     ClassSchedule newClassSchedule(@RequestBody ClassSchedule newClassSchedule) {
         try {
             System.out.println(newClassSchedule);
+            User user = userRepository.findById(newClassSchedule.getUser().getId()).orElseThrow();
+            DeanGroup deanGroup = deanGroupRepository.findById(newClassSchedule.getDeanGroup().getId()).orElseThrow();
+            Room room = roomRepository.findById(newClassSchedule.getRoom().getId()).orElseThrow();
+            Course course = courseRepository.findById(newClassSchedule.getCourse().getId()).orElseThrow();
+            newClassSchedule.setRoom(room);
+            newClassSchedule.setUser(user);
+            newClassSchedule.setDeanGroup(deanGroup);
+            newClassSchedule.setCourse(course);
             ClassSchedule savedClassSchedule = classScheduleService.insertNewClassSchedule(newClassSchedule);
             Reservation reservation = new Reservation();
             reservation.setClassSchedule(savedClassSchedule);
@@ -57,6 +77,7 @@ public class ClassScheduleController {
             reservationService.insertNewReservation(reservation);
             return savedClassSchedule;
         } catch (Exception e) {
+            System.out.println(newClassSchedule);
             return null;
         }
     }

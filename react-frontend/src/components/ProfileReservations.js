@@ -28,6 +28,7 @@ function ProfileReservations() {
         const result = await axios.get(
           `http://localhost:8080/users/${userData.email}/reservations`
         );
+        console.log(result.data);
         setReservationsList(result.data);
       }
     } catch (error) {
@@ -128,7 +129,7 @@ function ProfileReservations() {
                   <button
                     className='btn btn-danger mx-2'
                     onClick={(e) => handleDeleteReservation(e, reservation.id)}>
-                    Delete
+                    Usuń
                   </button>
                 </td>
               </tr>

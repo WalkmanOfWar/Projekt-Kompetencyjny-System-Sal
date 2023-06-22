@@ -318,8 +318,6 @@ function ProfileAddReservation() {
         autoClose: 1000,
       });
     }
-
-    handleCancel();
   };
 
   const handleCancel = () => {
