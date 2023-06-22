@@ -67,7 +67,14 @@ export default function Adjustments() {
       const response = await axios.put(
         'http://localhost:8080/generate-classSchedules'
       );
-      toast.success('Plan zajęć wygenerowany');
+      toast.success('Plan zajęć wygenerowany', {
+        autoClose: 1000,
+        onClose: () => {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+      });
       console.log(response.data);
     } catch (error) {
       toast.error('Nie udało się wygenerować planu zajęć');
@@ -80,7 +87,14 @@ export default function Adjustments() {
       const response = await axios.put(
         'http://localhost:8080/shuffle-classSchedules'
       );
-      toast.success('Plan zajęć wygenerowany');
+      toast.success('Plan zajęć wygenerowany', {
+        autoClose: 1000,
+        onClose: () => {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        },
+      });
       console.log(response.data);
     } catch (error) {
       toast.error('Nie udało się wygenerować planu zajęć');
